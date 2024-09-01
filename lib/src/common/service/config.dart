@@ -15,7 +15,7 @@ class ConfigService {
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
       logger.err(
-          "Config file not found. Please create 'buddy.config' and set the path using `set-path` command.");
+          "Config file not found. Please create 'secret.env' file and add openrouter_key and run `buddy set-path -p <path/to/secret.env>`");
       return null;
     }
 
@@ -62,7 +62,8 @@ class ConfigService {
 
       final defaultModel = jsonMap['default_model'] as String?;
       if (defaultModel == null) {
-        logger.err('default_model not found in buddy.config file');
+        logger.warn(
+            'default_model not found in buddy.config file using fallback model which is $fallbackModel');
       }
       return defaultModel;
     } catch (e) {

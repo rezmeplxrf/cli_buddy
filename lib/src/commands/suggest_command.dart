@@ -71,9 +71,9 @@ class SuggestionCommand extends Command<int> {
           content: PromptService.describeCMD(),
           timestamp: currentTime);
 
-      final newSession = response.getOrNull();
-      if (newSession != null) {
-        newSession.messages.add(nextMsg);
+      final responseResult = response.getOrNull();
+      if (responseResult != null) {
+       final newSession =  responseResult.copyWith(messages: [...responseResult.messages, nextMsg]);
         final newResponse = await OpenRouterService.invoke(
             session: newSession, logger: _logger, debug: shouldDebug);
         if (newResponse.isError()) {

@@ -52,7 +52,7 @@ class SetPathCommand extends Command<int> {
         return ExitCode.data.code;
       }
     } else {
-      _logger.info('Config file not found. Creating a new one.');
+      _logger.info('Config file not found. Creating a new one at ${file.path}');
       config = {};
     }
 
