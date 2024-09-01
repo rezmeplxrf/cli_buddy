@@ -5,7 +5,7 @@ class CustomException implements Exception {
       {required this.message, required this.stack, this.verboseMessage});
 
   String message;
-  dynamic verboseMessage;
+  Map<String, dynamic>? verboseMessage;
   String stack;
 
   Map<String, dynamic> toJson() {

@@ -7,9 +7,6 @@ class User {
 
   String? name;
 
-  @Property(type: PropertyType.date) // Store as int in milliseconds
-  DateTime? date;
-
   @Transient() // Ignore this property, not stored in the database.
   int? computedProperty;
 }

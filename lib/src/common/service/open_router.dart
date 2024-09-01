@@ -22,16 +22,27 @@ class OpenRouterService {
 
   Future<Result<ChatSession, CustomException>> invoke(
       ChatSession session) async {
-    final data = json.encode(
-        {'model': session.model, 'stream': true, 'messages': session.messages});
+    final prompt = <String, dynamic>{
+      'model': session.model,
+      'stream': true,
+      'messages': session.messages,
+    };
+
+    if (session.parameters != null) {
+      prompt.addAll(session.parameters!.toJson());
+    }
+
+    final promptJson = json.encode(prompt);
+    print(promptJson);
+
     final response = await dio.post<ResponseBody>(
       'https://openrouter.ai/api/v1/chat/completions',
       options: Options(headers: headers, responseType: ResponseType.stream),
-      data: data,
+      data: prompt,
     );
 
     final msg = StringBuffer();
-    Message? aiResponse;
+
     ChatSession? newSession;
     final responses = <ORResponse>[];
 
@@ -42,8 +53,9 @@ class OpenRouterService {
 
       for (var i = 0; i < parts.length - 1; i++) {
         final part = parts[i].trim();
-        if (part.contains('[DONE]')) break;
-        if (part.startsWith('data:')) {
+        if (part.startsWith('data:') &&
+            part.length > 5 &&
+            !part.contains('[DONE]')) {
           final jsonString = part.substring(5).trim();
           if (jsonString.isNotEmpty) {
             final decodedJson = json.decode(jsonString) as Map<String, dynamic>;
@@ -53,35 +65,38 @@ class OpenRouterService {
             if (response.choices != null &&
                 response.choices!.first.delta?.content?.trim() != null) {
               msg.write(response.choices!.first.delta!.content);
-            
             }
-            if (response.usage != null) { 
-              aiResponse = Message(
-                role: Role.assistant,
-                content: msg.toString(),
-                timestamp: DateTime.now().millisecondsSinceEpoch,
-                usage: response.usage,
-              );
-              newSession = session.copyWith(
-                messages: [...session.messages, aiResponse],
-              );
-            }
+
             if (response.choices?.first.error != null) {
               throw CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
-                  verboseMessage: response.choices!.first.error?.toJson());
+                  verboseMessage: {
+                    'api_error_message': response.choices!.first.error?.toJson()
+                  });
             }
           }
         }
       }
     }
+    if (responses.isNotEmpty) {
+      final lastResponse = responses.last;
+      final aiResponse = Message(
+        role: Role.assistant,
+        content: msg.toString(),
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        usage: lastResponse.usage,
+      );
+      newSession = session.copyWith(
+        messages: [...session.messages, aiResponse],
+      );
+    }
     if (newSession != null) {
       return Success(newSession);
     } else {
       throw CustomException(
-          message: 'Something went wrong',
-          verboseMessage: responses,
+          message: 'Something went wrong - newSession is null',
+          verboseMessage: {'api_responses': responses},
           stack: 'OpenRouterService.invoke');
     }
   }

@@ -10,7 +10,9 @@ Future<void> main() async {
         content:
             'Can you perform function callings if I provide you with tools?',
         timestamp: 0)
-  ]);
+  ],
+  parameters: Parameters(temperature: 1)
+  );
   final result = await repo.invoke(session);
   result.fold(
     (success) {

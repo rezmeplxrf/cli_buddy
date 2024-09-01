@@ -33,11 +33,6 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(2, 6867052450524148658),
             name: 'name',
             type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 8671164928168730335),
-            name: 'date',
-            type: 10,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -84,7 +79,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [],
+      retiredPropertyUids: const [8671164928168730335],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -105,22 +100,17 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
-          fbb.addInt64(2, object.date?.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
         objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-          final dateValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 8);
+
           final object = User()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 6)
-            ..date = dateValue == null
-                ? null
-                : DateTime.fromMillisecondsSinceEpoch(dateValue);
+                .vTableGetNullable(buffer, rootOffset, 6);
 
           return object;
         })
@@ -136,7 +126,4 @@ class User_ {
 
   /// See [User.name].
   static final name = obx.QueryStringProperty<User>(_entities[0].properties[1]);
-
-  /// See [User.date].
-  static final date = obx.QueryDateProperty<User>(_entities[0].properties[2]);
 }
