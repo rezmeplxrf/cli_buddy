@@ -1273,8 +1273,11 @@ Usage _$UsageFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Usage {
+  @JsonKey(name: 'prompt_tokens')
   int? get promptTokens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'completion_tokens')
   int? get completionTokens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'total_tokens')
   int? get totalTokens => throw _privateConstructorUsedError;
 
   /// Serializes this Usage to a JSON map.
@@ -1291,7 +1294,10 @@ abstract class $UsageCopyWith<$Res> {
   factory $UsageCopyWith(Usage value, $Res Function(Usage) then) =
       _$UsageCopyWithImpl<$Res, Usage>;
   @useResult
-  $Res call({int? promptTokens, int? completionTokens, int? totalTokens});
+  $Res call(
+      {@JsonKey(name: 'prompt_tokens') int? promptTokens,
+      @JsonKey(name: 'completion_tokens') int? completionTokens,
+      @JsonKey(name: 'total_tokens') int? totalTokens});
 }
 
 /// @nodoc
@@ -1337,7 +1343,10 @@ abstract class _$$UsageImplCopyWith<$Res> implements $UsageCopyWith<$Res> {
       __$$UsageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? promptTokens, int? completionTokens, int? totalTokens});
+  $Res call(
+      {@JsonKey(name: 'prompt_tokens') int? promptTokens,
+      @JsonKey(name: 'completion_tokens') int? completionTokens,
+      @JsonKey(name: 'total_tokens') int? totalTokens});
 }
 
 /// @nodoc
@@ -1378,16 +1387,21 @@ class __$$UsageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UsageImpl implements _Usage {
   const _$UsageImpl(
-      {this.promptTokens, this.completionTokens, this.totalTokens});
+      {@JsonKey(name: 'prompt_tokens') this.promptTokens,
+      @JsonKey(name: 'completion_tokens') this.completionTokens,
+      @JsonKey(name: 'total_tokens') this.totalTokens});
 
   factory _$UsageImpl.fromJson(Map<String, dynamic> json) =>
       _$$UsageImplFromJson(json);
 
   @override
+  @JsonKey(name: 'prompt_tokens')
   final int? promptTokens;
   @override
+  @JsonKey(name: 'completion_tokens')
   final int? completionTokens;
   @override
+  @JsonKey(name: 'total_tokens')
   final int? totalTokens;
 
   @override
@@ -1431,17 +1445,20 @@ class _$UsageImpl implements _Usage {
 
 abstract class _Usage implements Usage {
   const factory _Usage(
-      {final int? promptTokens,
-      final int? completionTokens,
-      final int? totalTokens}) = _$UsageImpl;
+      {@JsonKey(name: 'prompt_tokens') final int? promptTokens,
+      @JsonKey(name: 'completion_tokens') final int? completionTokens,
+      @JsonKey(name: 'total_tokens') final int? totalTokens}) = _$UsageImpl;
 
   factory _Usage.fromJson(Map<String, dynamic> json) = _$UsageImpl.fromJson;
 
   @override
+  @JsonKey(name: 'prompt_tokens')
   int? get promptTokens;
   @override
+  @JsonKey(name: 'completion_tokens')
   int? get completionTokens;
   @override
+  @JsonKey(name: 'total_tokens')
   int? get totalTokens;
 
   /// Create a copy of Usage

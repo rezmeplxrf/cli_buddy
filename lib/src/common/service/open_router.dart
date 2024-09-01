@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:cli_buddy/src/common/domain/common_llm.dart';
+import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
+import 'package:result_dart/result_dart.dart';
 
 final headers = {
   'HTTP-Referer': 'insightsentry.com',
@@ -14,18 +16,14 @@ final headers = {
 };
 
 class OpenRouterService {
-  Future<ChatSession> invoke(ChatSession session) async {
-    final paramters = session.parameters ?? null;
-    Parameters? parameters;
-    final data = json.encode({
-      'model': 'mistralai/mixtral-8x7b-instruct',
-      'stream': true,
-      
-      'messages': [
-        {'role': 'user', 'content': 'Who are you?'},
-        {'role': 'assistant', 'content': "I'm not sure, but my best guess is"}
-      ]
-    });
+  factory OpenRouterService() => _instance;
+  OpenRouterService._internal();
+  static final OpenRouterService _instance = OpenRouterService._internal();
+
+  Future<Result<ChatSession, CustomException>> invoke(
+      ChatSession session) async {
+    final data = json.encode(
+        {'model': session.model, 'stream': true, 'messages': session.messages});
     final response = await dio.post<ResponseBody>(
       'https://openrouter.ai/api/v1/chat/completions',
       options: Options(headers: headers, responseType: ResponseType.stream),
@@ -34,6 +32,8 @@ class OpenRouterService {
 
     final msg = StringBuffer();
     Message? aiResponse;
+    ChatSession? newSession;
+    final responses = <ORResponse>[];
 
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
@@ -46,28 +46,43 @@ class OpenRouterService {
         if (part.startsWith('data:')) {
           final jsonString = part.substring(5).trim();
           if (jsonString.isNotEmpty) {
-            final response = ORResponse.fromJson(
-                json.decode(jsonString) as Map<String, dynamic>);
+            final decodedJson = json.decode(jsonString) as Map<String, dynamic>;
+            final response = ORResponse.fromJson(decodedJson);
+            responses.add(response);
 
             if (response.choices != null &&
                 response.choices!.first.delta?.content?.trim() != null) {
               msg.write(response.choices!.first.delta!.content);
+            
             }
-            if (response.usage != null) {
+            if (response.usage != null) { 
               aiResponse = Message(
                 role: Role.assistant,
                 content: msg.toString(),
                 timestamp: DateTime.now().millisecondsSinceEpoch,
                 usage: response.usage,
               );
+              newSession = session.copyWith(
+                messages: [...session.messages, aiResponse],
+              );
+            }
+            if (response.choices?.first.error != null) {
+              throw CustomException(
+                  message: 'An Error occured from the provider',
+                  stack: 'OpenRouterService.invoke',
+                  verboseMessage: response.choices!.first.error?.toJson());
             }
           }
         }
       }
     }
-    final updatedSession = session.copyWith(
-      messages: [...session.messages, aiResponse!],
-    );
-    return updatedSession;
+    if (newSession != null) {
+      return Success(newSession);
+    } else {
+      throw CustomException(
+          message: 'Something went wrong',
+          verboseMessage: responses,
+          stack: 'OpenRouterService.invoke');
+    }
   }
 }

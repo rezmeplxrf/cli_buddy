@@ -165,6 +165,30 @@ class Parameters with _$Parameters {
       _$ParametersFromJson(json);
 }
 
+class Tool {
+  Tool({
+    required this.type,
+    required this.function,
+  });
+
+  factory Tool.fromJson(Map<String, dynamic> json) {
+    return Tool(
+      type: json['type'] as String,
+      function: FunctionDescription.fromJson(
+          json['function'] as Map<String, dynamic>),
+    );
+  }
+  final String type;
+  final FunctionDescription function;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'function': function.toJson(),
+    };
+  }
+}
+
 class FunctionDescription {
   FunctionDescription({
     required this.name,
@@ -188,30 +212,6 @@ class FunctionDescription {
       'description': description,
       'name': name,
       'parameters': parameters,
-    };
-  }
-}
-
-class Tool {
-  Tool({
-    required this.type,
-    required this.function,
-  });
-
-  factory Tool.fromJson(Map<String, dynamic> json) {
-    return Tool(
-      type: json['type'] as String,
-      function: FunctionDescription.fromJson(
-          json['function'] as Map<String, dynamic>),
-    );
-  }
-  final String type;
-  final FunctionDescription function;
-
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'function': function.toJson(),
     };
   }
 }

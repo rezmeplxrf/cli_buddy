@@ -136,14 +136,14 @@ Map<String, dynamic> _$$ErrorImplToJson(_$ErrorImpl instance) =>
     };
 
 _$UsageImpl _$$UsageImplFromJson(Map<String, dynamic> json) => _$UsageImpl(
-      promptTokens: (json['promptTokens'] as num?)?.toInt(),
-      completionTokens: (json['completionTokens'] as num?)?.toInt(),
-      totalTokens: (json['totalTokens'] as num?)?.toInt(),
+      promptTokens: (json['prompt_tokens'] as num?)?.toInt(),
+      completionTokens: (json['completion_tokens'] as num?)?.toInt(),
+      totalTokens: (json['total_tokens'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$UsageImplToJson(_$UsageImpl instance) =>
     <String, dynamic>{
-      'promptTokens': instance.promptTokens,
-      'completionTokens': instance.completionTokens,
-      'totalTokens': instance.totalTokens,
+      'prompt_tokens': instance.promptTokens,
+      'completion_tokens': instance.completionTokens,
+      'total_tokens': instance.totalTokens,
     };

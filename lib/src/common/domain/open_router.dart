@@ -82,9 +82,9 @@ class Error with _$Error {
 @freezed
 class Usage with _$Usage {
   const factory Usage({
-    int? promptTokens,
-    int? completionTokens,
-    int? totalTokens,
+    @JsonKey(name: 'prompt_tokens') int? promptTokens,
+    @JsonKey(name: 'completion_tokens') int? completionTokens,
+    @JsonKey(name: 'total_tokens') int? totalTokens,
   }) = _Usage;
 
   factory Usage.fromJson(Map<String, Object?> json) => _$UsageFromJson(json);
