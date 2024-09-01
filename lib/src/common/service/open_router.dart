@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:cli_buddy/src/common/domain/common_llm.dart';
 import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
-import 'package:cli_buddy/src/common/service/secret.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
+
+String fallbackModel = 'openai/gpt-4o-2024-08-06';
 
 class OpenRouterService {
   factory OpenRouterService() => _instance;
@@ -15,8 +17,11 @@ class OpenRouterService {
   static final OpenRouterService _instance = OpenRouterService._internal();
 
   static Future<Result<ChatSession, CustomException>> invoke(
-      {required ChatSession session, required Logger logger}) async {
-    openrouterKey ??= await SecretService.readOpenrouterKey(logger);
+      {required ChatSession session,
+      required Logger logger,
+      bool? debug = false}) async {
+    openrouterKey ??= await ConfigService.readOpenrouterKey(logger);
+    defaultModel ??= await ConfigService.readDefaultModel(logger);
     if (openrouterKey == null) {
       throw CustomException(
         message: 'openrouter_key not found in .env file',
@@ -29,9 +34,10 @@ class OpenRouterService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $openrouterKey'
     };
-
+    final model =
+        (session.model != null) ? session.model : defaultModel ?? fallbackModel;
     final prompt = <String, dynamic>{
-      'model': session.model,
+      'model': model,
       'stream': true,
       'messages': session.messages,
     };
@@ -41,7 +47,9 @@ class OpenRouterService {
     }
 
     final promptForDebug = json.encode(prompt);
-    print(promptForDebug);
+    if (debug != null && debug) {
+      logger.info('Prompt:\n${lightCyan.wrap(promptForDebug)}');
+    }
 
     final response = await dio.post<ResponseBody>(
       'https://openrouter.ai/api/v1/chat/completions',

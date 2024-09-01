@@ -21,7 +21,7 @@ ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ChatSession {
   List<Message> get messages => throw _privateConstructorUsedError;
-  String get model => throw _privateConstructorUsedError;
+  String? get model => throw _privateConstructorUsedError;
   Parameters? get parameters => throw _privateConstructorUsedError;
 
   /// Serializes this ChatSession to a JSON map.
@@ -40,7 +40,7 @@ abstract class $ChatSessionCopyWith<$Res> {
           ChatSession value, $Res Function(ChatSession) then) =
       _$ChatSessionCopyWithImpl<$Res, ChatSession>;
   @useResult
-  $Res call({List<Message> messages, String model, Parameters? parameters});
+  $Res call({List<Message> messages, String? model, Parameters? parameters});
 
   $ParametersCopyWith<$Res>? get parameters;
 }
@@ -61,7 +61,7 @@ class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
   @override
   $Res call({
     Object? messages = null,
-    Object? model = null,
+    Object? model = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_value.copyWith(
@@ -69,10 +69,10 @@ class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      model: null == model
+      model: freezed == model
           ? _value.model
           : model // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       parameters: freezed == parameters
           ? _value.parameters
           : parameters // ignore: cast_nullable_to_non_nullable
@@ -103,7 +103,7 @@ abstract class _$$ChatSessionImplCopyWith<$Res>
       __$$ChatSessionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Message> messages, String model, Parameters? parameters});
+  $Res call({List<Message> messages, String? model, Parameters? parameters});
 
   @override
   $ParametersCopyWith<$Res>? get parameters;
@@ -123,7 +123,7 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? messages = null,
-    Object? model = null,
+    Object? model = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_$ChatSessionImpl(
@@ -131,10 +131,10 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      model: null == model
+      model: freezed == model
           ? _value.model
           : model // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       parameters: freezed == parameters
           ? _value.parameters
           : parameters // ignore: cast_nullable_to_non_nullable
@@ -148,9 +148,7 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
 @JsonSerializable(explicitToJson: true)
 class _$ChatSessionImpl implements _ChatSession {
   const _$ChatSessionImpl(
-      {required final List<Message> messages,
-      required this.model,
-      this.parameters})
+      {required final List<Message> messages, this.model, this.parameters})
       : _messages = messages;
 
   factory _$ChatSessionImpl.fromJson(Map<String, dynamic> json) =>
@@ -165,7 +163,7 @@ class _$ChatSessionImpl implements _ChatSession {
   }
 
   @override
-  final String model;
+  final String? model;
   @override
   final Parameters? parameters;
 
@@ -209,7 +207,7 @@ class _$ChatSessionImpl implements _ChatSession {
 abstract class _ChatSession implements ChatSession {
   const factory _ChatSession(
       {required final List<Message> messages,
-      required final String model,
+      final String? model,
       final Parameters? parameters}) = _$ChatSessionImpl;
 
   factory _ChatSession.fromJson(Map<String, dynamic> json) =
@@ -218,7 +216,7 @@ abstract class _ChatSession implements ChatSession {
   @override
   List<Message> get messages;
   @override
-  String get model;
+  String? get model;
   @override
   Parameters? get parameters;
 

@@ -11,7 +11,7 @@ _$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
       messages: (json['messages'] as List<dynamic>)
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
-      model: json['model'] as String,
+      model: json['model'] as String?,
       parameters: json['parameters'] == null
           ? null
           : Parameters.fromJson(json['parameters'] as Map<String, dynamic>),

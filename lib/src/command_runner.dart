@@ -1,7 +1,6 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/commands/commands.dart';
-import 'package:cli_buddy/src/commands/suggest_command.dart';
 import 'package:cli_buddy/src/version.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';

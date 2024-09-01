@@ -1,15 +1,17 @@
 import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:objectbox/objectbox.dart';
 
 part 'common_llm.freezed.dart';
 part 'common_llm.g.dart';
+
 
 @freezed
 class ChatSession with _$ChatSession {
   @JsonSerializable(explicitToJson: true)
   const factory ChatSession({
-    required List<Message> messages,
-    required String model,
+    required List<Message> messages, 
+    String? model,
     Parameters? parameters,
   }) = _ChatSession;
 
@@ -32,6 +34,7 @@ class Message with _$Message {
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
 }
+
 
 @freezed
 class Parameters with _$Parameters {

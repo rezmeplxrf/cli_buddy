@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/common_llm.dart';
+import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
 
@@ -13,12 +14,19 @@ class SuggestionCommand extends Command<int> {
   SuggestionCommand({
     required Logger logger,
   }) : _logger = logger {
-    argParser.addFlag(
-      'desc',
-      abbr: 'c',
-      help: 'Also describe the command',
-      negatable: false,
-    );
+    argParser
+      ..addFlag(
+        'desc',
+        abbr: 'c',
+        help: 'Also describes the command',
+        negatable: false,
+      )
+      ..addFlag(
+        'debug',
+        abbr: 'd',
+        help: 'get more detailed information about the process for debugging',
+        negatable: false,
+      );
   }
 
   @override
@@ -43,7 +51,23 @@ class SuggestionCommand extends Command<int> {
         timestamp: currentTime);
     final userMsg =
         Message(role: Role.user, content: args.first, timestamp: currentTime);
-    final session = ChatSession(messages: [sysMsg, userMsg], model: '');
+    final session = ChatSession(messages: [sysMsg, userMsg]);
+    bool? shouldDebug;
+
+    if (argResults?['debug'] == true) {
+      shouldDebug = true;
+    }
+    final response = await OpenRouterService.invoke(
+        session: session, logger: _logger, debug: shouldDebug);
+    response.fold(
+      (success) {
+        // handle the success here
+        print(success.toJson());
+      },
+      (failure) {x
+        print(failure.toJson());
+      },
+    );
     // if (argResults?['cyan'] == true) {
     //   output = lightCyan.wrap(output)!;
     // }
