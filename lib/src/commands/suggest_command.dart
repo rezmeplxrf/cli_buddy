@@ -24,7 +24,7 @@ class SuggestionCommand extends Command<int> {
       ..addFlag(
         'debug',
         abbr: 'd',
-        help: 'get more detailed information about the process for debugging',
+        help: 'get raw outputs of api requests',
         negatable: false,
       );
   }
@@ -49,29 +49,44 @@ class SuggestionCommand extends Command<int> {
         role: Role.system,
         content: PromptService.cmdOnly(),
         timestamp: currentTime);
-    final userMsg =
+    final initialMsg =
         Message(role: Role.user, content: args.first, timestamp: currentTime);
-    final session = ChatSession(messages: [sysMsg, userMsg]);
-    bool? shouldDebug;
+    final session = ChatSession(messages: [sysMsg, initialMsg]);
+    var shouldDebug = false;
 
     if (argResults?['debug'] == true) {
       shouldDebug = true;
     }
     final response = await OpenRouterService.invoke(
         session: session, logger: _logger, debug: shouldDebug);
-    response.fold(
-      (success) {
-        // handle the success here
-        print(success.toJson());
-      },
-      (failure) {
-        print(failure.toJson());
-      },
-    );
-    // if (argResults?['cyan'] == true) {
-    //   output = lightCyan.wrap(output)!;
-    // }
-    // _logger.info(output);
+
+    if (argResults?['desc'] == true && response.isSuccess()) {
+      final nextMsg = Message(
+          role: Role.user,
+          content: PromptService.describeCMD(),
+          timestamp: currentTime);
+
+      final newSession = response.getOrNull();
+      if (newSession != null) {
+        newSession.messages.add(nextMsg);
+        final newResponse = await OpenRouterService.invoke(
+            session: newSession, logger: _logger, debug: shouldDebug);
+        if (newResponse.isError()) {
+          _logger.err('An Error occured while asking for descriptions');
+          return ExitCode.tempFail.code;
+        } else {
+          return ExitCode.success.code;
+        }
+      } else {
+        _logger.err('An Error occured while asking for descriptions');
+        return ExitCode.tempFail.code;
+      }
+    }
+    if (response.isError()) {
+      _logger.err('An Error occured while asking for suggested commands');
+      return ExitCode.tempFail.code;
+    }
+
     return ExitCode.success.code;
   }
 }

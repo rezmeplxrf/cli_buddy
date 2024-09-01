@@ -9,8 +9,6 @@ import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
-String fallbackModel = 'openai/gpt-4o-2024-08-06';
-
 class OpenRouterService {
   factory OpenRouterService() => _instance;
   OpenRouterService._internal();
@@ -19,7 +17,7 @@ class OpenRouterService {
   static Future<Result<ChatSession, CustomException>> invoke(
       {required ChatSession session,
       required Logger logger,
-      bool? debug = false}) async {
+      required bool debug}) async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
     defaultModel ??= await ConfigService.loadDefaultModel(logger);
     defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
@@ -48,11 +46,24 @@ class OpenRouterService {
     if (parameters != null) {
       prompt.addAll(parameters.toJson());
     }
-
+    Progress? progress;
     final promptForDebug = json.encode(prompt);
-    if (debug != null && debug) {
-      logger.info(
-          '\n---------Prompt--------\n${lightCyan.wrap(promptForDebug)}\n');
+    if ( debug) {
+      final log = '''
+
+## Prompt
+${lightCyan.wrap(promptForDebug)}
+
+## Response
+''';
+      logger.info(log);
+    } else {
+      progress = logger.progress(
+        '',
+        options: const ProgressOptions(
+          animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
+        ),
+      );
     }
 
     final response = await dio.post<ResponseBody>(
@@ -86,12 +97,11 @@ class OpenRouterService {
             if (response.choices != null &&
                 response.choices!.first.delta?.content?.trim() != null) {
               msg.write(response.choices!.first.delta!.content);
-              if (debug != null && debug) {
+              if (debug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
+              } else {
+                progress?.update(lightGreen.wrap(msg.toString())!);
               }
-              // if (debug != null && debug) {
-              //   logger.info('\n${darkGray.wrap(response.toJson().toString())}');
-              // }
             }
 
             if (response.choices?.first.error != null) {
@@ -106,6 +116,7 @@ class OpenRouterService {
         }
       }
     }
+    progress?.complete();
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
       final aiResponse = Message(
@@ -118,6 +129,11 @@ class OpenRouterService {
           messages: [...session.messages, aiResponse],
           model: model,
           parameters: parameters);
+      final tokenUsage = lastResponse.usage;
+
+      final usageLog =
+          'Token usage | Prompt: ${tokenUsage?.promptTokens} | Completion: ${tokenUsage?.completionTokens} | Total: ${tokenUsage?.totalTokens}';
+      logger.info(darkGray.wrap(usageLog));
     }
     if (newSession != null) {
       return Success(newSession);

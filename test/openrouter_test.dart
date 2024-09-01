@@ -4,19 +4,20 @@ import 'package:mason_logger/mason_logger.dart';
 
 Future<void> main() async {
   const session = ChatSession(
-      messages: [
-        Message(
-            role: Role.user,
-            content:
-                'Can you perform function callings if I provide you with tools?',
-            timestamp: 0)
-      ],
-     );
-  final result = await OpenRouterService.invoke(session: session, logger: Logger(), debug: true);
+    messages: [
+      Message(
+          role: Role.user,
+          content:
+              'Can you perform function callings if I provide you with tools?',
+          timestamp: 0)
+    ],
+  );
+  final logger = Logger();
+  final result =
+      await OpenRouterService.invoke(session: session, logger: logger, debug: false);
   result.fold(
     (success) {
-      // handle the success here
-      print(success.toJson());
+ 
     },
     (failure) {
       print(failure.toJson());

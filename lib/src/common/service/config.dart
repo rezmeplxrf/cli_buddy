@@ -8,6 +8,7 @@ import 'package:mason_logger/mason_logger.dart';
 String? openrouterKey;
 String? defaultModel;
 Parameters? defaultParameters;
+String fallbackModel = 'openai/gpt-4o-2024-08-06';
 
 class ConfigService {
   static Future<String?> loadOpenrouterKey(Logger logger) async {
