@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
@@ -39,13 +40,28 @@ class SetModelCommand extends Command<int> {
 
     final file = File('buddy.config');
 
-    if (!file.existsSync()) {
+    Map<String, dynamic> config;
+
+    if (file.existsSync()) {
+      final content = await file.readAsString();
+      try {
+        config = jsonDecode(content) as Map<String, dynamic>;
+      } catch (e) {
+        _logger.err(
+            'Failed to parse config file. Please ensure it is valid JSON.');
+        return ExitCode.data.code;
+      }
+    } else {
       _logger.info('Config file not found. Creating a new one.');
-      await file.create(recursive: true);
+      config = {};
     }
 
-    await file.writeAsString('default_model=$model\n', mode: FileMode.append);
-    _logger.info('Model saved successfully: $model');
+    config['default_model'] = model;
+
+    final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
+    await file.writeAsString(updatedContent);
+
+    _logger.info('Default Model ($model) saved successfully at ${file.path}');
     return ExitCode.success.code;
   }
 }

@@ -9,7 +9,7 @@ import 'package:pub_updater/pub_updater.dart';
 const executableName = 'buddy';
 const packageName = 'cli_buddy';
 const description =
-    'CLI to call any AI to ask, auto-complete, and generate code directly from any command line tool.';
+    'A CLI tool to call any AI to ask, auto-complete, and generate code directly from any command line tool.';
 
 /// {@template cli_buddy_command_runner}
 /// A [CommandRunner] for the CLI.

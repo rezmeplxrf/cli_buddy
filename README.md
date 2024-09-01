@@ -27,48 +27,37 @@ Or locally via:
 dart pub global activate --source=path <path to this package>
 ```
 
+## config file example
+### buddy.config
+{
+  "secret_env_path": "secret.env",
+  "default_model": "openai/gpt-4o-mini-2024-07-18",
+  "max_tokens": null,
+  "temperature": 0.3,
+  "top_p": null,
+  "top_k": null,
+  "frequency_penalty": null,
+  "presence_penalty": null,
+  "repetition_penalty": null,
+  "min_p": null,
+  "top_a": null,
+  "seed": null,
+  "logit_bias": null,
+  "logprobs": true,
+  "top_logprobs": 1,
+  "response_format": null,
+  "stop": null
+}
+
 ## Usage
 
 ```sh
-# Sample command
-$ cli_buddy sample
-
-# Sample command option
-$ cli_buddy sample --cyan
+# Suggest command
+$ buddy suggest how can I update homebrew?
 
 # Show CLI version
-$ cli_buddy --version
+$ buddy --version
 
 # Show usage help
-$ cli_buddy --help
+$ buddy --help
 ```
-
-## Running Tests with coverage 🧪
-
-To run all unit tests use the following command:
-
-```sh
-$ dart pub global activate coverage 1.2.0
-$ dart test --coverage=coverage
-$ dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info
-```
-
-To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov)
-.
-
-```sh
-# Generate Coverage Report
-$ genhtml coverage/lcov.info -o coverage/
-
-# Open Coverage Report
-$ open coverage/index.html
-```
-
----
-
-[coverage_badge]: coverage_badge.svg
-[license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license_link]: https://opensource.org/licenses/MIT
-[very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
-[very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
-[very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
