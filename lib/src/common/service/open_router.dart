@@ -6,6 +6,7 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/secret/load.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
+import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
 class OpenRouterService {
@@ -13,9 +14,15 @@ class OpenRouterService {
   OpenRouterService._internal();
   static final OpenRouterService _instance = OpenRouterService._internal();
 
-  Future<Result<ChatSession, CustomException>> invoke(
-      ChatSession session) async {
+  static Future<Result<ChatSession, CustomException>> invoke(
+      {required ChatSession session, required Logger logger}) async {
     openrouterKey ??= SecretService.readOpenrouterKey();
+    if (openrouterKey == null) {
+      throw CustomException(
+        message: 'openrouter_key not found in .env file',
+        stack: 'OpenRouterService.invoke',
+      );
+    }
     final headers = {
       'HTTP-Referer': 'insightsentry.com',
       'X-Title': 'CLI Buddy',
@@ -32,6 +39,9 @@ class OpenRouterService {
     if (session.parameters != null) {
       prompt.addAll(session.parameters!.toJson());
     }
+
+    final promptForDebug = json.encode(prompt);
+    print(promptForDebug);
 
     final response = await dio.post<ResponseBody>(
       'https://openrouter.ai/api/v1/chat/completions',
@@ -69,7 +79,7 @@ class OpenRouterService {
               throw CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
-                  verboseMessage: {
+                  details: {
                     'api_error_message': response.choices!.first.error?.toJson()
                   });
             }
@@ -94,7 +104,7 @@ class OpenRouterService {
     } else {
       throw CustomException(
           message: 'Something went wrong - newSession is null',
-          verboseMessage: {'api_responses': responses},
+          details: {'api_responses': responses},
           stack: 'OpenRouterService.invoke');
     }
   }

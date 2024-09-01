@@ -1,15 +1,16 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/commands/commands.dart';
+import 'package:cli_buddy/src/commands/suggest_command.dart';
 import 'package:cli_buddy/src/version.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pub_updater/pub_updater.dart';
 
-const executableName = 'cli_buddy';
+const executableName = 'buddy';
 const packageName = 'cli_buddy';
 const description =
-    'CLI to call LLMs to ask, auto-complete, and generate code, inspired by ShellGPT.';
+    'CLI to call any AI to ask, auto-complete, and generate code directly from any command line tool.';
 
 /// {@template cli_buddy_command_runner}
 /// A [CommandRunner] for the CLI.
@@ -40,6 +41,7 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
       );
 
     // Add sub commands
+    addCommand(SuggestionCommand(logger: _logger));
     addCommand(SampleCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }

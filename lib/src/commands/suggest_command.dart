@@ -5,7 +5,7 @@ class SuggestionCommand extends Command<int> {
   SuggestionCommand({
     required Logger logger,
   }) : _logger = logger {
-    argParser.addFlag(  
+    argParser.addFlag(
       'cyan',
       abbr: 'c',
       help: 'Prints the same joke, but in cyan',
@@ -14,15 +14,22 @@ class SuggestionCommand extends Command<int> {
   }
 
   @override
-  String get description => 'A sample sub command that just prints one joke';
+  String get description => 'Suggests a command based on prompt';
 
   @override
-  String get name => 'sample';
+  String get name => 'suggest';
 
   final Logger _logger;
 
   @override
   Future<int> run() async {
+    print(" argResults?.command: : ${argResults?.command}");
+    print(" command : ${argResults?.name}");
+    print(" arguments : ${argResults?.arguments}");
+    print(" options : ${argResults?.options}");
+    print(" multi options: ${argResults?.multiOption(name)}");
+    print(" rest : ${argResults?.rest}");
+    print("flags: ${argResults?.flag(name)}");
     var output = 'Which unicorn has a cold? The Achoo-nicorn!';
     if (argResults?['cyan'] == true) {
       output = lightCyan.wrap(output)!;
