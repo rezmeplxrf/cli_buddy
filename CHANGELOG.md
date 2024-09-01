@@ -9,3 +9,7 @@
 # 0.0.2
 
 * Added suggest command.
+
+# 0.0.3
+
+* Added set-path and set-model commands.
