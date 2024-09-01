@@ -3,7 +3,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'open_router.freezed.dart';
 part 'open_router.g.dart';
 
-
 @freezed
 class ORResponse with _$ORResponse {
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
@@ -23,12 +22,10 @@ class ORResponse with _$ORResponse {
 @freezed
 class Choices with _$Choices {
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
-  const factory Choices({
-    int? index,
-    Delta? delta,
-    String? finishReason,
-    String? logprobs,
-  }) = _Choices;
+  const factory Choices(
+      {Delta? delta,
+      @JsonKey(name: 'finish_reason') String? finishReason,
+      Error? error}) = _Choices;
 
   factory Choices.fromJson(Map<String, Object?> json) =>
       _$ChoicesFromJson(json);
@@ -40,7 +37,7 @@ class Delta with _$Delta {
   const factory Delta({
     String? role,
     String? content,
-    ToolCall? toolCall,
+    @JsonKey(name: 'tool_calls') List<ToolCall>? toolCalls,
   }) = _Delta;
 
   factory Delta.fromJson(Map<String, Object?> json) => _$DeltaFromJson(json);
@@ -48,14 +45,38 @@ class Delta with _$Delta {
 
 @freezed
 class ToolCall with _$ToolCall {
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory ToolCall({
     String? id,
     String? type,
-    String? function,
+    FunctionCall? function,
   }) = _ToolCall;
 
   factory ToolCall.fromJson(Map<String, Object?> json) =>
       _$ToolCallFromJson(json);
+}
+
+@freezed
+class FunctionCall with _$FunctionCall {
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
+  const factory FunctionCall({
+    required String name,
+    required String arguments,
+  }) = _FunctionCall;
+
+  factory FunctionCall.fromJson(Map<String, Object?> json) =>
+      _$FunctionCallFromJson(json);
+}
+
+@freezed
+class Error with _$Error {
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
+  const factory Error({
+    required int code,
+    required String message,
+  }) = _Error;
+
+  factory Error.fromJson(Map<String, Object?> json) => _$ErrorFromJson(json);
 }
 
 @freezed

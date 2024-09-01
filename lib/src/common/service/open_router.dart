@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cli_buddy/src/common/domain/common_llm.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
@@ -13,10 +14,13 @@ final headers = {
 };
 
 class OpenRouterService {
-  Future<void> invoke() async {
+  Future<ChatSession> invoke(ChatSession session) async {
+    final paramters = session.parameters ?? null;
+    Parameters? parameters;
     final data = json.encode({
       'model': 'mistralai/mixtral-8x7b-instruct',
       'stream': true,
+      
       'messages': [
         {'role': 'user', 'content': 'Who are you?'},
         {'role': 'assistant', 'content': "I'm not sure, but my best guess is"}
@@ -29,7 +33,8 @@ class OpenRouterService {
     );
 
     final msg = StringBuffer();
-    ChatMessage? aiResponse;
+    Message? aiResponse;
+
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
       final decodedString = utf8.decode(chunk);
@@ -49,17 +54,20 @@ class OpenRouterService {
               msg.write(response.choices!.first.delta!.content);
             }
             if (response.usage != null) {
-              aiResponse = ChatMessage(
+              aiResponse = Message(
                 role: Role.assistant,
                 content: msg.toString(),
                 timestamp: DateTime.now().millisecondsSinceEpoch,
                 usage: response.usage,
               );
-              print(aiResponse);
             }
           }
         }
       }
     }
+    final updatedSession = session.copyWith(
+      messages: [...session.messages, aiResponse!],
+    );
+    return updatedSession;
   }
 }

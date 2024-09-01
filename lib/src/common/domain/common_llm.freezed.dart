@@ -14,6 +14,222 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) {
+  return _ChatSession.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChatSession {
+  List<Message> get messages => throw _privateConstructorUsedError;
+  String get model => throw _privateConstructorUsedError;
+  Parameters? get parameters => throw _privateConstructorUsedError;
+
+  /// Serializes this ChatSession to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ChatSessionCopyWith<ChatSession> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChatSessionCopyWith<$Res> {
+  factory $ChatSessionCopyWith(
+          ChatSession value, $Res Function(ChatSession) then) =
+      _$ChatSessionCopyWithImpl<$Res, ChatSession>;
+  @useResult
+  $Res call({List<Message> messages, String model, Parameters? parameters});
+
+  $ParametersCopyWith<$Res>? get parameters;
+}
+
+/// @nodoc
+class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
+    implements $ChatSessionCopyWith<$Res> {
+  _$ChatSessionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+    Object? model = null,
+    Object? parameters = freezed,
+  }) {
+    return _then(_value.copyWith(
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      model: null == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String,
+      parameters: freezed == parameters
+          ? _value.parameters
+          : parameters // ignore: cast_nullable_to_non_nullable
+              as Parameters?,
+    ) as $Val);
+  }
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ParametersCopyWith<$Res>? get parameters {
+    if (_value.parameters == null) {
+      return null;
+    }
+
+    return $ParametersCopyWith<$Res>(_value.parameters!, (value) {
+      return _then(_value.copyWith(parameters: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$ChatSessionImplCopyWith<$Res>
+    implements $ChatSessionCopyWith<$Res> {
+  factory _$$ChatSessionImplCopyWith(
+          _$ChatSessionImpl value, $Res Function(_$ChatSessionImpl) then) =
+      __$$ChatSessionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<Message> messages, String model, Parameters? parameters});
+
+  @override
+  $ParametersCopyWith<$Res>? get parameters;
+}
+
+/// @nodoc
+class __$$ChatSessionImplCopyWithImpl<$Res>
+    extends _$ChatSessionCopyWithImpl<$Res, _$ChatSessionImpl>
+    implements _$$ChatSessionImplCopyWith<$Res> {
+  __$$ChatSessionImplCopyWithImpl(
+      _$ChatSessionImpl _value, $Res Function(_$ChatSessionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? messages = null,
+    Object? model = null,
+    Object? parameters = freezed,
+  }) {
+    return _then(_$ChatSessionImpl(
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as List<Message>,
+      model: null == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String,
+      parameters: freezed == parameters
+          ? _value.parameters
+          : parameters // ignore: cast_nullable_to_non_nullable
+              as Parameters?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true)
+class _$ChatSessionImpl implements _ChatSession {
+  const _$ChatSessionImpl(
+      {required final List<Message> messages,
+      required this.model,
+      this.parameters})
+      : _messages = messages;
+
+  factory _$ChatSessionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChatSessionImplFromJson(json);
+
+  final List<Message> _messages;
+  @override
+  List<Message> get messages {
+    if (_messages is EqualUnmodifiableListView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  @override
+  final String model;
+  @override
+  final Parameters? parameters;
+
+  @override
+  String toString() {
+    return 'ChatSession(messages: $messages, model: $model, parameters: $parameters)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChatSessionImpl &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
+            (identical(other.model, model) || other.model == model) &&
+            (identical(other.parameters, parameters) ||
+                other.parameters == parameters));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_messages), model, parameters);
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChatSessionImplCopyWith<_$ChatSessionImpl> get copyWith =>
+      __$$ChatSessionImplCopyWithImpl<_$ChatSessionImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChatSessionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChatSession implements ChatSession {
+  const factory _ChatSession(
+      {required final List<Message> messages,
+      required final String model,
+      final Parameters? parameters}) = _$ChatSessionImpl;
+
+  factory _ChatSession.fromJson(Map<String, dynamic> json) =
+      _$ChatSessionImpl.fromJson;
+
+  @override
+  List<Message> get messages;
+  @override
+  String get model;
+  @override
+  Parameters? get parameters;
+
+  /// Create a copy of ChatSession
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChatSessionImplCopyWith<_$ChatSessionImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 Message _$MessageFromJson(Map<String, dynamic> json) {
   return _Message.fromJson(json);
 }
@@ -23,7 +239,6 @@ mixin _$Message {
   Role get role => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
   int get timestamp => throw _privateConstructorUsedError;
-  String? get model => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
@@ -40,8 +255,7 @@ abstract class $MessageCopyWith<$Res> {
   factory $MessageCopyWith(Message value, $Res Function(Message) then) =
       _$MessageCopyWithImpl<$Res, Message>;
   @useResult
-  $Res call(
-      {Role role, String content, int timestamp, String? model, Usage? usage});
+  $Res call({Role role, String content, int timestamp, Usage? usage});
 
   $UsageCopyWith<$Res>? get usage;
 }
@@ -64,7 +278,6 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? role = null,
     Object? content = null,
     Object? timestamp = null,
-    Object? model = freezed,
     Object? usage = freezed,
   }) {
     return _then(_value.copyWith(
@@ -80,10 +293,6 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      model: freezed == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
-              as String?,
       usage: freezed == usage
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
@@ -113,8 +322,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       __$$MessageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {Role role, String content, int timestamp, String? model, Usage? usage});
+  $Res call({Role role, String content, int timestamp, Usage? usage});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -136,7 +344,6 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? role = null,
     Object? content = null,
     Object? timestamp = null,
-    Object? model = freezed,
     Object? usage = freezed,
   }) {
     return _then(_$MessageImpl(
@@ -152,10 +359,6 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      model: freezed == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
-              as String?,
       usage: freezed == usage
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
@@ -172,7 +375,6 @@ class _$MessageImpl implements _Message {
       {required this.role,
       required this.content,
       required this.timestamp,
-      this.model,
       this.usage});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
@@ -185,13 +387,11 @@ class _$MessageImpl implements _Message {
   @override
   final int timestamp;
   @override
-  final String? model;
-  @override
   final Usage? usage;
 
   @override
   String toString() {
-    return 'Message(role: $role, content: $content, timestamp: $timestamp, model: $model, usage: $usage)';
+    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage)';
   }
 
   @override
@@ -203,14 +403,12 @@ class _$MessageImpl implements _Message {
             (identical(other.content, content) || other.content == content) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
-            (identical(other.model, model) || other.model == model) &&
             (identical(other.usage, usage) || other.usage == usage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, role, content, timestamp, model, usage);
+  int get hashCode => Object.hash(runtimeType, role, content, timestamp, usage);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -233,7 +431,6 @@ abstract class _Message implements Message {
       {required final Role role,
       required final String content,
       required final int timestamp,
-      final String? model,
       final Usage? usage}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
@@ -245,8 +442,6 @@ abstract class _Message implements Message {
   @override
   int get timestamp;
   @override
-  String? get model;
-  @override
   Usage? get usage;
 
   /// Create a copy of Message
@@ -254,183 +449,6 @@ abstract class _Message implements Message {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) {
-  return _ChatSession.fromJson(json);
-}
-
-/// @nodoc
-mixin _$ChatSession {
-  String get initialPrompt => throw _privateConstructorUsedError;
-  List<Message> get messages => throw _privateConstructorUsedError;
-
-  /// Serializes this ChatSession to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ChatSession
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $ChatSessionCopyWith<ChatSession> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ChatSessionCopyWith<$Res> {
-  factory $ChatSessionCopyWith(
-          ChatSession value, $Res Function(ChatSession) then) =
-      _$ChatSessionCopyWithImpl<$Res, ChatSession>;
-  @useResult
-  $Res call({String initialPrompt, List<Message> messages});
-}
-
-/// @nodoc
-class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
-    implements $ChatSessionCopyWith<$Res> {
-  _$ChatSessionCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of ChatSession
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? initialPrompt = null,
-    Object? messages = null,
-  }) {
-    return _then(_value.copyWith(
-      initialPrompt: null == initialPrompt
-          ? _value.initialPrompt
-          : initialPrompt // ignore: cast_nullable_to_non_nullable
-              as String,
-      messages: null == messages
-          ? _value.messages
-          : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$ChatSessionImplCopyWith<$Res>
-    implements $ChatSessionCopyWith<$Res> {
-  factory _$$ChatSessionImplCopyWith(
-          _$ChatSessionImpl value, $Res Function(_$ChatSessionImpl) then) =
-      __$$ChatSessionImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String initialPrompt, List<Message> messages});
-}
-
-/// @nodoc
-class __$$ChatSessionImplCopyWithImpl<$Res>
-    extends _$ChatSessionCopyWithImpl<$Res, _$ChatSessionImpl>
-    implements _$$ChatSessionImplCopyWith<$Res> {
-  __$$ChatSessionImplCopyWithImpl(
-      _$ChatSessionImpl _value, $Res Function(_$ChatSessionImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ChatSession
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? initialPrompt = null,
-    Object? messages = null,
-  }) {
-    return _then(_$ChatSessionImpl(
-      initialPrompt: null == initialPrompt
-          ? _value.initialPrompt
-          : initialPrompt // ignore: cast_nullable_to_non_nullable
-              as String,
-      messages: null == messages
-          ? _value._messages
-          : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
-    ));
-  }
-}
-
-/// @nodoc
-
-@JsonSerializable(explicitToJson: true, includeIfNull: false)
-class _$ChatSessionImpl implements _ChatSession {
-  const _$ChatSessionImpl(
-      {required this.initialPrompt, required final List<Message> messages})
-      : _messages = messages;
-
-  factory _$ChatSessionImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ChatSessionImplFromJson(json);
-
-  @override
-  final String initialPrompt;
-  final List<Message> _messages;
-  @override
-  List<Message> get messages {
-    if (_messages is EqualUnmodifiableListView) return _messages;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_messages);
-  }
-
-  @override
-  String toString() {
-    return 'ChatSession(initialPrompt: $initialPrompt, messages: $messages)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ChatSessionImpl &&
-            (identical(other.initialPrompt, initialPrompt) ||
-                other.initialPrompt == initialPrompt) &&
-            const DeepCollectionEquality().equals(other._messages, _messages));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, initialPrompt,
-      const DeepCollectionEquality().hash(_messages));
-
-  /// Create a copy of ChatSession
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$ChatSessionImplCopyWith<_$ChatSessionImpl> get copyWith =>
-      __$$ChatSessionImplCopyWithImpl<_$ChatSessionImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ChatSessionImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _ChatSession implements ChatSession {
-  const factory _ChatSession(
-      {required final String initialPrompt,
-      required final List<Message> messages}) = _$ChatSessionImpl;
-
-  factory _ChatSession.fromJson(Map<String, dynamic> json) =
-      _$ChatSessionImpl.fromJson;
-
-  @override
-  String get initialPrompt;
-  @override
-  List<Message> get messages;
-
-  /// Create a copy of ChatSession
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ChatSessionImplCopyWith<_$ChatSessionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -570,7 +588,7 @@ mixin _$Parameters {
   /// For providers with custom interfaces, we transform and map the properties.
   /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
   @JsonKey(name: 'tools')
-  List<dynamic>? get tools => throw _privateConstructorUsedError;
+  List<Tool>? get tools => throw _privateConstructorUsedError;
 
   /// Controls which (if any) tool is called by the model.
   /// 'none' means the model will not call any tool and instead generates a message.
@@ -578,7 +596,7 @@ mixin _$Parameters {
   /// 'required' means the model must call one or more tools.
   /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
   @JsonKey(name: 'tool_choice')
-  List<dynamic>? get toolChoices => throw _privateConstructorUsedError;
+  List<ToolChoice>? get toolChoices => throw _privateConstructorUsedError;
 
   /// Serializes this Parameters to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -612,8 +630,8 @@ abstract class $ParametersCopyWith<$Res> {
       @JsonKey(name: 'top_logprobs') int? topLogProbabilities,
       @JsonKey(name: 'response_format') Map<String, String>? responseFormat,
       @JsonKey(name: 'stop') List<int>? stop,
-      @JsonKey(name: 'tools') List<dynamic>? tools,
-      @JsonKey(name: 'tool_choice') List<dynamic>? toolChoices});
+      @JsonKey(name: 'tools') List<Tool>? tools,
+      @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices});
 }
 
 /// @nodoc
@@ -713,11 +731,11 @@ class _$ParametersCopyWithImpl<$Res, $Val extends Parameters>
       tools: freezed == tools
           ? _value.tools
           : tools // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Tool>?,
       toolChoices: freezed == toolChoices
           ? _value.toolChoices
           : toolChoices // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ToolChoice>?,
     ) as $Val);
   }
 }
@@ -746,8 +764,8 @@ abstract class _$$ParametersImplCopyWith<$Res>
       @JsonKey(name: 'top_logprobs') int? topLogProbabilities,
       @JsonKey(name: 'response_format') Map<String, String>? responseFormat,
       @JsonKey(name: 'stop') List<int>? stop,
-      @JsonKey(name: 'tools') List<dynamic>? tools,
-      @JsonKey(name: 'tool_choice') List<dynamic>? toolChoices});
+      @JsonKey(name: 'tools') List<Tool>? tools,
+      @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices});
 }
 
 /// @nodoc
@@ -845,11 +863,11 @@ class __$$ParametersImplCopyWithImpl<$Res>
       tools: freezed == tools
           ? _value._tools
           : tools // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Tool>?,
       toolChoices: freezed == toolChoices
           ? _value._toolChoices
           : toolChoices // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<ToolChoice>?,
     ));
   }
 }
@@ -875,8 +893,8 @@ class _$ParametersImpl implements _Parameters {
       @JsonKey(name: 'response_format')
       final Map<String, String>? responseFormat,
       @JsonKey(name: 'stop') final List<int>? stop,
-      @JsonKey(name: 'tools') final List<dynamic>? tools,
-      @JsonKey(name: 'tool_choice') final List<dynamic>? toolChoices})
+      @JsonKey(name: 'tools') final List<Tool>? tools,
+      @JsonKey(name: 'tool_choice') final List<ToolChoice>? toolChoices})
       : _logitBias = logitBias,
         _responseFormat = responseFormat,
         _stop = stop,
@@ -1065,7 +1083,7 @@ class _$ParametersImpl implements _Parameters {
   /// Will be passed down as-is for providers implementing OpenAI's interface.
   /// For providers with custom interfaces, we transform and map the properties.
   /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-  final List<dynamic>? _tools;
+  final List<Tool>? _tools;
 
   /// Tool calling parameter.
   /// Will be passed down as-is for providers implementing OpenAI's interface.
@@ -1073,7 +1091,7 @@ class _$ParametersImpl implements _Parameters {
   /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
   @override
   @JsonKey(name: 'tools')
-  List<dynamic>? get tools {
+  List<Tool>? get tools {
     final value = _tools;
     if (value == null) return null;
     if (_tools is EqualUnmodifiableListView) return _tools;
@@ -1086,7 +1104,7 @@ class _$ParametersImpl implements _Parameters {
   /// 'auto' means the model can pick between generating a message or calling one or more tools.
   /// 'required' means the model must call one or more tools.
   /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-  final List<dynamic>? _toolChoices;
+  final List<ToolChoice>? _toolChoices;
 
   /// Controls which (if any) tool is called by the model.
   /// 'none' means the model will not call any tool and instead generates a message.
@@ -1095,7 +1113,7 @@ class _$ParametersImpl implements _Parameters {
   /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
   @override
   @JsonKey(name: 'tool_choice')
-  List<dynamic>? get toolChoices {
+  List<ToolChoice>? get toolChoices {
     final value = _toolChoices;
     if (value == null) return null;
     if (_toolChoices is EqualUnmodifiableListView) return _toolChoices;
@@ -1200,8 +1218,8 @@ abstract class _Parameters implements Parameters {
           @JsonKey(name: 'response_format')
           final Map<String, String>? responseFormat,
           @JsonKey(name: 'stop') final List<int>? stop,
-          @JsonKey(name: 'tools') final List<dynamic>? tools,
-          @JsonKey(name: 'tool_choice') final List<dynamic>? toolChoices}) =
+          @JsonKey(name: 'tools') final List<Tool>? tools,
+          @JsonKey(name: 'tool_choice') final List<ToolChoice>? toolChoices}) =
       _$ParametersImpl;
 
   factory _Parameters.fromJson(Map<String, dynamic> json) =
@@ -1353,7 +1371,7 @@ abstract class _Parameters implements Parameters {
   /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
   @override
   @JsonKey(name: 'tools')
-  List<dynamic>? get tools;
+  List<Tool>? get tools;
 
   /// Controls which (if any) tool is called by the model.
   /// 'none' means the model will not call any tool and instead generates a message.
@@ -1362,7 +1380,7 @@ abstract class _Parameters implements Parameters {
   /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
   @override
   @JsonKey(name: 'tool_choice')
-  List<dynamic>? get toolChoices;
+  List<ToolChoice>? get toolChoices;
 
   /// Create a copy of Parameters
   /// with the given fields replaced by the non-null parameter values.

@@ -40,12 +40,13 @@ Map<String, dynamic> _$$ORResponseImplToJson(_$ORResponseImpl instance) {
 
 _$ChoicesImpl _$$ChoicesImplFromJson(Map<String, dynamic> json) =>
     _$ChoicesImpl(
-      index: (json['index'] as num?)?.toInt(),
       delta: json['delta'] == null
           ? null
           : Delta.fromJson(json['delta'] as Map<String, dynamic>),
-      finishReason: json['finishReason'] as String?,
-      logprobs: json['logprobs'] as String?,
+      finishReason: json['finish_reason'] as String?,
+      error: json['error'] == null
+          ? null
+          : Error.fromJson(json['error'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) {
@@ -57,19 +58,18 @@ Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) {
     }
   }
 
-  writeNotNull('index', instance.index);
   writeNotNull('delta', instance.delta?.toJson());
-  writeNotNull('finishReason', instance.finishReason);
-  writeNotNull('logprobs', instance.logprobs);
+  writeNotNull('finish_reason', instance.finishReason);
+  writeNotNull('error', instance.error?.toJson());
   return val;
 }
 
 _$DeltaImpl _$$DeltaImplFromJson(Map<String, dynamic> json) => _$DeltaImpl(
       role: json['role'] as String?,
       content: json['content'] as String?,
-      toolCall: json['toolCall'] == null
-          ? null
-          : ToolCall.fromJson(json['toolCall'] as Map<String, dynamic>),
+      toolCalls: (json['tool_calls'] as List<dynamic>?)
+          ?.map((e) => ToolCall.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$DeltaImplToJson(_$DeltaImpl instance) {
@@ -83,7 +83,8 @@ Map<String, dynamic> _$$DeltaImplToJson(_$DeltaImpl instance) {
 
   writeNotNull('role', instance.role);
   writeNotNull('content', instance.content);
-  writeNotNull('toolCall', instance.toolCall?.toJson());
+  writeNotNull(
+      'tool_calls', instance.toolCalls?.map((e) => e.toJson()).toList());
   return val;
 }
 
@@ -91,14 +92,47 @@ _$ToolCallImpl _$$ToolCallImplFromJson(Map<String, dynamic> json) =>
     _$ToolCallImpl(
       id: json['id'] as String?,
       type: json['type'] as String?,
-      function: json['function'] as String?,
+      function: json['function'] == null
+          ? null
+          : FunctionCall.fromJson(json['function'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ToolCallImplToJson(_$ToolCallImpl instance) =>
+Map<String, dynamic> _$$ToolCallImplToJson(_$ToolCallImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  writeNotNull('type', instance.type);
+  writeNotNull('function', instance.function?.toJson());
+  return val;
+}
+
+_$FunctionCallImpl _$$FunctionCallImplFromJson(Map<String, dynamic> json) =>
+    _$FunctionCallImpl(
+      name: json['name'] as String,
+      arguments: json['arguments'] as String,
+    );
+
+Map<String, dynamic> _$$FunctionCallImplToJson(_$FunctionCallImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'type': instance.type,
-      'function': instance.function,
+      'name': instance.name,
+      'arguments': instance.arguments,
+    };
+
+_$ErrorImpl _$$ErrorImplFromJson(Map<String, dynamic> json) => _$ErrorImpl(
+      code: (json['code'] as num).toInt(),
+      message: json['message'] as String,
+    );
+
+Map<String, dynamic> _$$ErrorImplToJson(_$ErrorImpl instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'message': instance.message,
     };
 
 _$UsageImpl _$$UsageImplFromJson(Map<String, dynamic> json) => _$UsageImpl(

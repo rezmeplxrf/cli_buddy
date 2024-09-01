@@ -303,10 +303,10 @@ Choices _$ChoicesFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Choices {
-  int? get index => throw _privateConstructorUsedError;
   Delta? get delta => throw _privateConstructorUsedError;
+  @JsonKey(name: 'finish_reason')
   String? get finishReason => throw _privateConstructorUsedError;
-  String? get logprobs => throw _privateConstructorUsedError;
+  Error? get error => throw _privateConstructorUsedError;
 
   /// Serializes this Choices to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -322,9 +322,13 @@ abstract class $ChoicesCopyWith<$Res> {
   factory $ChoicesCopyWith(Choices value, $Res Function(Choices) then) =
       _$ChoicesCopyWithImpl<$Res, Choices>;
   @useResult
-  $Res call({int? index, Delta? delta, String? finishReason, String? logprobs});
+  $Res call(
+      {Delta? delta,
+      @JsonKey(name: 'finish_reason') String? finishReason,
+      Error? error});
 
   $DeltaCopyWith<$Res>? get delta;
+  $ErrorCopyWith<$Res>? get error;
 }
 
 /// @nodoc
@@ -342,16 +346,11 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? index = freezed,
     Object? delta = freezed,
     Object? finishReason = freezed,
-    Object? logprobs = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
-      index: freezed == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int?,
       delta: freezed == delta
           ? _value.delta
           : delta // ignore: cast_nullable_to_non_nullable
@@ -360,10 +359,10 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
           ? _value.finishReason
           : finishReason // ignore: cast_nullable_to_non_nullable
               as String?,
-      logprobs: freezed == logprobs
-          ? _value.logprobs
-          : logprobs // ignore: cast_nullable_to_non_nullable
-              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as Error?,
     ) as $Val);
   }
 
@@ -380,6 +379,20 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
       return _then(_value.copyWith(delta: value) as $Val);
     });
   }
+
+  /// Create a copy of Choices
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ErrorCopyWith<$Res>? get error {
+    if (_value.error == null) {
+      return null;
+    }
+
+    return $ErrorCopyWith<$Res>(_value.error!, (value) {
+      return _then(_value.copyWith(error: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -389,10 +402,15 @@ abstract class _$$ChoicesImplCopyWith<$Res> implements $ChoicesCopyWith<$Res> {
       __$$ChoicesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? index, Delta? delta, String? finishReason, String? logprobs});
+  $Res call(
+      {Delta? delta,
+      @JsonKey(name: 'finish_reason') String? finishReason,
+      Error? error});
 
   @override
   $DeltaCopyWith<$Res>? get delta;
+  @override
+  $ErrorCopyWith<$Res>? get error;
 }
 
 /// @nodoc
@@ -408,16 +426,11 @@ class __$$ChoicesImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? index = freezed,
     Object? delta = freezed,
     Object? finishReason = freezed,
-    Object? logprobs = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$ChoicesImpl(
-      index: freezed == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int?,
       delta: freezed == delta
           ? _value.delta
           : delta // ignore: cast_nullable_to_non_nullable
@@ -426,10 +439,10 @@ class __$$ChoicesImplCopyWithImpl<$Res>
           ? _value.finishReason
           : finishReason // ignore: cast_nullable_to_non_nullable
               as String?,
-      logprobs: freezed == logprobs
-          ? _value.logprobs
-          : logprobs // ignore: cast_nullable_to_non_nullable
-              as String?,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as Error?,
     ));
   }
 }
@@ -439,23 +452,24 @@ class __$$ChoicesImplCopyWithImpl<$Res>
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class _$ChoicesImpl implements _Choices {
   const _$ChoicesImpl(
-      {this.index, this.delta, this.finishReason, this.logprobs});
+      {this.delta,
+      @JsonKey(name: 'finish_reason') this.finishReason,
+      this.error});
 
   factory _$ChoicesImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChoicesImplFromJson(json);
 
   @override
-  final int? index;
-  @override
   final Delta? delta;
   @override
+  @JsonKey(name: 'finish_reason')
   final String? finishReason;
   @override
-  final String? logprobs;
+  final Error? error;
 
   @override
   String toString() {
-    return 'Choices(index: $index, delta: $delta, finishReason: $finishReason, logprobs: $logprobs)';
+    return 'Choices(delta: $delta, finishReason: $finishReason, error: $error)';
   }
 
   @override
@@ -463,18 +477,15 @@ class _$ChoicesImpl implements _Choices {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChoicesImpl &&
-            (identical(other.index, index) || other.index == index) &&
             (identical(other.delta, delta) || other.delta == delta) &&
             (identical(other.finishReason, finishReason) ||
                 other.finishReason == finishReason) &&
-            (identical(other.logprobs, logprobs) ||
-                other.logprobs == logprobs));
+            (identical(other.error, error) || other.error == error));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, index, delta, finishReason, logprobs);
+  int get hashCode => Object.hash(runtimeType, delta, finishReason, error);
 
   /// Create a copy of Choices
   /// with the given fields replaced by the non-null parameter values.
@@ -494,21 +505,19 @@ class _$ChoicesImpl implements _Choices {
 
 abstract class _Choices implements Choices {
   const factory _Choices(
-      {final int? index,
-      final Delta? delta,
-      final String? finishReason,
-      final String? logprobs}) = _$ChoicesImpl;
+      {final Delta? delta,
+      @JsonKey(name: 'finish_reason') final String? finishReason,
+      final Error? error}) = _$ChoicesImpl;
 
   factory _Choices.fromJson(Map<String, dynamic> json) = _$ChoicesImpl.fromJson;
 
   @override
-  int? get index;
-  @override
   Delta? get delta;
   @override
+  @JsonKey(name: 'finish_reason')
   String? get finishReason;
   @override
-  String? get logprobs;
+  Error? get error;
 
   /// Create a copy of Choices
   /// with the given fields replaced by the non-null parameter values.
@@ -526,7 +535,8 @@ Delta _$DeltaFromJson(Map<String, dynamic> json) {
 mixin _$Delta {
   String? get role => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
-  ToolCall? get toolCall => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tool_calls')
+  List<ToolCall>? get toolCalls => throw _privateConstructorUsedError;
 
   /// Serializes this Delta to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -542,9 +552,10 @@ abstract class $DeltaCopyWith<$Res> {
   factory $DeltaCopyWith(Delta value, $Res Function(Delta) then) =
       _$DeltaCopyWithImpl<$Res, Delta>;
   @useResult
-  $Res call({String? role, String? content, ToolCall? toolCall});
-
-  $ToolCallCopyWith<$Res>? get toolCall;
+  $Res call(
+      {String? role,
+      String? content,
+      @JsonKey(name: 'tool_calls') List<ToolCall>? toolCalls});
 }
 
 /// @nodoc
@@ -564,7 +575,7 @@ class _$DeltaCopyWithImpl<$Res, $Val extends Delta>
   $Res call({
     Object? role = freezed,
     Object? content = freezed,
-    Object? toolCall = freezed,
+    Object? toolCalls = freezed,
   }) {
     return _then(_value.copyWith(
       role: freezed == role
@@ -575,25 +586,11 @@ class _$DeltaCopyWithImpl<$Res, $Val extends Delta>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String?,
-      toolCall: freezed == toolCall
-          ? _value.toolCall
-          : toolCall // ignore: cast_nullable_to_non_nullable
-              as ToolCall?,
+      toolCalls: freezed == toolCalls
+          ? _value.toolCalls
+          : toolCalls // ignore: cast_nullable_to_non_nullable
+              as List<ToolCall>?,
     ) as $Val);
-  }
-
-  /// Create a copy of Delta
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ToolCallCopyWith<$Res>? get toolCall {
-    if (_value.toolCall == null) {
-      return null;
-    }
-
-    return $ToolCallCopyWith<$Res>(_value.toolCall!, (value) {
-      return _then(_value.copyWith(toolCall: value) as $Val);
-    });
   }
 }
 
@@ -604,10 +601,10 @@ abstract class _$$DeltaImplCopyWith<$Res> implements $DeltaCopyWith<$Res> {
       __$$DeltaImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? role, String? content, ToolCall? toolCall});
-
-  @override
-  $ToolCallCopyWith<$Res>? get toolCall;
+  $Res call(
+      {String? role,
+      String? content,
+      @JsonKey(name: 'tool_calls') List<ToolCall>? toolCalls});
 }
 
 /// @nodoc
@@ -625,7 +622,7 @@ class __$$DeltaImplCopyWithImpl<$Res>
   $Res call({
     Object? role = freezed,
     Object? content = freezed,
-    Object? toolCall = freezed,
+    Object? toolCalls = freezed,
   }) {
     return _then(_$DeltaImpl(
       role: freezed == role
@@ -636,10 +633,10 @@ class __$$DeltaImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String?,
-      toolCall: freezed == toolCall
-          ? _value.toolCall
-          : toolCall // ignore: cast_nullable_to_non_nullable
-              as ToolCall?,
+      toolCalls: freezed == toolCalls
+          ? _value._toolCalls
+          : toolCalls // ignore: cast_nullable_to_non_nullable
+              as List<ToolCall>?,
     ));
   }
 }
@@ -648,7 +645,11 @@ class __$$DeltaImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class _$DeltaImpl implements _Delta {
-  const _$DeltaImpl({this.role, this.content, this.toolCall});
+  const _$DeltaImpl(
+      {this.role,
+      this.content,
+      @JsonKey(name: 'tool_calls') final List<ToolCall>? toolCalls})
+      : _toolCalls = toolCalls;
 
   factory _$DeltaImpl.fromJson(Map<String, dynamic> json) =>
       _$$DeltaImplFromJson(json);
@@ -657,12 +658,20 @@ class _$DeltaImpl implements _Delta {
   final String? role;
   @override
   final String? content;
+  final List<ToolCall>? _toolCalls;
   @override
-  final ToolCall? toolCall;
+  @JsonKey(name: 'tool_calls')
+  List<ToolCall>? get toolCalls {
+    final value = _toolCalls;
+    if (value == null) return null;
+    if (_toolCalls is EqualUnmodifiableListView) return _toolCalls;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Delta(role: $role, content: $content, toolCall: $toolCall)';
+    return 'Delta(role: $role, content: $content, toolCalls: $toolCalls)';
   }
 
   @override
@@ -672,13 +681,14 @@ class _$DeltaImpl implements _Delta {
             other is _$DeltaImpl &&
             (identical(other.role, role) || other.role == role) &&
             (identical(other.content, content) || other.content == content) &&
-            (identical(other.toolCall, toolCall) ||
-                other.toolCall == toolCall));
+            const DeepCollectionEquality()
+                .equals(other._toolCalls, _toolCalls));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, role, content, toolCall);
+  int get hashCode => Object.hash(runtimeType, role, content,
+      const DeepCollectionEquality().hash(_toolCalls));
 
   /// Create a copy of Delta
   /// with the given fields replaced by the non-null parameter values.
@@ -698,9 +708,10 @@ class _$DeltaImpl implements _Delta {
 
 abstract class _Delta implements Delta {
   const factory _Delta(
-      {final String? role,
-      final String? content,
-      final ToolCall? toolCall}) = _$DeltaImpl;
+          {final String? role,
+          final String? content,
+          @JsonKey(name: 'tool_calls') final List<ToolCall>? toolCalls}) =
+      _$DeltaImpl;
 
   factory _Delta.fromJson(Map<String, dynamic> json) = _$DeltaImpl.fromJson;
 
@@ -709,7 +720,8 @@ abstract class _Delta implements Delta {
   @override
   String? get content;
   @override
-  ToolCall? get toolCall;
+  @JsonKey(name: 'tool_calls')
+  List<ToolCall>? get toolCalls;
 
   /// Create a copy of Delta
   /// with the given fields replaced by the non-null parameter values.
@@ -727,7 +739,7 @@ ToolCall _$ToolCallFromJson(Map<String, dynamic> json) {
 mixin _$ToolCall {
   String? get id => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
-  String? get function => throw _privateConstructorUsedError;
+  FunctionCall? get function => throw _privateConstructorUsedError;
 
   /// Serializes this ToolCall to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -744,7 +756,9 @@ abstract class $ToolCallCopyWith<$Res> {
   factory $ToolCallCopyWith(ToolCall value, $Res Function(ToolCall) then) =
       _$ToolCallCopyWithImpl<$Res, ToolCall>;
   @useResult
-  $Res call({String? id, String? type, String? function});
+  $Res call({String? id, String? type, FunctionCall? function});
+
+  $FunctionCallCopyWith<$Res>? get function;
 }
 
 /// @nodoc
@@ -778,8 +792,22 @@ class _$ToolCallCopyWithImpl<$Res, $Val extends ToolCall>
       function: freezed == function
           ? _value.function
           : function // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as FunctionCall?,
     ) as $Val);
+  }
+
+  /// Create a copy of ToolCall
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $FunctionCallCopyWith<$Res>? get function {
+    if (_value.function == null) {
+      return null;
+    }
+
+    return $FunctionCallCopyWith<$Res>(_value.function!, (value) {
+      return _then(_value.copyWith(function: value) as $Val);
+    });
   }
 }
 
@@ -791,7 +819,10 @@ abstract class _$$ToolCallImplCopyWith<$Res>
       __$$ToolCallImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? id, String? type, String? function});
+  $Res call({String? id, String? type, FunctionCall? function});
+
+  @override
+  $FunctionCallCopyWith<$Res>? get function;
 }
 
 /// @nodoc
@@ -823,13 +854,14 @@ class __$$ToolCallImplCopyWithImpl<$Res>
       function: freezed == function
           ? _value.function
           : function // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as FunctionCall?,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class _$ToolCallImpl implements _ToolCall {
   const _$ToolCallImpl({this.id, this.type, this.function});
 
@@ -841,7 +873,7 @@ class _$ToolCallImpl implements _ToolCall {
   @override
   final String? type;
   @override
-  final String? function;
+  final FunctionCall? function;
 
   @override
   String toString() {
@@ -883,7 +915,7 @@ abstract class _ToolCall implements ToolCall {
   const factory _ToolCall(
       {final String? id,
       final String? type,
-      final String? function}) = _$ToolCallImpl;
+      final FunctionCall? function}) = _$ToolCallImpl;
 
   factory _ToolCall.fromJson(Map<String, dynamic> json) =
       _$ToolCallImpl.fromJson;
@@ -893,13 +925,345 @@ abstract class _ToolCall implements ToolCall {
   @override
   String? get type;
   @override
-  String? get function;
+  FunctionCall? get function;
 
   /// Create a copy of ToolCall
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ToolCallImplCopyWith<_$ToolCallImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+FunctionCall _$FunctionCallFromJson(Map<String, dynamic> json) {
+  return _FunctionCall.fromJson(json);
+}
+
+/// @nodoc
+mixin _$FunctionCall {
+  String get name => throw _privateConstructorUsedError;
+  String get arguments => throw _privateConstructorUsedError;
+
+  /// Serializes this FunctionCall to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of FunctionCall
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $FunctionCallCopyWith<FunctionCall> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FunctionCallCopyWith<$Res> {
+  factory $FunctionCallCopyWith(
+          FunctionCall value, $Res Function(FunctionCall) then) =
+      _$FunctionCallCopyWithImpl<$Res, FunctionCall>;
+  @useResult
+  $Res call({String name, String arguments});
+}
+
+/// @nodoc
+class _$FunctionCallCopyWithImpl<$Res, $Val extends FunctionCall>
+    implements $FunctionCallCopyWith<$Res> {
+  _$FunctionCallCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of FunctionCall
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? arguments = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      arguments: null == arguments
+          ? _value.arguments
+          : arguments // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FunctionCallImplCopyWith<$Res>
+    implements $FunctionCallCopyWith<$Res> {
+  factory _$$FunctionCallImplCopyWith(
+          _$FunctionCallImpl value, $Res Function(_$FunctionCallImpl) then) =
+      __$$FunctionCallImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name, String arguments});
+}
+
+/// @nodoc
+class __$$FunctionCallImplCopyWithImpl<$Res>
+    extends _$FunctionCallCopyWithImpl<$Res, _$FunctionCallImpl>
+    implements _$$FunctionCallImplCopyWith<$Res> {
+  __$$FunctionCallImplCopyWithImpl(
+      _$FunctionCallImpl _value, $Res Function(_$FunctionCallImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of FunctionCall
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? arguments = null,
+  }) {
+    return _then(_$FunctionCallImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      arguments: null == arguments
+          ? _value.arguments
+          : arguments // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class _$FunctionCallImpl implements _FunctionCall {
+  const _$FunctionCallImpl({required this.name, required this.arguments});
+
+  factory _$FunctionCallImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FunctionCallImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String arguments;
+
+  @override
+  String toString() {
+    return 'FunctionCall(name: $name, arguments: $arguments)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FunctionCallImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.arguments, arguments) ||
+                other.arguments == arguments));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, arguments);
+
+  /// Create a copy of FunctionCall
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FunctionCallImplCopyWith<_$FunctionCallImpl> get copyWith =>
+      __$$FunctionCallImplCopyWithImpl<_$FunctionCallImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FunctionCallImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _FunctionCall implements FunctionCall {
+  const factory _FunctionCall(
+      {required final String name,
+      required final String arguments}) = _$FunctionCallImpl;
+
+  factory _FunctionCall.fromJson(Map<String, dynamic> json) =
+      _$FunctionCallImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get arguments;
+
+  /// Create a copy of FunctionCall
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$FunctionCallImplCopyWith<_$FunctionCallImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Error _$ErrorFromJson(Map<String, dynamic> json) {
+  return _Error.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Error {
+  int get code => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+
+  /// Serializes this Error to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Error
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ErrorCopyWith<Error> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ErrorCopyWith<$Res> {
+  factory $ErrorCopyWith(Error value, $Res Function(Error) then) =
+      _$ErrorCopyWithImpl<$Res, Error>;
+  @useResult
+  $Res call({int code, String message});
+}
+
+/// @nodoc
+class _$ErrorCopyWithImpl<$Res, $Val extends Error>
+    implements $ErrorCopyWith<$Res> {
+  _$ErrorCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Error
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? code = null,
+    Object? message = null,
+  }) {
+    return _then(_value.copyWith(
+      code: null == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as int,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ErrorImplCopyWith<$Res> implements $ErrorCopyWith<$Res> {
+  factory _$$ErrorImplCopyWith(
+          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
+      __$$ErrorImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int code, String message});
+}
+
+/// @nodoc
+class __$$ErrorImplCopyWithImpl<$Res>
+    extends _$ErrorCopyWithImpl<$Res, _$ErrorImpl>
+    implements _$$ErrorImplCopyWith<$Res> {
+  __$$ErrorImplCopyWithImpl(
+      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Error
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? code = null,
+    Object? message = null,
+  }) {
+    return _then(_$ErrorImpl(
+      code: null == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as int,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
+class _$ErrorImpl implements _Error {
+  const _$ErrorImpl({required this.code, required this.message});
+
+  factory _$ErrorImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ErrorImplFromJson(json);
+
+  @override
+  final int code;
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'Error(code: $code, message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ErrorImpl &&
+            (identical(other.code, code) || other.code == code) &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, code, message);
+
+  /// Create a copy of Error
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ErrorImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Error implements Error {
+  const factory _Error(
+      {required final int code, required final String message}) = _$ErrorImpl;
+
+  factory _Error.fromJson(Map<String, dynamic> json) = _$ErrorImpl.fromJson;
+
+  @override
+  int get code;
+  @override
+  String get message;
+
+  /// Create a copy of Error
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

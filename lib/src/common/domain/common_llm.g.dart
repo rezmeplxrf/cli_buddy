@@ -6,12 +6,29 @@ part of 'common_llm.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
+    _$ChatSessionImpl(
+      messages: (json['messages'] as List<dynamic>)
+          .map((e) => Message.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      model: json['model'] as String,
+      parameters: json['parameters'] == null
+          ? null
+          : Parameters.fromJson(json['parameters'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) =>
+    <String, dynamic>{
+      'messages': instance.messages.map((e) => e.toJson()).toList(),
+      'model': instance.model,
+      'parameters': instance.parameters?.toJson(),
+    };
+
 _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
     _$MessageImpl(
       role: $enumDecode(_$RoleEnumMap, json['role']),
       content: json['content'] as String,
       timestamp: (json['timestamp'] as num).toInt(),
-      model: json['model'] as String?,
       usage: json['usage'] == null
           ? null
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
@@ -30,7 +47,6 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) {
     }
   }
 
-  writeNotNull('model', instance.model);
   writeNotNull('usage', instance.usage?.toJson());
   return val;
 }
@@ -39,21 +55,8 @@ const _$RoleEnumMap = {
   Role.system: 'system',
   Role.user: 'user',
   Role.assistant: 'assistant',
+  Role.tool: 'tool',
 };
-
-_$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
-    _$ChatSessionImpl(
-      initialPrompt: json['initialPrompt'] as String,
-      messages: (json['messages'] as List<dynamic>)
-          .map((e) => Message.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) =>
-    <String, dynamic>{
-      'initialPrompt': instance.initialPrompt,
-      'messages': instance.messages.map((e) => e.toJson()).toList(),
-    };
 
 _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
     _$ParametersImpl(
@@ -78,8 +81,12 @@ _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
       stop: (json['stop'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
-      tools: json['tools'] as List<dynamic>?,
-      toolChoices: json['tool_choice'] as List<dynamic>?,
+      tools: (json['tools'] as List<dynamic>?)
+          ?.map((e) => Tool.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      toolChoices: (json['tool_choice'] as List<dynamic>?)
+          ?.map(ToolChoice.fromJson)
+          .toList(),
     );
 
 Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {

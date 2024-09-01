@@ -4,7 +4,20 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'common_llm.freezed.dart';
 part 'common_llm.g.dart';
 
-enum Role { system, user, assistant }
+@freezed
+class ChatSession with _$ChatSession {
+  @JsonSerializable(explicitToJson: true)
+  const factory ChatSession({
+    required List<Message> messages,
+    required String model,
+    Parameters? parameters,
+  }) = _ChatSession;
+
+  factory ChatSession.fromJson(Map<String, Object?> json) =>
+      _$ChatSessionFromJson(json);
+}
+
+enum Role { system, user, assistant, tool }
 
 @freezed
 class Message with _$Message {
@@ -13,24 +26,11 @@ class Message with _$Message {
     required Role role,
     required String content,
     required int timestamp,
-    String? model,
     Usage? usage,
   }) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
-}
-
-@freezed
-class ChatSession with _$ChatSession {
-  @JsonSerializable(explicitToJson: true, includeIfNull: false)
-  const factory ChatSession({
-    required String initialPrompt,
-    required List<Message> messages,
-  }) = _ChatSession;
-
-  factory ChatSession.fromJson(Map<String, Object?> json) =>
-      _$ChatSessionFromJson(json);
 }
 
 @freezed
@@ -151,16 +151,120 @@ class Parameters with _$Parameters {
     /// Will be passed down as-is for providers implementing OpenAI's interface.
     /// For providers with custom interfaces, we transform and map the properties.
     /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-    @JsonKey(name: 'tools') List<dynamic>? tools,
+    @JsonKey(name: 'tools') List<Tool>? tools,
 
     /// Controls which (if any) tool is called by the model.
     /// 'none' means the model will not call any tool and instead generates a message.
     /// 'auto' means the model can pick between generating a message or calling one or more tools.
     /// 'required' means the model must call one or more tools.
     /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-    @JsonKey(name: 'tool_choice') List<dynamic>? toolChoices,
+    @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices,
   }) = _Parameters;
 
   factory Parameters.fromJson(Map<String, Object?> json) =>
       _$ParametersFromJson(json);
+}
+
+class FunctionDescription {
+  FunctionDescription({
+    required this.name,
+    required this.parameters,
+    this.description,
+  });
+
+  factory FunctionDescription.fromJson(Map<String, dynamic> json) {
+    return FunctionDescription(
+      description: json['description'] as String?,
+      name: json['name'] as String,
+      parameters: json['parameters'] as Map<String, dynamic>,
+    );
+  }
+  final String? description;
+  final String name;
+  final Map<String, dynamic> parameters;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'name': name,
+      'parameters': parameters,
+    };
+  }
+}
+
+class Tool {
+  Tool({
+    required this.type,
+    required this.function,
+  });
+
+  factory Tool.fromJson(Map<String, dynamic> json) {
+    return Tool(
+      type: json['type'] as String,
+      function: FunctionDescription.fromJson(
+          json['function'] as Map<String, dynamic>),
+    );
+  }
+  final String type;
+  final FunctionDescription function;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'function': function.toJson(),
+    };
+  }
+}
+
+class ToolChoice {
+  ToolChoice._({
+    this.type,
+    this.function,
+  });
+
+  factory ToolChoice.none() {
+    return ToolChoice._();
+  }
+
+  factory ToolChoice.auto() {
+    return ToolChoice._(type: 'auto');
+  }
+
+  factory ToolChoice.function(String name) {
+    return ToolChoice._(
+      type: 'function',
+      function: FunctionDescription(name: name, parameters: {}),
+    );
+  }
+
+  factory ToolChoice.fromJson(dynamic json) {
+    if (json == 'none') {
+      return ToolChoice.none();
+    } else if (json == 'auto') {
+      return ToolChoice.auto();
+    } else {
+      return ToolChoice._(
+        type: (json as Map<String, dynamic>).containsKey('type')
+            ? json['type'] as String
+            : null,
+        function: FunctionDescription.fromJson(
+            json['function'] as Map<String, dynamic>),
+      );
+    }
+  }
+  final String? type;
+  final FunctionDescription? function;
+
+  dynamic toJson() {
+    if (type == null) {
+      return 'none';
+    } else if (type == 'auto') {
+      return 'auto';
+    } else {
+      return {
+        'type': type,
+        'function': function?.toJson(),
+      };
+    }
+  }
 }
