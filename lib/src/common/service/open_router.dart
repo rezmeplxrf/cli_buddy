@@ -9,10 +9,10 @@ import 'package:result_dart/result_dart.dart';
 
 final headers = {
   'HTTP-Referer': 'insightsentry.com',
-  'X-Title': 'Buddy CLI',
+  'X-Title': 'CLI Buddy',
   'Content-Type': 'application/json',
   'Authorization':
-      'Bearer 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'
+      'Bearer '
 };
 
 class OpenRouterService {
