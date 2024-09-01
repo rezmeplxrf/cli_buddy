@@ -5,6 +5,7 @@ import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 
+/// TODO: add test
 class SetCommand extends Command<int> {
   SetCommand({
     required Logger logger,
@@ -28,12 +29,18 @@ class SetCommand extends Command<int> {
         help:
             'Path to the existing buddy.config file. Note that custom path will not persist so it must be provided each time. Also if the file does not exist, new one will be created at the default path.',
         valueHelp: 'path',
+      )
+      ..addOption(
+        'model',
+        abbr: 'm',
+        help: 'sets the default AI model',
+        valueHelp: 'model name',
       );
   }
 
   @override
   String get description =>
-      'Sets the path of the existing secret.env file or creates a new one with the API key';
+      'Sets the path of the existing secret.env file, creates a new one with the API key, or sets the default model ';
 
   @override
   String get name => 'set';
@@ -45,11 +52,15 @@ class SetCommand extends Command<int> {
     final path = argResults?['secret'];
     final key = argResults?['key'];
     final configPath = argResults?['config'];
+    final model = argResults?['model'];
 
-    if (path == null && key == null) {
+    if (path == null && key == null && model == null) {
       _logger.err(
-          'Please provide a path using --secret or -s or a key using --key or -k');
+          'Please provide a path using --secret or -s, a key using --key or -k, or a model using --model or -m');
       return ExitCode.usage.code;
+    }
+    if (path != null && key != null) {
+      _logger.warn('--secret will be ignored since --key is provided');
     }
 
     final configDir = _getConfigDirectory();
@@ -86,10 +97,15 @@ class SetCommand extends Command<int> {
       config['secret_env_path'] = secretEnvPath;
 
       _logger.info(
-          'Created secret.env and set API key successfully at: $secretEnvPath');
+          'Created secret.env and set API key successfully at $secretEnvPath');
     } else if (path != null) {
       config['secret_env_path'] = path;
       _logger.info('Path to the secret.env saved successfully: $path');
+    }
+
+    if (model != null) {
+      config['default_model'] = model;
+      _logger.info('Default Model ($model) saved successfully.');
     }
 
     final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
