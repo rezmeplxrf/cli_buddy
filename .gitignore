@@ -7,6 +7,7 @@ build/
 pubspec.lock
 .github/
 .git_backup/
+*.env
 
 # Files generated during tests
 .test_coverage.dart

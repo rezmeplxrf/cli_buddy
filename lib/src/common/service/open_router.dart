@@ -7,14 +7,6 @@ import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:result_dart/result_dart.dart';
 
-final headers = {
-  'HTTP-Referer': 'insightsentry.com',
-  'X-Title': 'CLI Buddy',
-  'Content-Type': 'application/json',
-  'Authorization':
-      'Bearer '
-};
-
 class OpenRouterService {
   factory OpenRouterService() => _instance;
   OpenRouterService._internal();
@@ -22,6 +14,13 @@ class OpenRouterService {
 
   Future<Result<ChatSession, CustomException>> invoke(
       ChatSession session) async {
+    final headers = {
+      'HTTP-Referer': 'insightsentry.com',
+      'X-Title': 'CLI Buddy',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer '
+    };
+
     final prompt = <String, dynamic>{
       'model': session.model,
       'stream': true,
