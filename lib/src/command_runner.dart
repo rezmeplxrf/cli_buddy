@@ -1,6 +1,7 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/commands/commands.dart';
+import 'package:cli_buddy/src/commands/set_path.dart';
 import 'package:cli_buddy/src/version.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -41,7 +42,8 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
 
     // Add sub commands
     addCommand(SuggestionCommand(logger: _logger));
-    addCommand(SampleCommand(logger: _logger));
+    addCommand(SetPathCommand(logger: _logger));
+    addCommand(SetModelCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }
 

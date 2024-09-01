@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
@@ -38,8 +39,29 @@ class SetPathCommand extends Command<int> {
     }
 
     final file = File('buddy.config');
-    await file.writeAsString('secret_env_path=$path');
-    _logger.info('Path saved successfully: $path');
+
+    Map<String, dynamic> config;
+
+    if (file.existsSync()) {
+      final content = await file.readAsString();
+      try {
+        config = jsonDecode(content) as Map<String, dynamic>;
+      } catch (e) {
+        _logger.err(
+            'Failed to parse config file. Please ensure it is valid JSON.');
+        return ExitCode.data.code;
+      }
+    } else {
+      _logger.info('Config file not found. Creating a new one.');
+      config = {};
+    }
+
+    config['secret_env_path'] = path;
+
+    final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
+    await file.writeAsString(updatedContent);
+
+    _logger.info('Path to the secret.env saved successfully: $path');
     return ExitCode.success.code;
   }
 }
