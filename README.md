@@ -27,8 +27,9 @@ Or locally via:
 dart pub global activate --source=path <path to this package>
 ```
 
-## config file example
-### buddy.config
+
+## buddy.config example
+```json
 {
   "secret_env_path": "secret.env",
   "default_model": "openai/gpt-4o-mini-2024-07-18",
@@ -48,12 +49,16 @@ dart pub global activate --source=path <path to this package>
   "response_format": null,
   "stop": null
 }
+```
 
 ## Usage
 
 ```sh
 # Suggest command
-$ buddy suggest how can I update homebrew?
+$ buddy suggest how can I update homebrew # can't use a question mark here
+
+# if you want to use special character use ""
+$ buddy suggest "how can I update homebrew?"
 
 # Show CLI version
 $ buddy --version

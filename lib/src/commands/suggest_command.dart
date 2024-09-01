@@ -16,21 +16,21 @@ class SuggestionCommand extends Command<int> {
   }) : _logger = logger {
     argParser
       ..addFlag(
-        'description',
+        'desc',
         abbr: 'd',
         help: 'Also describes the command',
         negatable: false,
       )
       ..addFlag(
-        'debug',
-        abbr: 'o',
-        help: 'get raw outputs of api requests',
+        'raw',
+        abbr: 'r',
+        help: 'get raw outputs of prompt and api requests',
         negatable: false,
       );
   }
 
   @override
-  String get description => 'Suggests a command based on prompt';
+  String get description => 'Suggests a shell command based on prompt';
 
   @override
   String get name => 'suggest';
@@ -56,14 +56,16 @@ class SuggestionCommand extends Command<int> {
     final session = ChatSession(messages: [sysMsg, initialMsg]);
     var shouldDebug = false;
 
-    if (argResults?['debug'] == true) {
+    if (argResults?['raw'] != null && argResults?['raw'] == true) {
       shouldDebug = true;
     }
 
     final response = await OpenRouterService.invoke(
         session: session, logger: _logger, debug: shouldDebug);
 
-    if (argResults?['desc'] == true && response.isSuccess()) {
+    if (argResults?['desc'] != null &&
+        argResults?['desc'] == true &&
+        response.isSuccess()) {
       final nextMsg = Message(
           role: Role.user,
           content: PromptService.describeCMD(),
