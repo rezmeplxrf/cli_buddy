@@ -49,8 +49,10 @@ class SuggestionCommand extends Command<int> {
         role: Role.system,
         content: PromptService.cmdOnly(),
         timestamp: currentTime);
+    // check if arg is more than one if so, concatenate them
+    final prompt = args.length > 1 ? args.join(' ') : args.first;
     final initialMsg =
-        Message(role: Role.user, content: args.first, timestamp: currentTime);
+        Message(role: Role.user, content: prompt, timestamp: currentTime);
     final session = ChatSession(messages: [sysMsg, initialMsg]);
     var shouldDebug = false;
 
@@ -87,6 +89,11 @@ class SuggestionCommand extends Command<int> {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;
     }
+    // TODO:
+    // Before exiting, give options to
+    // 1. copy the suggested command
+    // 2. run it directly
+    // 3. execute another prompt
 
     return ExitCode.success.code;
   }
