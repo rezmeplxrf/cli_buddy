@@ -46,9 +46,13 @@ class OpenRouterService {
     if (parameters != null) {
       prompt.addAll(parameters.toJson());
     }
-    Progress? progress;
+
     final promptForDebug = json.encode(prompt);
-    if ( debug) {
+    Progress? progress;
+    logger.info(
+      '\n',
+    );
+    if (debug) {
       final log = '''
 
 ## Prompt
@@ -100,7 +104,8 @@ ${lightCyan.wrap(promptForDebug)}
               if (debug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                progress?.update(lightGreen.wrap(msg.toString())!);
+                final log = lightGreen.wrap(msg.toString())!;
+                progress?.update(log);
               }
             }
 
@@ -132,7 +137,7 @@ ${lightCyan.wrap(promptForDebug)}
       final tokenUsage = lastResponse.usage;
 
       final usageLog =
-          'Token usage | Prompt: ${tokenUsage?.promptTokens} | Completion: ${tokenUsage?.completionTokens} | Total: ${tokenUsage?.totalTokens}';
+          'Token usage | Prompt: ${tokenUsage?.promptTokens} | Completion: ${tokenUsage?.completionTokens} | Total: ${tokenUsage?.totalTokens}\n';
       logger.info(darkGray.wrap(usageLog));
     }
     if (newSession != null) {

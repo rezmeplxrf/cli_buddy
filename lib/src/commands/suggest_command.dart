@@ -16,14 +16,14 @@ class SuggestionCommand extends Command<int> {
   }) : _logger = logger {
     argParser
       ..addFlag(
-        'desc',
-        abbr: 'c',
+        'description',
+        abbr: 'd',
         help: 'Also describes the command',
         negatable: false,
       )
       ..addFlag(
         'debug',
-        abbr: 'd',
+        abbr: 'o',
         help: 'get raw outputs of api requests',
         negatable: false,
       );
@@ -57,6 +57,7 @@ class SuggestionCommand extends Command<int> {
     if (argResults?['debug'] == true) {
       shouldDebug = true;
     }
+
     final response = await OpenRouterService.invoke(
         session: session, logger: _logger, debug: shouldDebug);
 
