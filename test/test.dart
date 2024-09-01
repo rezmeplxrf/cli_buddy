@@ -27,7 +27,7 @@ Future<void> main() async {
   );
 
   final msg = StringBuffer();
-  ORResponse? metrics;
+  ChatMessage? aiResponse;
   await for (final chunk in response.data!.stream) {
     if (chunk.isEmpty) continue;
     final decodedString = utf8.decode(chunk);
@@ -47,11 +47,16 @@ Future<void> main() async {
             msg.write(response.choices!.first.delta!.content);
           }
           if (response.usage != null) {
-            metrics = response.choices!.first.delta!.copyWith(content: msg.toString());
-            print(metrics);
+            aiResponse = ChatMessage(
+              role: Role.assistant,
+              content: msg.toString(),
+              timestamp: DateTime.now().millisecondsSinceEpoch,
+              usage: response.usage,
+            );
           }
         }
       }
     }
   }
+  print(aiResponse);
 }

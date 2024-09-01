@@ -3,15 +3,16 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'open_router.freezed.dart';
 part 'open_router.g.dart';
 
-enum PromptType { system, user, assistant }
+enum Role { system, user, assistant }
 
 @freezed
 class ChatMessage with _$ChatMessage {
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory ChatMessage({
-    required PromptType type,
+    required Role role,
     required String content,
     required int timestamp,
+    Usage? usage,
   }) = _ChatMessage;
 
   factory ChatMessage.fromJson(Map<String, Object?> json) =>

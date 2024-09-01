@@ -8,22 +8,35 @@ part of 'open_router.dart';
 
 _$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
     _$ChatMessageImpl(
-      type: $enumDecode(_$PromptTypeEnumMap, json['type']),
+      role: $enumDecode(_$RoleEnumMap, json['role']),
       content: json['content'] as String,
       timestamp: (json['timestamp'] as num).toInt(),
+      usage: json['usage'] == null
+          ? null
+          : Usage.fromJson(json['usage'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
-    <String, dynamic>{
-      'type': _$PromptTypeEnumMap[instance.type]!,
-      'content': instance.content,
-      'timestamp': instance.timestamp,
-    };
+Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) {
+  final val = <String, dynamic>{
+    'role': _$RoleEnumMap[instance.role]!,
+    'content': instance.content,
+    'timestamp': instance.timestamp,
+  };
 
-const _$PromptTypeEnumMap = {
-  PromptType.system: 'system',
-  PromptType.user: 'user',
-  PromptType.assistant: 'assistant',
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('usage', instance.usage?.toJson());
+  return val;
+}
+
+const _$RoleEnumMap = {
+  Role.system: 'system',
+  Role.user: 'user',
+  Role.assistant: 'assistant',
 };
 
 _$ORResponseImpl _$$ORResponseImplFromJson(Map<String, dynamic> json) =>
@@ -40,15 +53,23 @@ _$ORResponseImpl _$$ORResponseImplFromJson(Map<String, dynamic> json) =>
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ORResponseImplToJson(_$ORResponseImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'model': instance.model,
-      'object': instance.object,
-      'created': instance.created,
-      'choices': instance.choices?.map((e) => e.toJson()).toList(),
-      'usage': instance.usage?.toJson(),
-    };
+Map<String, dynamic> _$$ORResponseImplToJson(_$ORResponseImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('id', instance.id);
+  writeNotNull('model', instance.model);
+  writeNotNull('object', instance.object);
+  writeNotNull('created', instance.created);
+  writeNotNull('choices', instance.choices?.map((e) => e.toJson()).toList());
+  writeNotNull('usage', instance.usage?.toJson());
+  return val;
+}
 
 _$ChoicesImpl _$$ChoicesImplFromJson(Map<String, dynamic> json) =>
     _$ChoicesImpl(
@@ -60,13 +81,21 @@ _$ChoicesImpl _$$ChoicesImplFromJson(Map<String, dynamic> json) =>
       logprobs: json['logprobs'] as String?,
     );
 
-Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) =>
-    <String, dynamic>{
-      'index': instance.index,
-      'delta': instance.delta?.toJson(),
-      'finishReason': instance.finishReason,
-      'logprobs': instance.logprobs,
-    };
+Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('index', instance.index);
+  writeNotNull('delta', instance.delta?.toJson());
+  writeNotNull('finishReason', instance.finishReason);
+  writeNotNull('logprobs', instance.logprobs);
+  return val;
+}
 
 _$DeltaImpl _$$DeltaImplFromJson(Map<String, dynamic> json) => _$DeltaImpl(
       role: json['role'] as String?,
@@ -76,12 +105,20 @@ _$DeltaImpl _$$DeltaImplFromJson(Map<String, dynamic> json) => _$DeltaImpl(
           : ToolCall.fromJson(json['toolCall'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$DeltaImplToJson(_$DeltaImpl instance) =>
-    <String, dynamic>{
-      'role': instance.role,
-      'content': instance.content,
-      'toolCall': instance.toolCall?.toJson(),
-    };
+Map<String, dynamic> _$$DeltaImplToJson(_$DeltaImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('role', instance.role);
+  writeNotNull('content', instance.content);
+  writeNotNull('toolCall', instance.toolCall?.toJson());
+  return val;
+}
 
 _$ToolCallImpl _$$ToolCallImplFromJson(Map<String, dynamic> json) =>
     _$ToolCallImpl(
