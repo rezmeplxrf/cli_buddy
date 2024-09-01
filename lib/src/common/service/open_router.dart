@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cli_buddy/src/common/domain/common_llm.dart';
 import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
+import 'package:cli_buddy/src/common/secret/load.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:result_dart/result_dart.dart';
@@ -14,11 +15,12 @@ class OpenRouterService {
 
   Future<Result<ChatSession, CustomException>> invoke(
       ChatSession session) async {
+    openrouterKey ??= SecretService.readOpenrouterKey();
     final headers = {
       'HTTP-Referer': 'insightsentry.com',
       'X-Title': 'CLI Buddy',
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer '
+      'Authorization': 'Bearer $openrouterKey'
     };
 
     final prompt = <String, dynamic>{
@@ -30,9 +32,6 @@ class OpenRouterService {
     if (session.parameters != null) {
       prompt.addAll(session.parameters!.toJson());
     }
-
-    final promptJson = json.encode(prompt);
-    print(promptJson);
 
     final response = await dio.post<ResponseBody>(
       'https://openrouter.ai/api/v1/chat/completions',
