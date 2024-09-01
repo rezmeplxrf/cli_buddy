@@ -20,8 +20,9 @@ class OpenRouterService {
       {required ChatSession session,
       required Logger logger,
       bool? debug = false}) async {
-    openrouterKey ??= await ConfigService.readOpenrouterKey(logger);
-    defaultModel ??= await ConfigService.readDefaultModel(logger);
+    openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
+    defaultModel ??= await ConfigService.loadDefaultModel(logger);
+    defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
     if (openrouterKey == null) {
       throw CustomException(
         message: 'openrouter_key not found in .env file',
@@ -36,19 +37,22 @@ class OpenRouterService {
     };
     final model =
         (session.model != null) ? session.model : defaultModel ?? fallbackModel;
+    final parameters =
+        (session.parameters != null) ? session.parameters : defaultParameters;
     final prompt = <String, dynamic>{
       'model': model,
       'stream': true,
       'messages': session.messages,
     };
 
-    if (session.parameters != null) {
-      prompt.addAll(session.parameters!.toJson());
+    if (parameters != null) {
+      prompt.addAll(parameters.toJson());
     }
 
     final promptForDebug = json.encode(prompt);
     if (debug != null && debug) {
-      logger.info('Prompt:\n${lightCyan.wrap(promptForDebug)}');
+      logger.info(
+          '\n---------Prompt--------\n${lightCyan.wrap(promptForDebug)}\n');
     }
 
     final response = await dio.post<ResponseBody>(
@@ -75,12 +79,19 @@ class OpenRouterService {
           final jsonString = part.substring(5).trim();
           if (jsonString.isNotEmpty) {
             final decodedJson = json.decode(jsonString) as Map<String, dynamic>;
+
             final response = ORResponse.fromJson(decodedJson);
             responses.add(response);
 
             if (response.choices != null &&
                 response.choices!.first.delta?.content?.trim() != null) {
               msg.write(response.choices!.first.delta!.content);
+              if (debug != null && debug) {
+                logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
+              }
+              // if (debug != null && debug) {
+              //   logger.info('\n${darkGray.wrap(response.toJson().toString())}');
+              // }
             }
 
             if (response.choices?.first.error != null) {
@@ -104,8 +115,9 @@ class OpenRouterService {
         usage: lastResponse.usage,
       );
       newSession = session.copyWith(
-        messages: [...session.messages, aiResponse],
-      );
+          messages: [...session.messages, aiResponse],
+          model: model,
+          parameters: parameters);
     }
     if (newSession != null) {
       return Success(newSession);

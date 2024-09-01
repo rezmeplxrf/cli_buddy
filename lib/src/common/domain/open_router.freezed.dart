@@ -26,6 +26,8 @@ mixin _$ORResponse {
   int? get created => throw _privateConstructorUsedError;
   List<Choices>? get choices => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'system_fingerprint')
+  String? get systemFingerprint => throw _privateConstructorUsedError;
 
   /// Serializes this ORResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,7 +51,8 @@ abstract class $ORResponseCopyWith<$Res> {
       String? object,
       int? created,
       List<Choices>? choices,
-      Usage? usage});
+      Usage? usage,
+      @JsonKey(name: 'system_fingerprint') String? systemFingerprint});
 
   $UsageCopyWith<$Res>? get usage;
 }
@@ -75,6 +78,7 @@ class _$ORResponseCopyWithImpl<$Res, $Val extends ORResponse>
     Object? created = freezed,
     Object? choices = freezed,
     Object? usage = freezed,
+    Object? systemFingerprint = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -101,6 +105,10 @@ class _$ORResponseCopyWithImpl<$Res, $Val extends ORResponse>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as Usage?,
+      systemFingerprint: freezed == systemFingerprint
+          ? _value.systemFingerprint
+          : systemFingerprint // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -133,7 +141,8 @@ abstract class _$$ORResponseImplCopyWith<$Res>
       String? object,
       int? created,
       List<Choices>? choices,
-      Usage? usage});
+      Usage? usage,
+      @JsonKey(name: 'system_fingerprint') String? systemFingerprint});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -158,6 +167,7 @@ class __$$ORResponseImplCopyWithImpl<$Res>
     Object? created = freezed,
     Object? choices = freezed,
     Object? usage = freezed,
+    Object? systemFingerprint = freezed,
   }) {
     return _then(_$ORResponseImpl(
       id: freezed == id
@@ -184,6 +194,10 @@ class __$$ORResponseImplCopyWithImpl<$Res>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as Usage?,
+      systemFingerprint: freezed == systemFingerprint
+          ? _value.systemFingerprint
+          : systemFingerprint // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -198,7 +212,8 @@ class _$ORResponseImpl implements _ORResponse {
       this.object,
       this.created,
       final List<Choices>? choices,
-      this.usage})
+      this.usage,
+      @JsonKey(name: 'system_fingerprint') this.systemFingerprint})
       : _choices = choices;
 
   factory _$ORResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -224,10 +239,13 @@ class _$ORResponseImpl implements _ORResponse {
 
   @override
   final Usage? usage;
+  @override
+  @JsonKey(name: 'system_fingerprint')
+  final String? systemFingerprint;
 
   @override
   String toString() {
-    return 'ORResponse(id: $id, model: $model, object: $object, created: $created, choices: $choices, usage: $usage)';
+    return 'ORResponse(id: $id, model: $model, object: $object, created: $created, choices: $choices, usage: $usage, systemFingerprint: $systemFingerprint)';
   }
 
   @override
@@ -240,13 +258,15 @@ class _$ORResponseImpl implements _ORResponse {
             (identical(other.object, object) || other.object == object) &&
             (identical(other.created, created) || other.created == created) &&
             const DeepCollectionEquality().equals(other._choices, _choices) &&
-            (identical(other.usage, usage) || other.usage == usage));
+            (identical(other.usage, usage) || other.usage == usage) &&
+            (identical(other.systemFingerprint, systemFingerprint) ||
+                other.systemFingerprint == systemFingerprint));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, model, object, created,
-      const DeepCollectionEquality().hash(_choices), usage);
+      const DeepCollectionEquality().hash(_choices), usage, systemFingerprint);
 
   /// Create a copy of ORResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -271,7 +291,9 @@ abstract class _ORResponse implements ORResponse {
       final String? object,
       final int? created,
       final List<Choices>? choices,
-      final Usage? usage}) = _$ORResponseImpl;
+      final Usage? usage,
+      @JsonKey(name: 'system_fingerprint')
+      final String? systemFingerprint}) = _$ORResponseImpl;
 
   factory _ORResponse.fromJson(Map<String, dynamic> json) =
       _$ORResponseImpl.fromJson;
@@ -288,6 +310,9 @@ abstract class _ORResponse implements ORResponse {
   List<Choices>? get choices;
   @override
   Usage? get usage;
+  @override
+  @JsonKey(name: 'system_fingerprint')
+  String? get systemFingerprint;
 
   /// Create a copy of ORResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -307,6 +332,7 @@ mixin _$Choices {
   @JsonKey(name: 'finish_reason')
   String? get finishReason => throw _privateConstructorUsedError;
   Error? get error => throw _privateConstructorUsedError;
+  Logprobs? get logprobs => throw _privateConstructorUsedError;
 
   /// Serializes this Choices to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -325,10 +351,12 @@ abstract class $ChoicesCopyWith<$Res> {
   $Res call(
       {Delta? delta,
       @JsonKey(name: 'finish_reason') String? finishReason,
-      Error? error});
+      Error? error,
+      Logprobs? logprobs});
 
   $DeltaCopyWith<$Res>? get delta;
   $ErrorCopyWith<$Res>? get error;
+  $LogprobsCopyWith<$Res>? get logprobs;
 }
 
 /// @nodoc
@@ -349,6 +377,7 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
     Object? delta = freezed,
     Object? finishReason = freezed,
     Object? error = freezed,
+    Object? logprobs = freezed,
   }) {
     return _then(_value.copyWith(
       delta: freezed == delta
@@ -363,6 +392,10 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as Error?,
+      logprobs: freezed == logprobs
+          ? _value.logprobs
+          : logprobs // ignore: cast_nullable_to_non_nullable
+              as Logprobs?,
     ) as $Val);
   }
 
@@ -393,6 +426,20 @@ class _$ChoicesCopyWithImpl<$Res, $Val extends Choices>
       return _then(_value.copyWith(error: value) as $Val);
     });
   }
+
+  /// Create a copy of Choices
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LogprobsCopyWith<$Res>? get logprobs {
+    if (_value.logprobs == null) {
+      return null;
+    }
+
+    return $LogprobsCopyWith<$Res>(_value.logprobs!, (value) {
+      return _then(_value.copyWith(logprobs: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -405,12 +452,15 @@ abstract class _$$ChoicesImplCopyWith<$Res> implements $ChoicesCopyWith<$Res> {
   $Res call(
       {Delta? delta,
       @JsonKey(name: 'finish_reason') String? finishReason,
-      Error? error});
+      Error? error,
+      Logprobs? logprobs});
 
   @override
   $DeltaCopyWith<$Res>? get delta;
   @override
   $ErrorCopyWith<$Res>? get error;
+  @override
+  $LogprobsCopyWith<$Res>? get logprobs;
 }
 
 /// @nodoc
@@ -429,6 +479,7 @@ class __$$ChoicesImplCopyWithImpl<$Res>
     Object? delta = freezed,
     Object? finishReason = freezed,
     Object? error = freezed,
+    Object? logprobs = freezed,
   }) {
     return _then(_$ChoicesImpl(
       delta: freezed == delta
@@ -443,6 +494,10 @@ class __$$ChoicesImplCopyWithImpl<$Res>
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as Error?,
+      logprobs: freezed == logprobs
+          ? _value.logprobs
+          : logprobs // ignore: cast_nullable_to_non_nullable
+              as Logprobs?,
     ));
   }
 }
@@ -454,7 +509,8 @@ class _$ChoicesImpl implements _Choices {
   const _$ChoicesImpl(
       {this.delta,
       @JsonKey(name: 'finish_reason') this.finishReason,
-      this.error});
+      this.error,
+      this.logprobs});
 
   factory _$ChoicesImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChoicesImplFromJson(json);
@@ -466,10 +522,12 @@ class _$ChoicesImpl implements _Choices {
   final String? finishReason;
   @override
   final Error? error;
+  @override
+  final Logprobs? logprobs;
 
   @override
   String toString() {
-    return 'Choices(delta: $delta, finishReason: $finishReason, error: $error)';
+    return 'Choices(delta: $delta, finishReason: $finishReason, error: $error, logprobs: $logprobs)';
   }
 
   @override
@@ -480,12 +538,15 @@ class _$ChoicesImpl implements _Choices {
             (identical(other.delta, delta) || other.delta == delta) &&
             (identical(other.finishReason, finishReason) ||
                 other.finishReason == finishReason) &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.error, error) || other.error == error) &&
+            (identical(other.logprobs, logprobs) ||
+                other.logprobs == logprobs));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, delta, finishReason, error);
+  int get hashCode =>
+      Object.hash(runtimeType, delta, finishReason, error, logprobs);
 
   /// Create a copy of Choices
   /// with the given fields replaced by the non-null parameter values.
@@ -507,7 +568,8 @@ abstract class _Choices implements Choices {
   const factory _Choices(
       {final Delta? delta,
       @JsonKey(name: 'finish_reason') final String? finishReason,
-      final Error? error}) = _$ChoicesImpl;
+      final Error? error,
+      final Logprobs? logprobs}) = _$ChoicesImpl;
 
   factory _Choices.fromJson(Map<String, dynamic> json) = _$ChoicesImpl.fromJson;
 
@@ -518,6 +580,8 @@ abstract class _Choices implements Choices {
   String? get finishReason;
   @override
   Error? get error;
+  @override
+  Logprobs? get logprobs;
 
   /// Create a copy of Choices
   /// with the given fields replaced by the non-null parameter values.
@@ -728,6 +792,644 @@ abstract class _Delta implements Delta {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DeltaImplCopyWith<_$DeltaImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Logprobs _$LogprobsFromJson(Map<String, dynamic> json) {
+  return _Logprobs.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Logprobs {
+  @JsonKey(name: 'content')
+  List<Content>? get content => throw _privateConstructorUsedError;
+  String? get refusal => throw _privateConstructorUsedError;
+
+  /// Serializes this Logprobs to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Logprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $LogprobsCopyWith<Logprobs> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LogprobsCopyWith<$Res> {
+  factory $LogprobsCopyWith(Logprobs value, $Res Function(Logprobs) then) =
+      _$LogprobsCopyWithImpl<$Res, Logprobs>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'content') List<Content>? content, String? refusal});
+}
+
+/// @nodoc
+class _$LogprobsCopyWithImpl<$Res, $Val extends Logprobs>
+    implements $LogprobsCopyWith<$Res> {
+  _$LogprobsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Logprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = freezed,
+    Object? refusal = freezed,
+  }) {
+    return _then(_value.copyWith(
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as List<Content>?,
+      refusal: freezed == refusal
+          ? _value.refusal
+          : refusal // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LogprobsImplCopyWith<$Res>
+    implements $LogprobsCopyWith<$Res> {
+  factory _$$LogprobsImplCopyWith(
+          _$LogprobsImpl value, $Res Function(_$LogprobsImpl) then) =
+      __$$LogprobsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'content') List<Content>? content, String? refusal});
+}
+
+/// @nodoc
+class __$$LogprobsImplCopyWithImpl<$Res>
+    extends _$LogprobsCopyWithImpl<$Res, _$LogprobsImpl>
+    implements _$$LogprobsImplCopyWith<$Res> {
+  __$$LogprobsImplCopyWithImpl(
+      _$LogprobsImpl _value, $Res Function(_$LogprobsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Logprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? content = freezed,
+    Object? refusal = freezed,
+  }) {
+    return _then(_$LogprobsImpl(
+      content: freezed == content
+          ? _value._content
+          : content // ignore: cast_nullable_to_non_nullable
+              as List<Content>?,
+      refusal: freezed == refusal
+          ? _value.refusal
+          : refusal // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LogprobsImpl implements _Logprobs {
+  const _$LogprobsImpl(
+      {@JsonKey(name: 'content') final List<Content>? content, this.refusal})
+      : _content = content;
+
+  factory _$LogprobsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LogprobsImplFromJson(json);
+
+  final List<Content>? _content;
+  @override
+  @JsonKey(name: 'content')
+  List<Content>? get content {
+    final value = _content;
+    if (value == null) return null;
+    if (_content is EqualUnmodifiableListView) return _content;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final String? refusal;
+
+  @override
+  String toString() {
+    return 'Logprobs(content: $content, refusal: $refusal)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LogprobsImpl &&
+            const DeepCollectionEquality().equals(other._content, _content) &&
+            (identical(other.refusal, refusal) || other.refusal == refusal));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_content), refusal);
+
+  /// Create a copy of Logprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LogprobsImplCopyWith<_$LogprobsImpl> get copyWith =>
+      __$$LogprobsImplCopyWithImpl<_$LogprobsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LogprobsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Logprobs implements Logprobs {
+  const factory _Logprobs(
+      {@JsonKey(name: 'content') final List<Content>? content,
+      final String? refusal}) = _$LogprobsImpl;
+
+  factory _Logprobs.fromJson(Map<String, dynamic> json) =
+      _$LogprobsImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'content')
+  List<Content>? get content;
+  @override
+  String? get refusal;
+
+  /// Create a copy of Logprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LogprobsImplCopyWith<_$LogprobsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Content _$ContentFromJson(Map<String, dynamic> json) {
+  return _Content.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Content {
+  @JsonKey(name: 'token')
+  String? get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'logprob')
+  double? get logprob => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_logprobs')
+  List<TopLogprobs>? get topLogprobs => throw _privateConstructorUsedError;
+
+  /// Serializes this Content to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Content
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ContentCopyWith<Content> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ContentCopyWith<$Res> {
+  factory $ContentCopyWith(Content value, $Res Function(Content) then) =
+      _$ContentCopyWithImpl<$Res, Content>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'token') String? token,
+      @JsonKey(name: 'logprob') double? logprob,
+      @JsonKey(name: 'bytes') List<int>? bytes,
+      @JsonKey(name: 'top_logprobs') List<TopLogprobs>? topLogprobs});
+}
+
+/// @nodoc
+class _$ContentCopyWithImpl<$Res, $Val extends Content>
+    implements $ContentCopyWith<$Res> {
+  _$ContentCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Content
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = freezed,
+    Object? logprob = freezed,
+    Object? bytes = freezed,
+    Object? topLogprobs = freezed,
+  }) {
+    return _then(_value.copyWith(
+      token: freezed == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logprob: freezed == logprob
+          ? _value.logprob
+          : logprob // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bytes: freezed == bytes
+          ? _value.bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+      topLogprobs: freezed == topLogprobs
+          ? _value.topLogprobs
+          : topLogprobs // ignore: cast_nullable_to_non_nullable
+              as List<TopLogprobs>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ContentImplCopyWith<$Res> implements $ContentCopyWith<$Res> {
+  factory _$$ContentImplCopyWith(
+          _$ContentImpl value, $Res Function(_$ContentImpl) then) =
+      __$$ContentImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'token') String? token,
+      @JsonKey(name: 'logprob') double? logprob,
+      @JsonKey(name: 'bytes') List<int>? bytes,
+      @JsonKey(name: 'top_logprobs') List<TopLogprobs>? topLogprobs});
+}
+
+/// @nodoc
+class __$$ContentImplCopyWithImpl<$Res>
+    extends _$ContentCopyWithImpl<$Res, _$ContentImpl>
+    implements _$$ContentImplCopyWith<$Res> {
+  __$$ContentImplCopyWithImpl(
+      _$ContentImpl _value, $Res Function(_$ContentImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Content
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = freezed,
+    Object? logprob = freezed,
+    Object? bytes = freezed,
+    Object? topLogprobs = freezed,
+  }) {
+    return _then(_$ContentImpl(
+      token: freezed == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logprob: freezed == logprob
+          ? _value.logprob
+          : logprob // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bytes: freezed == bytes
+          ? _value._bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+      topLogprobs: freezed == topLogprobs
+          ? _value._topLogprobs
+          : topLogprobs // ignore: cast_nullable_to_non_nullable
+              as List<TopLogprobs>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ContentImpl implements _Content {
+  const _$ContentImpl(
+      {@JsonKey(name: 'token') this.token,
+      @JsonKey(name: 'logprob') this.logprob,
+      @JsonKey(name: 'bytes') final List<int>? bytes,
+      @JsonKey(name: 'top_logprobs') final List<TopLogprobs>? topLogprobs})
+      : _bytes = bytes,
+        _topLogprobs = topLogprobs;
+
+  factory _$ContentImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ContentImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'token')
+  final String? token;
+  @override
+  @JsonKey(name: 'logprob')
+  final double? logprob;
+  final List<int>? _bytes;
+  @override
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes {
+    final value = _bytes;
+    if (value == null) return null;
+    if (_bytes is EqualUnmodifiableListView) return _bytes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<TopLogprobs>? _topLogprobs;
+  @override
+  @JsonKey(name: 'top_logprobs')
+  List<TopLogprobs>? get topLogprobs {
+    final value = _topLogprobs;
+    if (value == null) return null;
+    if (_topLogprobs is EqualUnmodifiableListView) return _topLogprobs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'Content(token: $token, logprob: $logprob, bytes: $bytes, topLogprobs: $topLogprobs)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ContentImpl &&
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.logprob, logprob) || other.logprob == logprob) &&
+            const DeepCollectionEquality().equals(other._bytes, _bytes) &&
+            const DeepCollectionEquality()
+                .equals(other._topLogprobs, _topLogprobs));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      token,
+      logprob,
+      const DeepCollectionEquality().hash(_bytes),
+      const DeepCollectionEquality().hash(_topLogprobs));
+
+  /// Create a copy of Content
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ContentImplCopyWith<_$ContentImpl> get copyWith =>
+      __$$ContentImplCopyWithImpl<_$ContentImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ContentImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Content implements Content {
+  const factory _Content(
+      {@JsonKey(name: 'token') final String? token,
+      @JsonKey(name: 'logprob') final double? logprob,
+      @JsonKey(name: 'bytes') final List<int>? bytes,
+      @JsonKey(name: 'top_logprobs')
+      final List<TopLogprobs>? topLogprobs}) = _$ContentImpl;
+
+  factory _Content.fromJson(Map<String, dynamic> json) = _$ContentImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'token')
+  String? get token;
+  @override
+  @JsonKey(name: 'logprob')
+  double? get logprob;
+  @override
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes;
+  @override
+  @JsonKey(name: 'top_logprobs')
+  List<TopLogprobs>? get topLogprobs;
+
+  /// Create a copy of Content
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ContentImplCopyWith<_$ContentImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+TopLogprobs _$TopLogprobsFromJson(Map<String, dynamic> json) {
+  return _TopLogprobs.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TopLogprobs {
+  @JsonKey(name: 'token')
+  String? get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'logprob')
+  double? get logprob => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes => throw _privateConstructorUsedError;
+
+  /// Serializes this TopLogprobs to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TopLogprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TopLogprobsCopyWith<TopLogprobs> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TopLogprobsCopyWith<$Res> {
+  factory $TopLogprobsCopyWith(
+          TopLogprobs value, $Res Function(TopLogprobs) then) =
+      _$TopLogprobsCopyWithImpl<$Res, TopLogprobs>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'token') String? token,
+      @JsonKey(name: 'logprob') double? logprob,
+      @JsonKey(name: 'bytes') List<int>? bytes});
+}
+
+/// @nodoc
+class _$TopLogprobsCopyWithImpl<$Res, $Val extends TopLogprobs>
+    implements $TopLogprobsCopyWith<$Res> {
+  _$TopLogprobsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TopLogprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = freezed,
+    Object? logprob = freezed,
+    Object? bytes = freezed,
+  }) {
+    return _then(_value.copyWith(
+      token: freezed == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logprob: freezed == logprob
+          ? _value.logprob
+          : logprob // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bytes: freezed == bytes
+          ? _value.bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TopLogprobsImplCopyWith<$Res>
+    implements $TopLogprobsCopyWith<$Res> {
+  factory _$$TopLogprobsImplCopyWith(
+          _$TopLogprobsImpl value, $Res Function(_$TopLogprobsImpl) then) =
+      __$$TopLogprobsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'token') String? token,
+      @JsonKey(name: 'logprob') double? logprob,
+      @JsonKey(name: 'bytes') List<int>? bytes});
+}
+
+/// @nodoc
+class __$$TopLogprobsImplCopyWithImpl<$Res>
+    extends _$TopLogprobsCopyWithImpl<$Res, _$TopLogprobsImpl>
+    implements _$$TopLogprobsImplCopyWith<$Res> {
+  __$$TopLogprobsImplCopyWithImpl(
+      _$TopLogprobsImpl _value, $Res Function(_$TopLogprobsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of TopLogprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = freezed,
+    Object? logprob = freezed,
+    Object? bytes = freezed,
+  }) {
+    return _then(_$TopLogprobsImpl(
+      token: freezed == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logprob: freezed == logprob
+          ? _value.logprob
+          : logprob // ignore: cast_nullable_to_non_nullable
+              as double?,
+      bytes: freezed == bytes
+          ? _value._bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TopLogprobsImpl implements _TopLogprobs {
+  const _$TopLogprobsImpl(
+      {@JsonKey(name: 'token') this.token,
+      @JsonKey(name: 'logprob') this.logprob,
+      @JsonKey(name: 'bytes') final List<int>? bytes})
+      : _bytes = bytes;
+
+  factory _$TopLogprobsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TopLogprobsImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'token')
+  final String? token;
+  @override
+  @JsonKey(name: 'logprob')
+  final double? logprob;
+  final List<int>? _bytes;
+  @override
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes {
+    final value = _bytes;
+    if (value == null) return null;
+    if (_bytes is EqualUnmodifiableListView) return _bytes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'TopLogprobs(token: $token, logprob: $logprob, bytes: $bytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TopLogprobsImpl &&
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.logprob, logprob) || other.logprob == logprob) &&
+            const DeepCollectionEquality().equals(other._bytes, _bytes));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, token, logprob, const DeepCollectionEquality().hash(_bytes));
+
+  /// Create a copy of TopLogprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TopLogprobsImplCopyWith<_$TopLogprobsImpl> get copyWith =>
+      __$$TopLogprobsImplCopyWithImpl<_$TopLogprobsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TopLogprobsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TopLogprobs implements TopLogprobs {
+  const factory _TopLogprobs(
+      {@JsonKey(name: 'token') final String? token,
+      @JsonKey(name: 'logprob') final double? logprob,
+      @JsonKey(name: 'bytes') final List<int>? bytes}) = _$TopLogprobsImpl;
+
+  factory _TopLogprobs.fromJson(Map<String, dynamic> json) =
+      _$TopLogprobsImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'token')
+  String? get token;
+  @override
+  @JsonKey(name: 'logprob')
+  double? get logprob;
+  @override
+  @JsonKey(name: 'bytes')
+  List<int>? get bytes;
+
+  /// Create a copy of TopLogprobs
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TopLogprobsImplCopyWith<_$TopLogprobsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

@@ -47,7 +47,7 @@ class SuggestionCommand extends Command<int> {
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final sysMsg = Message(
         role: Role.system,
-        content: PromptsService.cmdOnly(),
+        content: PromptService.cmdOnly(),
         timestamp: currentTime);
     final userMsg =
         Message(role: Role.user, content: args.first, timestamp: currentTime);

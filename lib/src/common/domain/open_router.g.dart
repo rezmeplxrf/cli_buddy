@@ -18,6 +18,7 @@ _$ORResponseImpl _$$ORResponseImplFromJson(Map<String, dynamic> json) =>
       usage: json['usage'] == null
           ? null
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
+      systemFingerprint: json['system_fingerprint'] as String?,
     );
 
 Map<String, dynamic> _$$ORResponseImplToJson(_$ORResponseImpl instance) {
@@ -35,6 +36,7 @@ Map<String, dynamic> _$$ORResponseImplToJson(_$ORResponseImpl instance) {
   writeNotNull('created', instance.created);
   writeNotNull('choices', instance.choices?.map((e) => e.toJson()).toList());
   writeNotNull('usage', instance.usage?.toJson());
+  writeNotNull('system_fingerprint', instance.systemFingerprint);
   return val;
 }
 
@@ -47,6 +49,9 @@ _$ChoicesImpl _$$ChoicesImplFromJson(Map<String, dynamic> json) =>
       error: json['error'] == null
           ? null
           : Error.fromJson(json['error'] as Map<String, dynamic>),
+      logprobs: json['logprobs'] == null
+          ? null
+          : Logprobs.fromJson(json['logprobs'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) {
@@ -61,6 +66,7 @@ Map<String, dynamic> _$$ChoicesImplToJson(_$ChoicesImpl instance) {
   writeNotNull('delta', instance.delta?.toJson());
   writeNotNull('finish_reason', instance.finishReason);
   writeNotNull('error', instance.error?.toJson());
+  writeNotNull('logprobs', instance.logprobs?.toJson());
   return val;
 }
 
@@ -87,6 +93,56 @@ Map<String, dynamic> _$$DeltaImplToJson(_$DeltaImpl instance) {
       'tool_calls', instance.toolCalls?.map((e) => e.toJson()).toList());
   return val;
 }
+
+_$LogprobsImpl _$$LogprobsImplFromJson(Map<String, dynamic> json) =>
+    _$LogprobsImpl(
+      content: (json['content'] as List<dynamic>?)
+          ?.map((e) => Content.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      refusal: json['refusal'] as String?,
+    );
+
+Map<String, dynamic> _$$LogprobsImplToJson(_$LogprobsImpl instance) =>
+    <String, dynamic>{
+      'content': instance.content,
+      'refusal': instance.refusal,
+    };
+
+_$ContentImpl _$$ContentImplFromJson(Map<String, dynamic> json) =>
+    _$ContentImpl(
+      token: json['token'] as String?,
+      logprob: (json['logprob'] as num?)?.toDouble(),
+      bytes: (json['bytes'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+      topLogprobs: (json['top_logprobs'] as List<dynamic>?)
+          ?.map((e) => TopLogprobs.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ContentImplToJson(_$ContentImpl instance) =>
+    <String, dynamic>{
+      'token': instance.token,
+      'logprob': instance.logprob,
+      'bytes': instance.bytes,
+      'top_logprobs': instance.topLogprobs,
+    };
+
+_$TopLogprobsImpl _$$TopLogprobsImplFromJson(Map<String, dynamic> json) =>
+    _$TopLogprobsImpl(
+      token: json['token'] as String?,
+      logprob: (json['logprob'] as num?)?.toDouble(),
+      bytes: (json['bytes'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+    );
+
+Map<String, dynamic> _$$TopLogprobsImplToJson(_$TopLogprobsImpl instance) =>
+    <String, dynamic>{
+      'token': instance.token,
+      'logprob': instance.logprob,
+      'bytes': instance.bytes,
+    };
 
 _$ToolCallImpl _$$ToolCallImplFromJson(Map<String, dynamic> json) =>
     _$ToolCallImpl(

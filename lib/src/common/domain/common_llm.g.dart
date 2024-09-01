@@ -60,6 +60,7 @@ const _$RoleEnumMap = {
 
 _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
     _$ParametersImpl(
+      maxTokens: (json['max_tokens'] as num?)?.toInt(),
       temperature: (json['temperature'] as num?)?.toDouble(),
       topP: (json['top_p'] as num?)?.toDouble(),
       topK: (json['top_k'] as num?)?.toInt(),
@@ -69,7 +70,6 @@ _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
       minProbability: (json['min_p'] as num?)?.toDouble(),
       topAnswer: (json['top_a'] as num?)?.toDouble(),
       seed: (json['seed'] as num?)?.toInt(),
-      maxTokens: (json['max_tokens'] as num?)?.toInt(),
       logitBias: (json['logit_bias'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toInt()),
       ),
@@ -92,6 +92,7 @@ Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
     }
   }
 
+  writeNotNull('max_tokens', instance.maxTokens);
   writeNotNull('temperature', instance.temperature);
   writeNotNull('top_p', instance.topP);
   writeNotNull('top_k', instance.topK);
@@ -101,7 +102,6 @@ Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
   writeNotNull('min_p', instance.minProbability);
   writeNotNull('top_a', instance.topAnswer);
   writeNotNull('seed', instance.seed);
-  writeNotNull('max_tokens', instance.maxTokens);
   writeNotNull('logit_bias', instance.logitBias);
   writeNotNull('logprobs', instance.logProbabilities);
   writeNotNull('top_logprobs', instance.topLogProbabilities);

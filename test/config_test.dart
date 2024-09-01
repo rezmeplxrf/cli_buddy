@@ -3,7 +3,7 @@ import 'package:mason_logger/mason_logger.dart';
 
 void main() async {
   final logger = Logger();
-  print(await ConfigService.readDefaultModel(logger));
-  print(await ConfigService.readOpenrouterKey(logger));
-  print(await ConfigService.readDefaultParameters(logger));
+  print(await ConfigService.loadDefaultModel(logger));
+  print(await ConfigService.loadOpenrouterKey(logger));
+  print(await ConfigService.loadDefaultParameters(logger));
 }

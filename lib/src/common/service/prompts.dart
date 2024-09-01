@@ -1,9 +1,9 @@
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 
-class PromptsService {
-  factory PromptsService() => _instance;
-  PromptsService._internal();
-  static final PromptsService _instance = PromptsService._internal();
+class PromptService {
+  factory PromptService() => _instance;
+  PromptService._internal();
+  static final PromptService _instance = PromptService._internal();
 
   static String cmdOnly() {
     final os = SysInfoService.os;

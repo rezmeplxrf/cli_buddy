@@ -10,11 +10,11 @@ String? defaultModel;
 Parameters? defaultParameters;
 
 class ConfigService {
-  static Future<String?> readOpenrouterKey(Logger logger) async {
+  static Future<String?> loadOpenrouterKey(Logger logger) async {
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
       logger.err(
-          'Config file not found. Please set the path using `set-path` command.');
+          "Config file not found. Please create 'buddy.config' and set the path using `set-path` command.");
       return null;
     }
 
@@ -47,11 +47,11 @@ class ConfigService {
     }
   }
 
-  static Future<String?> readDefaultModel(Logger logger) async {
+  static Future<String?> loadDefaultModel(Logger logger) async {
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
       logger.err(
-          'Config file not found. Please set the path using `set-path` command.');
+          "Config file not found. Please create 'buddy.config' and set the path using `set-path` command.");
       return null;
     }
 
@@ -72,11 +72,11 @@ class ConfigService {
     }
   }
 
-  static Future<Parameters?> readDefaultParameters(Logger logger) async {
+  static Future<Parameters?> loadDefaultParameters(Logger logger) async {
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
       logger.err(
-          'Config file not found. Please set the path using `set-path` command.');
+          "Config file not found. Please create 'buddy.config' and set the path using `set-path` command.");
       return null;
     }
 

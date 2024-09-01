@@ -13,6 +13,7 @@ class ORResponse with _$ORResponse {
     int? created,
     List<Choices>? choices,
     Usage? usage,
+    @JsonKey(name: 'system_fingerprint') String? systemFingerprint,
   }) = _ORResponse;
 
   factory ORResponse.fromJson(Map<String, Object?> json) =>
@@ -22,10 +23,12 @@ class ORResponse with _$ORResponse {
 @freezed
 class Choices with _$Choices {
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
-  const factory Choices(
-      {Delta? delta,
-      @JsonKey(name: 'finish_reason') String? finishReason,
-      Error? error}) = _Choices;
+  const factory Choices({
+    Delta? delta,
+    @JsonKey(name: 'finish_reason') String? finishReason,
+    Error? error,
+    Logprobs? logprobs,
+  }) = _Choices;
 
   factory Choices.fromJson(Map<String, Object?> json) =>
       _$ChoicesFromJson(json);
@@ -38,10 +41,49 @@ class Delta with _$Delta {
     String? role,
     String? content,
     @JsonKey(name: 'tool_calls') List<ToolCall>? toolCalls,
+  
   }) = _Delta;
 
   factory Delta.fromJson(Map<String, Object?> json) => _$DeltaFromJson(json);
 }
+
+@freezed
+class Logprobs with _$Logprobs {
+  const factory Logprobs({
+    @JsonKey(name: 'content') List<Content>? content,
+    String? refusal,
+  }) = _Logprobs;
+
+  factory Logprobs.fromJson(Map<String, Object?> json) =>
+      _$LogprobsFromJson(json);
+}
+
+
+@freezed
+class Content with _$Content {
+  const factory Content({
+    @JsonKey(name: 'token') String? token,
+    @JsonKey(name: 'logprob') double? logprob,
+    @JsonKey(name: 'bytes') List<int>? bytes,
+    @JsonKey(name: 'top_logprobs') List<TopLogprobs>? topLogprobs,
+  }) = _Content;
+
+  factory Content.fromJson(Map<String, Object?> json) =>
+      _$ContentFromJson(json);
+}
+
+@freezed
+class TopLogprobs with _$TopLogprobs {
+  const factory TopLogprobs({
+    @JsonKey(name: 'token') String? token,
+    @JsonKey(name: 'logprob') double? logprob,
+    @JsonKey(name: 'bytes') List<int>? bytes,
+  }) = _TopLogprobs;
+
+  factory TopLogprobs.fromJson(Map<String, Object?> json) =>
+      _$TopLogprobsFromJson(json);
+}
+
 
 @freezed
 class ToolCall with _$ToolCall {

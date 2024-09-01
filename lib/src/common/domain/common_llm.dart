@@ -35,8 +35,13 @@ class Message with _$Message {
 
 @freezed
 class Parameters with _$Parameters {
-  @JsonSerializable(includeIfNull: false)
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory Parameters({
+    /// This sets the upper limit for the number of tokens the model can generate in response.
+    /// It won't produce more than this limit.
+    /// The maximum value is the context length minus the prompt length.
+    @JsonKey(name: 'max_tokens') int? maxTokens,
+
     /// This setting influences the variety in the model's responses.
     /// Lower values lead to more predictable and typical responses,
     /// while higher values encourage more diverse and less common responses.
@@ -116,11 +121,6 @@ class Parameters with _$Parameters {
     /// such that repeated requests with the same seed and parameters should return the same result.
     /// Determinism is not guaranteed for some models.
     @JsonKey(name: 'seed') int? seed,
-
-    /// This sets the upper limit for the number of tokens the model can generate in response.
-    /// It won't produce more than this limit.
-    /// The maximum value is the context length minus the prompt length.
-    @JsonKey(name: 'max_tokens') int? maxTokens,
 
     /// Accepts a JSON object that maps tokens (specified by their token ID in the tokenizer)
     /// to an associated bias value from -100 to 100. Mathematically,
