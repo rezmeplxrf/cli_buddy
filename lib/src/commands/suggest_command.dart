@@ -39,7 +39,7 @@ class SuggestionCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final args = argResults?.arguments;
+    final args = argResults?.rest;
     if (args == null || args.isEmpty) {
       _logger.info('Usage: $name <prompt>');
       return ExitCode.usage.code;
@@ -49,8 +49,8 @@ class SuggestionCommand extends Command<int> {
         role: Role.system,
         content: PromptService.cmdOnly(),
         timestamp: currentTime);
-    // check if arg is more than one if so, concatenate them
-    final prompt = args.length > 1 ? args.join(' ') : args.first;
+    // concatenate all remaining arguments to form the prompt
+    final prompt = args.join(' ');
     final initialMsg =
         Message(role: Role.user, content: prompt, timestamp: currentTime);
     final session = ChatSession(messages: [sysMsg, initialMsg]);
@@ -73,7 +73,7 @@ class SuggestionCommand extends Command<int> {
 
       final responseResult = response.getOrNull();
       if (responseResult != null) {
-       final newSession =  responseResult.copyWith(messages: [...responseResult.messages, nextMsg]);
+        final newSession = responseResult.copyWith(messages: [...responseResult.messages, nextMsg]);
         final newResponse = await OpenRouterService.invoke(
             session: newSession, logger: _logger, debug: shouldDebug);
         if (newResponse.isError()) {
