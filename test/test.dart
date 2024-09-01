@@ -53,10 +53,10 @@ Future<void> main() async {
               timestamp: DateTime.now().millisecondsSinceEpoch,
               usage: response.usage,
             );
+            print(aiResponse);
           }
         }
       }
     }
   }
-  print(aiResponse);
 }

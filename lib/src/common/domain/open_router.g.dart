@@ -6,39 +6,6 @@ part of 'open_router.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ChatMessageImpl _$$ChatMessageImplFromJson(Map<String, dynamic> json) =>
-    _$ChatMessageImpl(
-      role: $enumDecode(_$RoleEnumMap, json['role']),
-      content: json['content'] as String,
-      timestamp: (json['timestamp'] as num).toInt(),
-      usage: json['usage'] == null
-          ? null
-          : Usage.fromJson(json['usage'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) {
-  final val = <String, dynamic>{
-    'role': _$RoleEnumMap[instance.role]!,
-    'content': instance.content,
-    'timestamp': instance.timestamp,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('usage', instance.usage?.toJson());
-  return val;
-}
-
-const _$RoleEnumMap = {
-  Role.system: 'system',
-  Role.user: 'user',
-  Role.assistant: 'assistant',
-};
-
 _$ORResponseImpl _$$ORResponseImplFromJson(Map<String, dynamic> json) =>
     _$ORResponseImpl(
       id: json['id'] as String?,

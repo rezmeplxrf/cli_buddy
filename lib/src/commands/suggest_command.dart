@@ -1,14 +1,8 @@
 import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 
-/// {@template sample_command}
-///
-/// `cli_buddy sample`
-/// A [Command] to exemplify a sub command
-/// {@endtemplate}
-class SampleCommand extends Command<int> {
-  /// {@macro sample_command}
-  SampleCommand({
+class SuggestionCommand extends Command<int> {
+  SuggestionCommand({
     required Logger logger,
   }) : _logger = logger {
     argParser.addFlag(  

@@ -3,21 +3,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'open_router.freezed.dart';
 part 'open_router.g.dart';
 
-enum Role { system, user, assistant }
-
-@freezed
-class ChatMessage with _$ChatMessage {
-  @JsonSerializable(explicitToJson: true, includeIfNull: false)
-  const factory ChatMessage({
-    required Role role,
-    required String content,
-    required int timestamp,
-    Usage? usage,
-  }) = _ChatMessage;
-
-  factory ChatMessage.fromJson(Map<String, Object?> json) =>
-      _$ChatMessageFromJson(json);
-}
 
 @freezed
 class ORResponse with _$ORResponse {
