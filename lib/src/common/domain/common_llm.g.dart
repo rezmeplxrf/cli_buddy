@@ -81,12 +81,6 @@ _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
       stop: (json['stop'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),
-      tools: (json['tools'] as List<dynamic>?)
-          ?.map((e) => Tool.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      toolChoices: (json['tool_choice'] as List<dynamic>?)
-          ?.map(ToolChoice.fromJson)
-          .toList(),
     );
 
 Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
@@ -113,7 +107,5 @@ Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
   writeNotNull('top_logprobs', instance.topLogProbabilities);
   writeNotNull('response_format', instance.responseFormat);
   writeNotNull('stop', instance.stop);
-  writeNotNull('tools', instance.tools);
-  writeNotNull('tool_choice', instance.toolChoices);
   return val;
 }

@@ -1,7 +1,7 @@
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
-class User {
+class ChatSessionObj {
   @Id()
   int id = 0;
 

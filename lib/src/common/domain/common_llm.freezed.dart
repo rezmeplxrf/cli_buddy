@@ -581,21 +581,6 @@ mixin _$Parameters {
   @JsonKey(name: 'stop')
   List<int>? get stop => throw _privateConstructorUsedError;
 
-  /// Tool calling parameter.
-  /// Will be passed down as-is for providers implementing OpenAI's interface.
-  /// For providers with custom interfaces, we transform and map the properties.
-  /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-  @JsonKey(name: 'tools')
-  List<Tool>? get tools => throw _privateConstructorUsedError;
-
-  /// Controls which (if any) tool is called by the model.
-  /// 'none' means the model will not call any tool and instead generates a message.
-  /// 'auto' means the model can pick between generating a message or calling one or more tools.
-  /// 'required' means the model must call one or more tools.
-  /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-  @JsonKey(name: 'tool_choice')
-  List<ToolChoice>? get toolChoices => throw _privateConstructorUsedError;
-
   /// Serializes this Parameters to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -627,9 +612,7 @@ abstract class $ParametersCopyWith<$Res> {
       @JsonKey(name: 'logprobs') bool? logProbabilities,
       @JsonKey(name: 'top_logprobs') int? topLogProbabilities,
       @JsonKey(name: 'response_format') Map<String, String>? responseFormat,
-      @JsonKey(name: 'stop') List<int>? stop,
-      @JsonKey(name: 'tools') List<Tool>? tools,
-      @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices});
+      @JsonKey(name: 'stop') List<int>? stop});
 }
 
 /// @nodoc
@@ -662,8 +645,6 @@ class _$ParametersCopyWithImpl<$Res, $Val extends Parameters>
     Object? topLogProbabilities = freezed,
     Object? responseFormat = freezed,
     Object? stop = freezed,
-    Object? tools = freezed,
-    Object? toolChoices = freezed,
   }) {
     return _then(_value.copyWith(
       temperature: freezed == temperature
@@ -726,14 +707,6 @@ class _$ParametersCopyWithImpl<$Res, $Val extends Parameters>
           ? _value.stop
           : stop // ignore: cast_nullable_to_non_nullable
               as List<int>?,
-      tools: freezed == tools
-          ? _value.tools
-          : tools // ignore: cast_nullable_to_non_nullable
-              as List<Tool>?,
-      toolChoices: freezed == toolChoices
-          ? _value.toolChoices
-          : toolChoices // ignore: cast_nullable_to_non_nullable
-              as List<ToolChoice>?,
     ) as $Val);
   }
 }
@@ -761,9 +734,7 @@ abstract class _$$ParametersImplCopyWith<$Res>
       @JsonKey(name: 'logprobs') bool? logProbabilities,
       @JsonKey(name: 'top_logprobs') int? topLogProbabilities,
       @JsonKey(name: 'response_format') Map<String, String>? responseFormat,
-      @JsonKey(name: 'stop') List<int>? stop,
-      @JsonKey(name: 'tools') List<Tool>? tools,
-      @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices});
+      @JsonKey(name: 'stop') List<int>? stop});
 }
 
 /// @nodoc
@@ -794,8 +765,6 @@ class __$$ParametersImplCopyWithImpl<$Res>
     Object? topLogProbabilities = freezed,
     Object? responseFormat = freezed,
     Object? stop = freezed,
-    Object? tools = freezed,
-    Object? toolChoices = freezed,
   }) {
     return _then(_$ParametersImpl(
       temperature: freezed == temperature
@@ -858,14 +827,6 @@ class __$$ParametersImplCopyWithImpl<$Res>
           ? _value._stop
           : stop // ignore: cast_nullable_to_non_nullable
               as List<int>?,
-      tools: freezed == tools
-          ? _value._tools
-          : tools // ignore: cast_nullable_to_non_nullable
-              as List<Tool>?,
-      toolChoices: freezed == toolChoices
-          ? _value._toolChoices
-          : toolChoices // ignore: cast_nullable_to_non_nullable
-              as List<ToolChoice>?,
     ));
   }
 }
@@ -890,14 +851,10 @@ class _$ParametersImpl implements _Parameters {
       @JsonKey(name: 'top_logprobs') this.topLogProbabilities,
       @JsonKey(name: 'response_format')
       final Map<String, String>? responseFormat,
-      @JsonKey(name: 'stop') final List<int>? stop,
-      @JsonKey(name: 'tools') final List<Tool>? tools,
-      @JsonKey(name: 'tool_choice') final List<ToolChoice>? toolChoices})
+      @JsonKey(name: 'stop') final List<int>? stop})
       : _logitBias = logitBias,
         _responseFormat = responseFormat,
-        _stop = stop,
-        _tools = tools,
-        _toolChoices = toolChoices;
+        _stop = stop;
 
   factory _$ParametersImpl.fromJson(Map<String, dynamic> json) =>
       _$$ParametersImplFromJson(json);
@@ -1077,51 +1034,9 @@ class _$ParametersImpl implements _Parameters {
     return EqualUnmodifiableListView(value);
   }
 
-  /// Tool calling parameter.
-  /// Will be passed down as-is for providers implementing OpenAI's interface.
-  /// For providers with custom interfaces, we transform and map the properties.
-  /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-  final List<Tool>? _tools;
-
-  /// Tool calling parameter.
-  /// Will be passed down as-is for providers implementing OpenAI's interface.
-  /// For providers with custom interfaces, we transform and map the properties.
-  /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-  @override
-  @JsonKey(name: 'tools')
-  List<Tool>? get tools {
-    final value = _tools;
-    if (value == null) return null;
-    if (_tools is EqualUnmodifiableListView) return _tools;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  /// Controls which (if any) tool is called by the model.
-  /// 'none' means the model will not call any tool and instead generates a message.
-  /// 'auto' means the model can pick between generating a message or calling one or more tools.
-  /// 'required' means the model must call one or more tools.
-  /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-  final List<ToolChoice>? _toolChoices;
-
-  /// Controls which (if any) tool is called by the model.
-  /// 'none' means the model will not call any tool and instead generates a message.
-  /// 'auto' means the model can pick between generating a message or calling one or more tools.
-  /// 'required' means the model must call one or more tools.
-  /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-  @override
-  @JsonKey(name: 'tool_choice')
-  List<ToolChoice>? get toolChoices {
-    final value = _toolChoices;
-    if (value == null) return null;
-    if (_toolChoices is EqualUnmodifiableListView) return _toolChoices;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   String toString() {
-    return 'Parameters(temperature: $temperature, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minProbability: $minProbability, topAnswer: $topAnswer, seed: $seed, maxTokens: $maxTokens, logitBias: $logitBias, logProbabilities: $logProbabilities, topLogProbabilities: $topLogProbabilities, responseFormat: $responseFormat, stop: $stop, tools: $tools, toolChoices: $toolChoices)';
+    return 'Parameters(temperature: $temperature, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minProbability: $minProbability, topAnswer: $topAnswer, seed: $seed, maxTokens: $maxTokens, logitBias: $logitBias, logProbabilities: $logProbabilities, topLogProbabilities: $topLogProbabilities, responseFormat: $responseFormat, stop: $stop)';
   }
 
   @override
@@ -1154,10 +1069,7 @@ class _$ParametersImpl implements _Parameters {
                 other.topLogProbabilities == topLogProbabilities) &&
             const DeepCollectionEquality()
                 .equals(other._responseFormat, _responseFormat) &&
-            const DeepCollectionEquality().equals(other._stop, _stop) &&
-            const DeepCollectionEquality().equals(other._tools, _tools) &&
-            const DeepCollectionEquality()
-                .equals(other._toolChoices, _toolChoices));
+            const DeepCollectionEquality().equals(other._stop, _stop));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1178,9 +1090,7 @@ class _$ParametersImpl implements _Parameters {
       logProbabilities,
       topLogProbabilities,
       const DeepCollectionEquality().hash(_responseFormat),
-      const DeepCollectionEquality().hash(_stop),
-      const DeepCollectionEquality().hash(_tools),
-      const DeepCollectionEquality().hash(_toolChoices));
+      const DeepCollectionEquality().hash(_stop));
 
   /// Create a copy of Parameters
   /// with the given fields replaced by the non-null parameter values.
@@ -1200,25 +1110,22 @@ class _$ParametersImpl implements _Parameters {
 
 abstract class _Parameters implements Parameters {
   const factory _Parameters(
-          {@JsonKey(name: 'temperature') final double? temperature,
-          @JsonKey(name: 'top_p') final double? topP,
-          @JsonKey(name: 'top_k') final int? topK,
-          @JsonKey(name: 'frequency_penalty') final double? frequencyPenalty,
-          @JsonKey(name: 'presence_penalty') final double? presencePenalty,
-          @JsonKey(name: 'repetition_penalty') final double? repetitionPenalty,
-          @JsonKey(name: 'min_p') final double? minProbability,
-          @JsonKey(name: 'top_a') final double? topAnswer,
-          @JsonKey(name: 'seed') final int? seed,
-          @JsonKey(name: 'max_tokens') final int? maxTokens,
-          @JsonKey(name: 'logit_bias') final Map<String, int>? logitBias,
-          @JsonKey(name: 'logprobs') final bool? logProbabilities,
-          @JsonKey(name: 'top_logprobs') final int? topLogProbabilities,
-          @JsonKey(name: 'response_format')
-          final Map<String, String>? responseFormat,
-          @JsonKey(name: 'stop') final List<int>? stop,
-          @JsonKey(name: 'tools') final List<Tool>? tools,
-          @JsonKey(name: 'tool_choice') final List<ToolChoice>? toolChoices}) =
-      _$ParametersImpl;
+      {@JsonKey(name: 'temperature') final double? temperature,
+      @JsonKey(name: 'top_p') final double? topP,
+      @JsonKey(name: 'top_k') final int? topK,
+      @JsonKey(name: 'frequency_penalty') final double? frequencyPenalty,
+      @JsonKey(name: 'presence_penalty') final double? presencePenalty,
+      @JsonKey(name: 'repetition_penalty') final double? repetitionPenalty,
+      @JsonKey(name: 'min_p') final double? minProbability,
+      @JsonKey(name: 'top_a') final double? topAnswer,
+      @JsonKey(name: 'seed') final int? seed,
+      @JsonKey(name: 'max_tokens') final int? maxTokens,
+      @JsonKey(name: 'logit_bias') final Map<String, int>? logitBias,
+      @JsonKey(name: 'logprobs') final bool? logProbabilities,
+      @JsonKey(name: 'top_logprobs') final int? topLogProbabilities,
+      @JsonKey(name: 'response_format')
+      final Map<String, String>? responseFormat,
+      @JsonKey(name: 'stop') final List<int>? stop}) = _$ParametersImpl;
 
   factory _Parameters.fromJson(Map<String, dynamic> json) =
       _$ParametersImpl.fromJson;
@@ -1362,23 +1269,6 @@ abstract class _Parameters implements Parameters {
   @override
   @JsonKey(name: 'stop')
   List<int>? get stop;
-
-  /// Tool calling parameter.
-  /// Will be passed down as-is for providers implementing OpenAI's interface.
-  /// For providers with custom interfaces, we transform and map the properties.
-  /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-  @override
-  @JsonKey(name: 'tools')
-  List<Tool>? get tools;
-
-  /// Controls which (if any) tool is called by the model.
-  /// 'none' means the model will not call any tool and instead generates a message.
-  /// 'auto' means the model can pick between generating a message or calling one or more tools.
-  /// 'required' means the model must call one or more tools.
-  /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-  @override
-  @JsonKey(name: 'tool_choice')
-  List<ToolChoice>? get toolChoices;
 
   /// Create a copy of Parameters
   /// with the given fields replaced by the non-null parameter values.

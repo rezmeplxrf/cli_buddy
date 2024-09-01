@@ -1,16 +1,14 @@
 import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:objectbox/objectbox.dart';
 
 part 'common_llm.freezed.dart';
 part 'common_llm.g.dart';
-
 
 @freezed
 class ChatSession with _$ChatSession {
   @JsonSerializable(explicitToJson: true)
   const factory ChatSession({
-    required List<Message> messages, 
+    required List<Message> messages,
     String? model,
     Parameters? parameters,
   }) = _ChatSession;
@@ -34,7 +32,6 @@ class Message with _$Message {
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
 }
-
 
 @freezed
 class Parameters with _$Parameters {
@@ -150,124 +147,133 @@ class Parameters with _$Parameters {
     /// Stop generation immediately if the model encounter any token specified in the stop array.
     @JsonKey(name: 'stop') List<int>? stop,
 
+    ///
+    /// Not implemented yet
+    ///
     /// Tool calling parameter.
     /// Will be passed down as-is for providers implementing OpenAI's interface.
     /// For providers with custom interfaces, we transform and map the properties.
     /// Otherwise, we transform the tools into a YAML template. The model responds with an assistant message.
-    @JsonKey(name: 'tools') List<Tool>? tools,
+    // @JsonKey(name: 'tools') List<Tool>? tools,
 
-    /// Controls which (if any) tool is called by the model.
-    /// 'none' means the model will not call any tool and instead generates a message.
-    /// 'auto' means the model can pick between generating a message or calling one or more tools.
-    /// 'required' means the model must call one or more tools.
-    /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
-    @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices,
+    ///
+    /// Not implemented yet
+    ///
+    // /// Controls which (if any) tool is called by the model.
+    // /// 'none' means the model will not call any tool and instead generates a message.
+    // /// 'auto' means the model can pick between generating a message or calling one or more tools.
+    // /// 'required' means the model must call one or more tools.
+    // /// Specifying a particular tool via {"type": "function", "function": {"name": "my_function"}} forces the model to call that tool.
+    // @JsonKey(name: 'tool_choice') List<ToolChoice>? toolChoices,
   }) = _Parameters;
 
   factory Parameters.fromJson(Map<String, Object?> json) =>
       _$ParametersFromJson(json);
 }
 
-class Tool {
-  Tool({
-    required this.type,
-    required this.function,
-  });
+///
+/// Not implemented yet
+///
+// class Tool {
+//   Tool({
+//     required this.type,
+//     required this.function,
+//   });
 
-  factory Tool.fromJson(Map<String, dynamic> json) {
-    return Tool(
-      type: json['type'] as String,
-      function: FunctionDescription.fromJson(
-          json['function'] as Map<String, dynamic>),
-    );
-  }
-  final String type;
-  final FunctionDescription function;
+//   factory Tool.fromJson(Map<String, dynamic> json) {
+//     return Tool(
+//       type: json['type'] as String,
+//       function: FunctionDescription.fromJson(
+//           json['function'] as Map<String, dynamic>),
+//     );
+//   }
+//   final String type;
+//   final FunctionDescription function;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'function': function.toJson(),
-    };
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'type': type,
+//       'function': function.toJson(),
+//     };
+//   }
+// }
 
-class FunctionDescription {
-  FunctionDescription({
-    required this.name,
-    required this.parameters,
-    this.description,
-  });
+// class FunctionDescription {
+//   FunctionDescription({
+//     required this.name,
+//     required this.parameters,
+//     this.description,
+//   });
 
-  factory FunctionDescription.fromJson(Map<String, dynamic> json) {
-    return FunctionDescription(
-      description: json['description'] as String?,
-      name: json['name'] as String,
-      parameters: json['parameters'] as Map<String, dynamic>,
-    );
-  }
-  final String? description;
-  final String name;
-  final Map<String, dynamic> parameters;
+//   factory FunctionDescription.fromJson(Map<String, dynamic> json) {
+//     return FunctionDescription(
+//       description: json['description'] as String?,
+//       name: json['name'] as String,
+//       parameters: json['parameters'] as Map<String, dynamic>,
+//     );
+//   }
+//   final String? description;
+//   final String name;
+//   final Map<String, dynamic> parameters;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'description': description,
-      'name': name,
-      'parameters': parameters,
-    };
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'description': description,
+//       'name': name,
+//       'parameters': parameters,
+//     };
+//   }
+// }
 
-class ToolChoice {
-  ToolChoice._({
-    this.type,
-    this.function,
-  });
+// class ToolChoice {
+//   ToolChoice._({
+//     this.type,
+//     this.function,
+//   });
 
-  factory ToolChoice.none() {
-    return ToolChoice._();
-  }
+//   factory ToolChoice.none() {
+//     return ToolChoice._();
+//   }
 
-  factory ToolChoice.auto() {
-    return ToolChoice._(type: 'auto');
-  }
+//   factory ToolChoice.auto() {
+//     return ToolChoice._(type: 'auto');
+//   }
 
-  factory ToolChoice.function(String name) {
-    return ToolChoice._(
-      type: 'function',
-      function: FunctionDescription(name: name, parameters: {}),
-    );
-  }
+//   factory ToolChoice.function(String name) {
+//     return ToolChoice._(
+//       type: 'function',
+//       function: FunctionDescription(name: name, parameters: {}),
+//     );
+//   }
 
-  factory ToolChoice.fromJson(dynamic json) {
-    if (json == 'none') {
-      return ToolChoice.none();
-    } else if (json == 'auto') {
-      return ToolChoice.auto();
-    } else {
-      return ToolChoice._(
-        type: (json as Map<String, dynamic>).containsKey('type')
-            ? json['type'] as String
-            : null,
-        function: FunctionDescription.fromJson(
-            json['function'] as Map<String, dynamic>),
-      );
-    }
-  }
-  final String? type;
-  final FunctionDescription? function;
+//   factory ToolChoice.fromJson(dynamic json) {
+//     if (json == 'none') {
+//       return ToolChoice.none();
+//     } else if (json == 'auto') {
+//       return ToolChoice.auto();
+//     } else {
+//       return ToolChoice._(
+//         type: (json as Map<String, dynamic>).containsKey('type')
+//             ? json['type'] as String
+//             : null,
+//         function: FunctionDescription.fromJson(
+//             json['function'] as Map<String, dynamic>),
+//       );
+//     }
+//   }
+//   final String? type;
+//   final FunctionDescription? function;
 
-  dynamic toJson() {
-    if (type == null) {
-      return 'none';
-    } else if (type == 'auto') {
-      return 'auto';
-    } else {
-      return {
-        'type': type,
-        'function': function?.toJson(),
-      };
-    }
-  }
-}
+//   dynamic toJson() {
+//     if (type == null) {
+//       return 'none';
+//     } else if (type == 'auto') {
+//       return 'auto';
+//     } else {
+//       return {
+//         'type': type,
+//         'function': function?.toJson(),
+//       };
+//     }
+//   }
+// }

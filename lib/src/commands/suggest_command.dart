@@ -64,7 +64,7 @@ class SuggestionCommand extends Command<int> {
         // handle the success here
         print(success.toJson());
       },
-      (failure) {x
+      (failure) {
         print(failure.toJson());
       },
     );

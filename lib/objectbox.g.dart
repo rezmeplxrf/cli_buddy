@@ -19,18 +19,18 @@ export 'package:objectbox/objectbox.dart'; // so that callers only have to impor
 
 final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(1, 7197903377282785150),
-      name: 'User',
-      lastPropertyId: const obx_int.IdUid(3, 8671164928168730335),
+      id: const obx_int.IdUid(8, 219559440110391375),
+      name: 'ChatSessionObj',
+      lastPropertyId: const obx_int.IdUid(2, 4757890480076465614),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 7436341431742649142),
+            id: const obx_int.IdUid(1, 8440199423119109681),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 6867052450524148658),
+            id: const obx_int.IdUid(2, 4757890480076465614),
             name: 'name',
             type: 9,
             flags: 0)
@@ -73,31 +73,55 @@ obx.Store openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 7197903377282785150),
+      lastEntityId: const obx_int.IdUid(8, 219559440110391375),
       lastIndexId: const obx_int.IdUid(0, 0),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [],
+      retiredEntityUids: const [
+        7197903377282785150,
+        3039817446275430734,
+        8638115444279190067,
+        6975419890662908142,
+        1108049348362531907,
+        676032904795040519,
+        588197784449686384
+      ],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [8671164928168730335],
+      retiredPropertyUids: const [
+        8671164928168730335,
+        7436341431742649142,
+        6867052450524148658,
+        75366479064335440,
+        6996444716822839245,
+        9059216085310575479,
+        6711882052369313489,
+        2931869564416824313,
+        795456985963832272,
+        4493947438154819770,
+        7636000129563251714,
+        1902537270537812947,
+        7891237151917321233,
+        7046596691345783714,
+        1078599638499560405
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
       version: 1);
 
   final bindings = <Type, obx_int.EntityDefinition>{
-    User: obx_int.EntityDefinition<User>(
+    ChatSessionObj: obx_int.EntityDefinition<ChatSessionObj>(
         model: _entities[0],
-        toOneRelations: (User object) => [],
-        toManyRelations: (User object) => {},
-        getId: (User object) => object.id,
-        setId: (User object, int id) {
+        toOneRelations: (ChatSessionObj object) => [],
+        toManyRelations: (ChatSessionObj object) => {},
+        getId: (ChatSessionObj object) => object.id,
+        setId: (ChatSessionObj object, int id) {
           object.id = id;
         },
-        objectToFB: (User object, fb.Builder fbb) {
+        objectToFB: (ChatSessionObj object, fb.Builder fbb) {
           final nameOffset =
               object.name == null ? null : fbb.writeString(object.name!);
-          fbb.startTable(4);
+          fbb.startTable(3);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.finish(fbb.endTable());
@@ -107,7 +131,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
-          final object = User()
+          final object = ChatSessionObj()
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..name = const fb.StringReader(asciiOptimization: true)
                 .vTableGetNullable(buffer, rootOffset, 6);
@@ -119,11 +143,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
   return obx_int.ModelDefinition(model, bindings);
 }
 
-/// [User] entity fields to define ObjectBox queries.
-class User_ {
-  /// See [User.id].
-  static final id = obx.QueryIntegerProperty<User>(_entities[0].properties[0]);
+/// [ChatSessionObj] entity fields to define ObjectBox queries.
+class ChatSessionObj_ {
+  /// See [ChatSessionObj.id].
+  static final id =
+      obx.QueryIntegerProperty<ChatSessionObj>(_entities[0].properties[0]);
 
-  /// See [User.name].
-  static final name = obx.QueryStringProperty<User>(_entities[0].properties[1]);
+  /// See [ChatSessionObj.name].
+  static final name =
+      obx.QueryStringProperty<ChatSessionObj>(_entities[0].properties[1]);
 }
