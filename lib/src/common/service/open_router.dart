@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:cli_buddy/src/common/domain/common_llm.dart';
 import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
-import 'package:cli_buddy/src/common/secret/load.dart';
+import 'package:cli_buddy/src/common/service/secret.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -16,7 +16,7 @@ class OpenRouterService {
 
   static Future<Result<ChatSession, CustomException>> invoke(
       {required ChatSession session, required Logger logger}) async {
-    openrouterKey ??= SecretService.readOpenrouterKey();
+    openrouterKey ??= await SecretService.readOpenrouterKey(logger);
     if (openrouterKey == null) {
       throw CustomException(
         message: 'openrouter_key not found in .env file',

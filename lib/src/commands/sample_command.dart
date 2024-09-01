@@ -3,7 +3,7 @@ import 'package:mason_logger/mason_logger.dart';
 
 /// {@template sample_command}
 ///
-/// `cli_buddy sample`
+/// `buddy sample`
 /// A [Command] to exemplify a sub command
 /// {@endtemplate}
 class SampleCommand extends Command<int> {
