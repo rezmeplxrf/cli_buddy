@@ -1,15 +1,11 @@
-# 0.0.1-dev.1
+# 0.0.3
 
-* Init
-
-# 0.0.1
-
-* Initial release for testing purpose in order to use 'dart pub global activate' only.
+* Added set-path and set-model commands.
 
 # 0.0.2
 
 * Added suggest command.
 
-# 0.0.3
+# 0.0.1
 
-* Added set-path and set-model commands.
+* Initial release for testing purpose in order to use 'dart pub global activate' only.
