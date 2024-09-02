@@ -46,7 +46,7 @@ class SuggestionCommand extends Command<int> {
       _logger.info('Usage: $name <prompt>');
       return ExitCode.usage.code;
     }
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
     final sysMsg = Message(
         role: Role.system,
         content: PromptService.cmdOnly(),
@@ -70,10 +70,8 @@ class SuggestionCommand extends Command<int> {
     }
 
     if (argResults?['desc'] == true) {
-      currentTime = DateTime.now().millisecondsSinceEpoch;
       final initialSession = initialResult.getOrThrow();
-      final newResult =
-          await _explain(currentTime, initialSession, shouldDebug);
+      final newResult = await _explain(initialSession, shouldDebug);
       if (newResult.isError()) {
         _logger.err('An Error occured while asking for descriptions');
         return ExitCode.tempFail.code;
@@ -111,8 +109,7 @@ class SuggestionCommand extends Command<int> {
         await ActionService.run(aiCMD);
 
       case ActionType.explain:
-        final explainResult =
-            await _explain(currentTime, initialSession, shouldDebug);
+        final explainResult = await _explain(initialSession, shouldDebug);
         if (explainResult.isError()) {
           _logger.err('An Error occured while asking for explanations');
           return ExitCode.tempFail.code;
@@ -125,7 +122,8 @@ class SuggestionCommand extends Command<int> {
   }
 
   Future<Result<ChatSession, CustomException>> _explain(
-      int currentTime, ChatSession initialSession, bool shouldDebug) async {
+      ChatSession initialSession, bool shouldDebug) async {
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
     final nextMsg = Message(
         role: Role.user,
         content: PromptService.describeCMD(),
