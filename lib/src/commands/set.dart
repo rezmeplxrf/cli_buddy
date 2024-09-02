@@ -71,7 +71,9 @@ class SetCommand extends Command<int> {
 
     final configFilePath = configPath ?? p.join(configDir, 'buddy.config');
     final configFile = File(configFilePath as String);
-
+    // ANSI escape code for clickable link (some terminals don't support this)
+    final clickableLink =
+        '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
     Map<String, dynamic> config;
 
     if (configFile.existsSync()) {
@@ -85,7 +87,7 @@ class SetCommand extends Command<int> {
       }
     } else {
       _logger.info(
-          'Config file not found. Creating a new config file at ${Link(configFile.path)}');
+          'Config file not found. Creating a new config file at $clickableLink');
       config = {};
     }
 
@@ -100,12 +102,14 @@ class SetCommand extends Command<int> {
           'Created secret.env and set API key successfully at $secretEnvPath');
     } else if (path != null) {
       config['secret_env_path'] = path;
-      _logger.info('Path to the secret.env saved successfully: $path');
+      _logger.info(
+          'Saved Path to the secret.env ($path) successfully at $clickableLink');
     }
 
     if (model != null) {
       config['default_model'] = model;
-      _logger.info('Default Model ($model) saved successfully.');
+      _logger
+          .info('Saved Default Model ($model) successfully at $clickableLink');
     }
 
     final updatedContent = const JsonEncoder.withIndent('  ').convert(config);

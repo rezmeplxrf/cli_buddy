@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cli_buddy/src/common/domain/common_llm.dart';
+import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:dotenv/dotenv.dart';
 import 'package:mason_logger/mason_logger.dart';
 

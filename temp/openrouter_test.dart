@@ -1,4 +1,4 @@
-import 'package:cli_buddy/src/common/domain/common_llm.dart';
+import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:mason_logger/mason_logger.dart';
 

@@ -5,6 +5,7 @@ analyzer:
     eol_at_end_of_file: ignore
     invalid_annotation_target: ignore
     lines_longer_than_80_chars: ignore
+    no_default_cases: ignore
     require_trailing_commas: ignore
   exclude:
     - "**/*.g.dart"

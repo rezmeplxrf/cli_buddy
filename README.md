@@ -55,7 +55,7 @@ dart pub global activate --source=path <path to this package>
 
 ```sh
 # Suggest command
-$ buddy suggest how can I update homebrew?
+$ buddy suggest how can I update homebrew
 
 # if you want to use special character use ""
 $ buddy suggest "how can I update homebrew?"

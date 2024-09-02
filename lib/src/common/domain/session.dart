@@ -1,8 +1,8 @@
 import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'common_llm.freezed.dart';
-part 'common_llm.g.dart';
+part 'session.freezed.dart';
+part 'session.g.dart';
 
 @freezed
 class ChatSession with _$ChatSession {

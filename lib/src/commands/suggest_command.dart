@@ -1,8 +1,12 @@
 import 'package:args/command_runner.dart';
-import 'package:cli_buddy/src/common/domain/common_llm.dart';
+import 'package:cli_buddy/src/common/domain/action.dart';
+import 'package:cli_buddy/src/common/domain/exception.dart';
+import 'package:cli_buddy/src/common/domain/session.dart';
+import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:result_dart/result_dart.dart';
 
 /// {@template suggest_command}
 ///
@@ -21,12 +25,10 @@ class SuggestionCommand extends Command<int> {
         help: 'Also describes the command',
         negatable: false,
       )
-      ..addFlag(
-        'raw',
-        abbr: 'r',
-        help: 'get raw outputs of prompt and api requests',
-        negatable: false,
-      );
+      ..addFlag('raw',
+          abbr: 'r',
+          help: 'get raw outputs of prompt and api requests',
+          negatable: false);
   }
 
   @override
@@ -44,7 +46,7 @@ class SuggestionCommand extends Command<int> {
       _logger.info('Usage: $name <prompt>');
       return ExitCode.usage.code;
     }
-    final currentTime = DateTime.now().millisecondsSinceEpoch;
+    var currentTime = DateTime.now().millisecondsSinceEpoch;
     final sysMsg = Message(
         role: Role.system,
         content: PromptService.cmdOnly(),
@@ -56,49 +58,81 @@ class SuggestionCommand extends Command<int> {
     final session = ChatSession(messages: [sysMsg, initialMsg]);
     var shouldDebug = false;
 
-    if (argResults?['raw'] != null && argResults?['raw'] == true) {
+    if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
 
-    final response = await OpenRouterService.invoke(
+    final initialResult = await OpenRouterService.invoke(
         session: session, logger: _logger, debug: shouldDebug);
+    if (initialResult.isError()) {
+      _logger.err('An Error occured while asking for suggested commands');
+      return ExitCode.tempFail.code;
+    }
 
-    if (argResults?['desc'] != null &&
-        argResults?['desc'] == true &&
-        response.isSuccess()) {
-      final nextMsg = Message(
-          role: Role.user,
-          content: PromptService.describeCMD(),
-          timestamp: currentTime);
-
-      final responseResult = response.getOrNull();
-      if (responseResult != null) {
-        final newSession = responseResult
-            .copyWith(messages: [...responseResult.messages, nextMsg]);
-        final newResponse = await OpenRouterService.invoke(
-            session: newSession, logger: _logger, debug: shouldDebug);
-        if (newResponse.isError()) {
-          _logger.err('An Error occured while asking for descriptions');
-          return ExitCode.tempFail.code;
-        } else {
-          return ExitCode.success.code;
-        }
-      } else {
+    if (argResults?['desc'] == true) {
+      currentTime = DateTime.now().millisecondsSinceEpoch;
+      final initialSession = initialResult.getOrThrow();
+      final newResult =
+          await _explain(currentTime, initialSession, shouldDebug);
+      if (newResult.isError()) {
         _logger.err('An Error occured while asking for descriptions');
         return ExitCode.tempFail.code;
       }
     }
-    if (response.isError()) {
-      _logger.err('An Error occured while asking for suggested commands');
-      return ExitCode.tempFail.code;
+
+    final action1 = _logger.chooseOne(
+      'Your action:',
+      choices: [
+        ActionType.run,
+        ActionType.copy,
+        ActionType.explain,
+      ],
+      defaultValue: ActionType.copy,
+      display: (choice) {
+        switch (choice) {
+          case ActionType.run:
+            return 'run';
+          case ActionType.copy:
+            return 'copy';
+          case ActionType.explain:
+            return 'Explain';
+          default:
+            throw UnimplementedError();
+        }
+      },
+    );
+    final initialSession = initialResult.getOrThrow();
+    final aiCMD = initialSession.messages.last.content;
+    switch (action1) {
+      case ActionType.run:
+        await ActionService.run(aiCMD);
+      case ActionType.copy:
+        await ActionService.copy(aiCMD);
+      case ActionType.explain:
+        final explainResult =
+            await _explain(currentTime, initialSession, shouldDebug);
+        if (explainResult.isError()) {
+          _logger.err('An Error occured while asking for explanations');
+          return ExitCode.tempFail.code;
+        }
+      default:
+        throw UnimplementedError();
     }
-    // TODO:
-    // 0. Test existing command first
-    // Before exiting, give options to
-    // 1. copy the suggested command
-    // 2. run it directly
-    // 3. execute another prompt
 
     return ExitCode.success.code;
+  }
+
+  Future<Result<ChatSession, CustomException>> _explain(
+      int currentTime, ChatSession initialSession, bool shouldDebug) async {
+    final nextMsg = Message(
+        role: Role.user,
+        content: PromptService.describeCMD(),
+        timestamp: currentTime);
+
+    final newSession = initialSession
+        .copyWith(messages: [...initialSession.messages, nextMsg]);
+    final newResult = await OpenRouterService.invoke(
+        session: newSession, logger: _logger, debug: shouldDebug);
+    return newResult;
   }
 }
