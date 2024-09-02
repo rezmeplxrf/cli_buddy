@@ -1,12 +1,10 @@
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/action.dart';
-import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:result_dart/result_dart.dart';
 
 /// {@template suggest_command}
 ///

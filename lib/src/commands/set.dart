@@ -6,7 +6,13 @@ import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 
+/// {@template set_command}
+///
+/// `buddy set`
+/// A [Command] to get cli suggestion based on prompt
+/// {@endtemplate}
 class SetCommand extends Command<int> {
+  /// {@macro set_command}
   SetCommand({
     required Logger logger,
   }) : _logger = logger {
