@@ -20,14 +20,13 @@ Do not provide markdown formatting such as ```.
     return prompt;
   }
 
-  static String describeCMD() {
-    const describeShellPrompt = '''
-Provide a terse, single sentence description of the given shell command.
-Describe each argument and option of the command.
-Provide short responses in about 80 words.
-APPLY MARKDOWN formatting when possible.''';
-
-    return describeShellPrompt;
+  static String explain() {
+    const explainPrompt = '''
+Provide short and concise explanation of your previous response about command or code.
+Provide only plain text without Markdown formatting.
+Do not provide markdown formatting such as ```
+''';
+    return explainPrompt;
   }
 
   static String codeOnly() {
@@ -49,9 +48,7 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     final askPrompt = '''
 You are programming and system administration assistant.
 You are managing $os operating system with $shell shell.
-Provide short responses in about 100 words, unless you are specifically asked for more details.
-If you need to store any data, assume it will be stored in the conversation.
-APPLY MARKDOWN formatting when possible.''';
+Provide short responses in about 100 words, unless you are specifically asked for more details.''';
     return askPrompt;
   }
 }

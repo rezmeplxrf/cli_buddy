@@ -65,3 +65,10 @@ $ buddy --version
 # Show usage help
 $ buddy --help
 ```
+
+
+## RoadMap
+
+- Create CodeCommender and add flag that will paste the code into a file
+- Render Markdown format in CLI
+- Support Rag

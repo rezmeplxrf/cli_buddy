@@ -62,7 +62,7 @@ class SuggestionCommand extends Command<int> {
     if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
-   
+
     final initialResult = await openRouter.invoke(
         session: session, logger: _logger, shouldDebug: shouldDebug);
     if (initialResult.isError()) {
@@ -72,14 +72,15 @@ class SuggestionCommand extends Command<int> {
 
     if (argResults?['desc'] == true) {
       final initialSession = initialResult.getOrThrow();
-      final newResult = await _explain(initialSession, shouldDebug);
+      final newResult = await ActionService.explain(initialSession, _logger,
+          shouldDebug: shouldDebug);
       if (newResult.isError()) {
         _logger.err('An Error occured while asking for descriptions');
         return ExitCode.tempFail.code;
       }
     }
 
-    final action1 = _logger.chooseOne(
+    final action = _logger.chooseOne(
       'Your action:',
       choices: [
         ActionType.copy,
@@ -102,7 +103,7 @@ class SuggestionCommand extends Command<int> {
     );
     final initialSession = initialResult.getOrThrow();
     final aiCMD = initialSession.messages.last.content;
-    switch (action1) {
+    switch (action) {
       case ActionType.copy:
         await ActionService.copy(aiCMD);
 
@@ -110,7 +111,9 @@ class SuggestionCommand extends Command<int> {
         await ActionService.run(aiCMD);
 
       case ActionType.explain:
-        final explainResult = await _explain(initialSession, shouldDebug);
+        final explainResult = await ActionService.explain(
+            initialSession, _logger,
+            shouldDebug: shouldDebug);
         if (explainResult.isError()) {
           _logger.err('An Error occured while asking for explanations');
           return ExitCode.tempFail.code;
@@ -120,20 +123,5 @@ class SuggestionCommand extends Command<int> {
     }
 
     return ExitCode.success.code;
-  }
-
-  Future<Result<ChatSession, CustomException>> _explain(
-      ChatSession initialSession, bool shouldDebug) async {
-    final currentTime = DateTime.now().millisecondsSinceEpoch;
-    final nextMsg = Message(
-        role: Role.user,
-        content: PromptService.describeCMD(),
-        timestamp: currentTime);
-
-    final newSession = initialSession
-        .copyWith(messages: [...initialSession.messages, nextMsg]);
-    final newResult = await openRouter.invoke(
-        session: newSession, logger: _logger, shouldDebug: shouldDebug);
-    return newResult;
   }
 }

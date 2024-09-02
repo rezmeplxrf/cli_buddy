@@ -11,6 +11,7 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
 final openRouter = OpenRouterService();
+const _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
 class OpenRouterService {
   factory OpenRouterService() => _instance;
@@ -74,7 +75,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
 
     final response = await dio.post<ResponseBody>(
-      'https://openrouter.ai/api/v1/chat/completions',
+      _baseUrl,
       options: Options(headers: headers, responseType: ResponseType.stream),
       data: prompt,
     );
@@ -83,7 +84,6 @@ ${lightCyan.wrap(promptForDebug)}
 
     ChatSession? newSession;
     final responses = <ORResponse>[];
-
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
       final decodedString = utf8.decode(chunk);
@@ -108,12 +108,12 @@ ${lightCyan.wrap(promptForDebug)}
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
                 final log = lightGreen.wrap(msg.toString())!;
-
                 progress?.update(log);
               }
             }
 
             if (response.choices?.first.error != null) {
+              progress?.cancel();
               throw CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
@@ -125,6 +125,7 @@ ${lightCyan.wrap(promptForDebug)}
         }
       }
     }
+
     progress?.complete();
 
     if (responses.isNotEmpty) {
@@ -154,4 +155,6 @@ ${lightCyan.wrap(promptForDebug)}
           stack: 'OpenRouterService.invoke');
     }
   }
+
+ 
 }
