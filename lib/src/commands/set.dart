@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 
-/// TODO: add test
 class SetCommand extends Command<int> {
   SetCommand({
     required Logger logger,
@@ -14,7 +14,7 @@ class SetCommand extends Command<int> {
       ..addOption(
         'secret',
         abbr: 's',
-        help: 'Path to the secret.env file',
+        help: 'Sets path to the secret.env file',
         valueHelp: 'path',
       )
       ..addOption(
@@ -27,7 +27,7 @@ class SetCommand extends Command<int> {
         'config',
         abbr: 'c',
         help:
-            'Path to the existing buddy.config file. Note that custom path will not persist so it must be provided each time. Also if the file does not exist, new one will be created at the default path.',
+            'Sets path to the existing buddy.config file. Note that custom path will not persist so it must be provided each time. Also if the file does not exist, new one will be created at the default path.',
         valueHelp: 'path',
       )
       ..addOption(
@@ -63,7 +63,7 @@ class SetCommand extends Command<int> {
       _logger.warn('--secret will be ignored since --key is provided');
     }
 
-    final configDir = _getConfigDirectory();
+    final configDir = SysInfoService.getConfigDirectory();
     if (configDir == null) {
       _logger.err('Unsupported OS');
       return ExitCode.osError.code;
@@ -85,7 +85,7 @@ class SetCommand extends Command<int> {
       }
     } else {
       _logger.info(
-          'Config file not found. Creating a new one at ${configFile.path}');
+          'Config file not found. Creating a new config file at ${Link(configFile.path)}');
       config = {};
     }
 
@@ -112,18 +112,5 @@ class SetCommand extends Command<int> {
     await configFile.writeAsString(updatedContent);
 
     return ExitCode.success.code;
-  }
-
-  String? _getConfigDirectory() {
-    if (Platform.isWindows) {
-      return Platform.environment['APPDATA'];
-    } else if (Platform.isMacOS) {
-      return p.join(
-          Platform.environment['HOME']!, 'Library', 'Application Support');
-    } else if (Platform.isLinux) {
-      return p.join(Platform.environment['HOME']!, '.config');
-    } else {
-      return null;
-    }
   }
 }

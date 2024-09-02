@@ -73,7 +73,8 @@ class SuggestionCommand extends Command<int> {
 
       final responseResult = response.getOrNull();
       if (responseResult != null) {
-        final newSession = responseResult.copyWith(messages: [...responseResult.messages, nextMsg]);
+        final newSession = responseResult
+            .copyWith(messages: [...responseResult.messages, nextMsg]);
         final newResponse = await OpenRouterService.invoke(
             session: newSession, logger: _logger, debug: shouldDebug);
         if (newResponse.isError()) {
@@ -92,6 +93,7 @@ class SuggestionCommand extends Command<int> {
       return ExitCode.tempFail.code;
     }
     // TODO:
+    // 0. Test existing command first
     // Before exiting, give options to
     // 1. copy the suggested command
     // 2. run it directly

@@ -6,4 +6,5 @@ void main() async {
   print(await ConfigService.loadDefaultModel(logger));
   print(await ConfigService.loadOpenrouterKey(logger));
   print(await ConfigService.loadDefaultParameters(logger));
+  print(await ConfigService.loadDefaultParameters(logger));
 }

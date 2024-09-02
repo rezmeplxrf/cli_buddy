@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 
 class SysInfoService {
   factory SysInfoService() => _instance;
@@ -17,6 +18,27 @@ class SysInfoService {
       return Platform.environment['ComSpec'] ?? 'Unknown';
     } else {
       return Platform.environment['SHELL'] ?? 'Unknown';
+    }
+  }
+
+  static String get sdkPath =>
+      p.dirname(p.dirname(Platform.resolvedExecutable));
+
+  static String? getConfigDirectory() {
+    String? configDir;
+    if (Platform.isWindows) {
+      configDir = Platform.environment['APPDATA'];
+    } else if (Platform.isMacOS) {
+      configDir = p.join(
+          Platform.environment['HOME']!, 'Library', 'Application Support');
+    } else if (Platform.isLinux) {
+      configDir = p.join(Platform.environment['HOME']!, '.config');
+    }
+
+    if (configDir != null) {
+      return p.join(configDir, 'buddy');
+    } else {
+      return null;
     }
   }
 }
