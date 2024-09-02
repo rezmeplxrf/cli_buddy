@@ -13,24 +13,43 @@ Parameters? defaultParameters;
 String fallbackModel = 'openai/gpt-4o-2024-08-06';
 
 class ConfigService {
-  static Future<String?> loadOpenrouterKey(Logger logger) async {
+  static Map<String, dynamic>? _configData;
+
+  static Future<void> _loadConfigFile(Logger logger) async {
+    if (_configData != null) {
+      return;
+    }
+
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
       logger.err(
-          "Config file not found. Please create 'secret.env' file and add openrouter_key and run `buddy set -s <path/to/secret.env>`");
-      return null;
+          "Config file not found. Please create 'buddy.config' file and add the necessary configurations.");
+      return;
     }
 
     try {
       final configContent = await configFile.readAsString();
-      final jsonMap = jsonDecode(configContent) as Map<String, dynamic>;
+      _configData = jsonDecode(configContent) as Map<String, dynamic>;
+    } catch (e) {
+      logger
+        ..err('Error parsing config file')
+        ..detail(e.toString());
+    }
+  }
 
-      final secretEnvPath = jsonMap['secret_env_path'] as String?;
-      if (secretEnvPath == null) {
-        logger.err('secret_env_path not found in buddy.config file');
-        return null;
-      }
+  static Future<String?> loadOpenrouterKey(Logger logger) async {
+    await _loadConfigFile(logger);
+    if (_configData == null) {
+      return null;
+    }
 
+    final secretEnvPath = _configData!['secret_env_path'] as String?;
+    if (secretEnvPath == null) {
+      logger.err('secret_env_path not found in buddy.config file');
+      return null;
+    }
+
+    try {
       final env = DotEnv(includePlatformEnvironment: true)
         ..load([secretEnvPath]);
       final keyExists = env.isDefined('openrouter_key');
@@ -44,57 +63,38 @@ class ConfigService {
       return key;
     } catch (e) {
       logger
-        ..err('Error parsing secret_env_path from config file')
+        ..err('Error loading .env file')
         ..detail(e.toString());
       return null;
     }
   }
 
   static Future<String?> loadDefaultModel(Logger logger) async {
-    final configFile = File('buddy.config');
-    if (!configFile.existsSync()) {
-      logger.err(
-          "Config file not found. Please create 'buddy.config' and set the path using `set -c` command.");
+    await _loadConfigFile(logger);
+    if (_configData == null) {
       return null;
     }
 
-    try {
-      final configContent = await configFile.readAsString();
-      final jsonMap = jsonDecode(configContent) as Map<String, dynamic>;
-
-      final defaultModel = jsonMap['default_model'] as String?;
-      if (defaultModel == null) {
-        logger.warn(
-            'default_model not found in buddy.config file. We will use fallback model which is $fallbackModel');
-      }
-      return defaultModel;
-    } catch (e) {
-      logger
-        ..err('Error parsing default_model from config file')
-        ..detail(e.toString());
-      return null;
+    final defaultModel = _configData!['default_model'] as String?;
+    if (defaultModel == null) {
+      logger.warn(
+          'default_model not found in buddy.config file. We will use fallback model which is $fallbackModel');
     }
+    return defaultModel;
   }
 
   static Future<Parameters?> loadDefaultParameters(Logger logger) async {
-    final configFile = File('buddy.config');
-    if (!configFile.existsSync()) {
-      logger.err(
-          "Config file not found. Please create 'buddy.config' and set the path using `set -c` command.");
+    await _loadConfigFile(logger);
+    if (_configData == null) {
       return null;
     }
 
     try {
-      final configContent = await configFile.readAsString();
-      final jsonMap = jsonDecode(configContent);
-
-      final parameters = Parameters.fromJson(jsonMap as Map<String, dynamic>);
+      final parameters = Parameters.fromJson(_configData!);
       return parameters;
     } catch (e) {
       logger
-        ..err(
-          'Error parsing parameters from config file',
-        )
+        ..err('Error parsing parameters from config file')
         ..detail(e.toString());
       return null;
     }

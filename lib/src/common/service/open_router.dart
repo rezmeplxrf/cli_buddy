@@ -13,6 +13,7 @@ import 'package:result_dart/result_dart.dart';
 final openRouter = OpenRouterService();
 const _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
+// TODO: if messages exceed max token, remove the user messages from the first
 class OpenRouterService {
   factory OpenRouterService() => _instance;
   OpenRouterService._internal();
