@@ -83,17 +83,17 @@ class SuggestionCommand extends Command<int> {
     final action1 = _logger.chooseOne(
       'Your action:',
       choices: [
-        ActionType.run,
         ActionType.copy,
+        ActionType.run,
         ActionType.explain,
       ],
       defaultValue: ActionType.copy,
       display: (choice) {
         switch (choice) {
-          case ActionType.run:
-            return 'run';
           case ActionType.copy:
             return 'copy';
+          case ActionType.run:
+            return 'run';
           case ActionType.explain:
             return 'Explain';
           default:
@@ -104,10 +104,12 @@ class SuggestionCommand extends Command<int> {
     final initialSession = initialResult.getOrThrow();
     final aiCMD = initialSession.messages.last.content;
     switch (action1) {
-      case ActionType.run:
-        await ActionService.run(aiCMD);
       case ActionType.copy:
         await ActionService.copy(aiCMD);
+
+      case ActionType.run:
+        await ActionService.run(aiCMD);
+
       case ActionType.explain:
         final explainResult =
             await _explain(currentTime, initialSession, shouldDebug);
