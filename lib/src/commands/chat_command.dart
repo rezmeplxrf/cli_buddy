@@ -71,7 +71,7 @@ class ChatCommand extends Command<int> {
     }
 
     while (true) {
-      final initialResult = await OpenRouterService.invoke(
+      final initialResult = await openRouter.invoke(
           session: session!, logger: _logger, shouldDebug: shouldDebug);
       if (initialResult.isError()) {
         _logger.err('An Error occurred');
@@ -87,7 +87,7 @@ class ChatCommand extends Command<int> {
           content: prompt,
           timestamp: DateTime.now().millisecondsSinceEpoch);
       session = session.copyWith(messages: [...session.messages, newMsg]);
-      final newResult = await OpenRouterService.invoke(
+      final newResult = await openRouter.invoke(
           session: session, logger: _logger, shouldDebug: shouldDebug);
       if (newResult.isError()) {
         _logger.err('An Error occurred');

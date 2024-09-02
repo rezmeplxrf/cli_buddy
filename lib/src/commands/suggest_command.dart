@@ -62,8 +62,8 @@ class SuggestionCommand extends Command<int> {
     if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
-
-    final initialResult = await OpenRouterService.invoke(
+   
+    final initialResult = await openRouter.invoke(
         session: session, logger: _logger, shouldDebug: shouldDebug);
     if (initialResult.isError()) {
       _logger.err('An Error occured while asking for suggested commands');
@@ -132,7 +132,7 @@ class SuggestionCommand extends Command<int> {
 
     final newSession = initialSession
         .copyWith(messages: [...initialSession.messages, nextMsg]);
-    final newResult = await OpenRouterService.invoke(
+    final newResult = await openRouter.invoke(
         session: newSession, logger: _logger, shouldDebug: shouldDebug);
     return newResult;
   }

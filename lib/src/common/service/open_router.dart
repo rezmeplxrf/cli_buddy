@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cli_buddy/src/common/domain/exception.dart';
@@ -9,12 +10,14 @@ import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
+final openRouter = OpenRouterService();
+
 class OpenRouterService {
   factory OpenRouterService() => _instance;
   OpenRouterService._internal();
   static final OpenRouterService _instance = OpenRouterService._internal();
 
-  static Future<Result<ChatSession, CustomException>> invoke(
+  Future<Result<ChatSession, CustomException>> invoke(
       {required ChatSession session,
       required Logger logger,
       required bool shouldDebug}) async {
@@ -105,6 +108,7 @@ ${lightCyan.wrap(promptForDebug)}
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
                 final log = lightGreen.wrap(msg.toString())!;
+
                 progress?.update(log);
               }
             }
@@ -122,6 +126,7 @@ ${lightCyan.wrap(promptForDebug)}
       }
     }
     progress?.complete();
+
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
       final aiResponse = Message(
