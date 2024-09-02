@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:process_run/shell.dart';
 
-
 class ActionService {
   factory ActionService() => _instance;
   ActionService._internal();
@@ -43,17 +42,23 @@ class ActionService {
     String command,
   ) async {
     final shell = Shell();
+    print('original command: $command');
 
+    // Remove $ sign from anywhere in the command
+    final cleanedCommand =
+        command.replaceAll(RegExp(r'\$'), '').replaceAll(RegExp(r'}$'), '');
+
+    print('cleaned command: $cleanedCommand');
     try {
       if (Platform.isWindows) {
         // Windows
         await shell.run('''
-          $command}
+          $cleanedCommand
         ''');
       } else if (Platform.isMacOS || Platform.isLinux) {
         // macOS and Linux
         await shell.run('''
-          $command}
+          $cleanedCommand
         ''');
       } else {
         throw UnsupportedError('Unsupported platform');
