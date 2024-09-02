@@ -41,27 +41,17 @@ class ActionService {
   static Future<void> run(
     String command,
   ) async {
-    final shell = Shell();
-    print('original command: $command');
+    /// remove Markdown code block just in case
+    final cleanedCommand = command.replaceAll('```', '');
 
-    // Remove $ sign from anywhere in the command
-    final cleanedCommand =
-        command.replaceAll(RegExp(r'\$'), '').replaceAll(RegExp(r'}$'), '');
+    /// using && won't work with shell.run in a single run
+    final commands =
+        cleanedCommand.split('&&').map((cmd) => cmd.trim()).toList();
 
-    print('cleaned command: $cleanedCommand');
+    final shell = Shell(throwOnError: false);
     try {
-      if (Platform.isWindows) {
-        // Windows
-        await shell.run('''
-          $cleanedCommand
-        ''');
-      } else if (Platform.isMacOS || Platform.isLinux) {
-        // macOS and Linux
-        await shell.run('''
-          $cleanedCommand
-        ''');
-      } else {
-        throw UnsupportedError('Unsupported platform');
+      for (final cmd in commands) {
+        await shell.run(cmd);
       }
     } catch (e) {
       throw Exception('Error running command: $e');

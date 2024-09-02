@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
+import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:dio/dio.dart';

@@ -41,7 +41,7 @@ class SuggestionCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final args = argResults?.rest;
+    final args = argResults?.arguments;
     if (args == null || args.isEmpty) {
       _logger.info('Usage: $name <prompt>');
       return ExitCode.usage.code;
