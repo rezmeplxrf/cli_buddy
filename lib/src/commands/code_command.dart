@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/action.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
@@ -71,8 +73,7 @@ class CodeCommand extends Command<int> {
     if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
-
-    while (true) {
+    try {
       final initialResult = await openRouter.invoke(
           session: session!, logger: _logger, shouldDebug: shouldDebug);
       if (initialResult.isError()) {
@@ -80,40 +81,50 @@ class CodeCommand extends Command<int> {
         return ExitCode.tempFail.code;
       }
       session = initialResult.getOrThrow();
+     
 
-      final action = _logger.chooseOne(
-        'Your action:',
-        choices: [
-          ActionType.copy,
-          ActionType.run,
-          ActionType.explain,
-        ],
-        defaultValue: ActionType.copy,
-        display: (choice) {
-          switch (choice) {
-            case ActionType.copy:
-              return 'copy';
-            case ActionType.run:
-              return 'run';
-            case ActionType.explain:
-              return 'Explain';
-            default:
-              throw UnimplementedError();
-          }
-        },
-      );
-      try {
-        final lastMsg = session.messages.last.content;
+      while (true) {
+        final actionCompleter = Completer<ActionType>();
+
+        // to block the event loop
+        await Future.microtask(() {
+          final action = _logger.chooseOne(
+            'Your action:',
+            choices: [
+              ActionType.file,
+              ActionType.chat,
+              ActionType.copy,
+              ActionType.explain,
+            ],
+            defaultValue: ActionType.copy,
+            display: (choice) {
+              switch (choice) {
+                case ActionType.copy:
+                  return 'copy';
+                case ActionType.explain:
+                  return 'explain';
+                case ActionType.chat:
+                  return 'chat';
+                case ActionType.file:
+                  return 'file';
+                default:
+                  throw UnimplementedError();
+              }
+            },
+          );
+          actionCompleter.complete(action);
+        });
+
+        final action = await actionCompleter.future;
+        final lastMsg = session!.messages.last.content;
         switch (action) {
           case ActionType.copy:
             await ActionService.copy(lastMsg);
-
           case ActionType.file:
             final fileName = _logger.prompt(
               'Enter the name of the file you want to save the output:',
             );
             await ActionService.saveToFile(fileName, lastMsg, _logger);
-
           case ActionType.explain:
             final explainResult = await ActionService.explain(session, _logger,
                 shouldDebug: shouldDebug);
@@ -133,10 +144,10 @@ class CodeCommand extends Command<int> {
           default:
             throw UnimplementedError();
         }
-      } catch (e) {
-        _logger.err('$e');
-        return ExitCode.tempFail.code;
       }
+    } catch (e) {
+      _logger.err('$e');
+      return ExitCode.tempFail.code;
     }
   }
 }

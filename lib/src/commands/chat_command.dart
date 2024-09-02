@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
@@ -79,9 +81,17 @@ class ChatCommand extends Command<int> {
       }
       session = initialResult.getOrThrow();
 
-      final prompt = _logger.prompt(
-        '...',
-      );
+      final promptCompleter = Completer<String>();
+
+      // to block the event loop
+      await Future.microtask(() {
+        final prompt = _logger.prompt(
+          '...',
+        );
+        promptCompleter.complete(prompt);
+      });
+
+      final prompt = await promptCompleter.future;
       final newMsg = Message(
           role: Role.user,
           content: prompt,

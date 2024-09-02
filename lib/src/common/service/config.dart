@@ -106,8 +106,6 @@ class ConfigService {
   }) async {
     final configFile = File('buddy.config');
     if (!configFile.existsSync()) {
-      logger.err(
-          "Config file not found. Please create 'buddy.config' and set the path using `set -c` command.");
       return;
     }
     try {
@@ -117,10 +115,7 @@ class ConfigService {
       final shouldSaveSession = jsonMap['save_session'] as bool? ?? true;
       if (shouldSaveSession) {
         final appDir = SysInfoService.getConfigDirectory();
-        if (appDir == null) {
-          logger.err('Unsupported OS');
-          return;
-        } else {
+        if (appDir != null) {
           final sessionsPath = p.join(appDir, 'sessions');
           final sessionFilePath = p.join(sessionsPath, '${session.id}.json');
 
@@ -137,7 +132,7 @@ class ConfigService {
     } catch (e) {
       logger
         ..err(
-          'Error saving session to file',
+          'Error while saving session',
         )
         ..detail(e.toString());
     }

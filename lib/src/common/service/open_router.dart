@@ -84,7 +84,9 @@ ${lightCyan.wrap(promptForDebug)}
 
     ChatSession? newSession;
     final responses = <ORResponse>[];
+    var chunkCount = 0;
     await for (final chunk in response.data!.stream) {
+      chunkCount++;
       if (chunk.isEmpty) continue;
       final decodedString = utf8.decode(chunk);
       final parts = decodedString.split('\n');
@@ -100,20 +102,18 @@ ${lightCyan.wrap(promptForDebug)}
 
             final response = ORResponse.fromJson(decodedJson);
             responses.add(response);
-
-            if (response.choices != null &&
-                response.choices!.first.delta?.content?.trim() != null) {
-              msg.write(response.choices!.first.delta!.content);
+            final content = response.choices?.first.delta?.content;
+            if (response.choices != null && content!.isNotEmpty) {
+              msg.write(content);
               if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                final log = lightGreen.wrap(msg.toString())!;
-                progress?.update(log);
+                // increment #
+                progress?.update(chunkCount.toString());
               }
             }
 
             if (response.choices?.first.error != null) {
-              progress?.cancel();
               throw CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
@@ -127,6 +127,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
 
     progress?.complete();
+    logger.info(msg.toString());
 
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
@@ -147,6 +148,7 @@ ${lightCyan.wrap(promptForDebug)}
       logger.info(darkGray.wrap(usageLog));
     }
     if (newSession != null) {
+      unawaited(ConfigService.saveSession(logger, session: session));
       return Success(newSession);
     } else {
       throw CustomException(
@@ -155,6 +157,4 @@ ${lightCyan.wrap(promptForDebug)}
           stack: 'OpenRouterService.invoke');
     }
   }
-
- 
 }
