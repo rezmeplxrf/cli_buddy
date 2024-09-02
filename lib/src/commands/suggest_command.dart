@@ -55,7 +55,8 @@ class SuggestionCommand extends Command<int> {
     final prompt = args.join(' ');
     final initialMsg =
         Message(role: Role.user, content: prompt, timestamp: currentTime);
-    final session = ChatSession(messages: [sysMsg, initialMsg]);
+    final session =
+        ChatSession(id: currentTime, messages: [sysMsg, initialMsg]);
     var shouldDebug = false;
 
     if (argResults?['raw'] == true) {
@@ -63,7 +64,7 @@ class SuggestionCommand extends Command<int> {
     }
 
     final initialResult = await OpenRouterService.invoke(
-        session: session, logger: _logger, debug: shouldDebug);
+        session: session, logger: _logger, shouldDebug: shouldDebug);
     if (initialResult.isError()) {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;
@@ -132,7 +133,7 @@ class SuggestionCommand extends Command<int> {
     final newSession = initialSession
         .copyWith(messages: [...initialSession.messages, nextMsg]);
     final newResult = await OpenRouterService.invoke(
-        session: newSession, logger: _logger, debug: shouldDebug);
+        session: newSession, logger: _logger, shouldDebug: shouldDebug);
     return newResult;
   }
 }

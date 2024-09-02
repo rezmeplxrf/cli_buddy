@@ -20,6 +20,7 @@ ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChatSession {
+  int get id => throw _privateConstructorUsedError;
   List<Message> get messages => throw _privateConstructorUsedError;
   String? get model => throw _privateConstructorUsedError;
   Parameters? get parameters => throw _privateConstructorUsedError;
@@ -40,7 +41,8 @@ abstract class $ChatSessionCopyWith<$Res> {
           ChatSession value, $Res Function(ChatSession) then) =
       _$ChatSessionCopyWithImpl<$Res, ChatSession>;
   @useResult
-  $Res call({List<Message> messages, String? model, Parameters? parameters});
+  $Res call(
+      {int id, List<Message> messages, String? model, Parameters? parameters});
 
   $ParametersCopyWith<$Res>? get parameters;
 }
@@ -60,11 +62,16 @@ class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? messages = null,
     Object? model = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       messages: null == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -103,7 +110,8 @@ abstract class _$$ChatSessionImplCopyWith<$Res>
       __$$ChatSessionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Message> messages, String? model, Parameters? parameters});
+  $Res call(
+      {int id, List<Message> messages, String? model, Parameters? parameters});
 
   @override
   $ParametersCopyWith<$Res>? get parameters;
@@ -122,11 +130,16 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? messages = null,
     Object? model = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_$ChatSessionImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
       messages: null == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -145,15 +158,20 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class _$ChatSessionImpl implements _ChatSession {
   const _$ChatSessionImpl(
-      {required final List<Message> messages, this.model, this.parameters})
+      {required this.id,
+      required final List<Message> messages,
+      this.model,
+      this.parameters})
       : _messages = messages;
 
   factory _$ChatSessionImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatSessionImplFromJson(json);
 
+  @override
+  final int id;
   final List<Message> _messages;
   @override
   List<Message> get messages {
@@ -169,7 +187,7 @@ class _$ChatSessionImpl implements _ChatSession {
 
   @override
   String toString() {
-    return 'ChatSession(messages: $messages, model: $model, parameters: $parameters)';
+    return 'ChatSession(id: $id, messages: $messages, model: $model, parameters: $parameters)';
   }
 
   @override
@@ -177,6 +195,7 @@ class _$ChatSessionImpl implements _ChatSession {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatSessionImpl &&
+            (identical(other.id, id) || other.id == id) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             (identical(other.model, model) || other.model == model) &&
             (identical(other.parameters, parameters) ||
@@ -185,7 +204,7 @@ class _$ChatSessionImpl implements _ChatSession {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType,
+  int get hashCode => Object.hash(runtimeType, id,
       const DeepCollectionEquality().hash(_messages), model, parameters);
 
   /// Create a copy of ChatSession
@@ -206,13 +225,16 @@ class _$ChatSessionImpl implements _ChatSession {
 
 abstract class _ChatSession implements ChatSession {
   const factory _ChatSession(
-      {required final List<Message> messages,
+      {required final int id,
+      required final List<Message> messages,
       final String? model,
       final Parameters? parameters}) = _$ChatSessionImpl;
 
   factory _ChatSession.fromJson(Map<String, dynamic> json) =
       _$ChatSessionImpl.fromJson;
 
+  @override
+  int get id;
   @override
   List<Message> get messages;
   @override

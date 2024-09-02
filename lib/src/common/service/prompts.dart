@@ -42,7 +42,7 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     return codeOnlyPrompt;
   }
 
-  static String ask() {
+  static String chat() {
     final os = SysInfoService.os;
     final shell = SysInfoService.shell;
 

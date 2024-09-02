@@ -17,7 +17,7 @@ class OpenRouterService {
   static Future<Result<ChatSession, CustomException>> invoke(
       {required ChatSession session,
       required Logger logger,
-      required bool debug}) async {
+      required bool shouldDebug}) async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
     defaultModel ??= await ConfigService.loadDefaultModel(logger);
     defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
@@ -47,12 +47,12 @@ class OpenRouterService {
       prompt.addAll(parameters.toJson());
     }
 
-    final promptForDebug = json.encode(prompt);
     Progress? progress;
     logger.info(
       '\n',
     );
-    if (debug) {
+    if (shouldDebug) {
+      final promptForDebug = json.encode(prompt);
       final log = '''
 
 ## Prompt
@@ -101,7 +101,7 @@ ${lightCyan.wrap(promptForDebug)}
             if (response.choices != null &&
                 response.choices!.first.delta?.content?.trim() != null) {
               msg.write(response.choices!.first.delta!.content);
-              if (debug) {
+              if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
                 final log = lightGreen.wrap(msg.toString())!;

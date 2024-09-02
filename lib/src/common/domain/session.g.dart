@@ -8,6 +8,7 @@ part of 'session.dart';
 
 _$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
     _$ChatSessionImpl(
+      id: (json['id'] as num).toInt(),
       messages: (json['messages'] as List<dynamic>)
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -17,12 +18,22 @@ _$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
           : Parameters.fromJson(json['parameters'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) =>
-    <String, dynamic>{
-      'messages': instance.messages.map((e) => e.toJson()).toList(),
-      'model': instance.model,
-      'parameters': instance.parameters?.toJson(),
-    };
+Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) {
+  final val = <String, dynamic>{
+    'id': instance.id,
+    'messages': instance.messages.map((e) => e.toJson()).toList(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('model', instance.model);
+  writeNotNull('parameters', instance.parameters?.toJson());
+  return val;
+}
 
 _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
     _$MessageImpl(

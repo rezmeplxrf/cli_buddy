@@ -6,8 +6,9 @@ part 'session.g.dart';
 
 @freezed
 class ChatSession with _$ChatSession {
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable(explicitToJson: true, includeIfNull: false)
   const factory ChatSession({
+    required int id,
     required List<Message> messages,
     String? model,
     Parameters? parameters,
