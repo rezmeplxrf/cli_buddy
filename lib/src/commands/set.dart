@@ -209,7 +209,8 @@ class SetCommand extends Command<int> {
     if (key != null) {
       String? secretEnvPath;
       if (path != null) {
-        /// if path and key are both provided, create a new secret.env file with the key in the provided path and update config file
+        /// if path and key are both provided,
+        /// create a new secret.env file with the key in the provided path and update config file
         secretEnvPath = p.join(path, 'secret.env');
       } else {
         secretEnvPath = p.join(defaultDir!, 'secret.env');
@@ -220,9 +221,7 @@ class SetCommand extends Command<int> {
           newConfig: configuration!.copyWith(secretEnvPath: secretEnvPath));
       _logger.info(
           'Created secret.env and set API key successfully at $secretEnvPath');
-    }
-
-    if (path != null && key == null) {
+    } else if (path != null && key == null) {
       await ConfigService.saveConfig(_logger,
           newConfig: configuration!.copyWith(secretEnvPath: path));
     }
