@@ -264,4 +264,5 @@ ${lightCyan.wrap(promptForDebug)}
           details: {'error': e.toString()}).toFailure();
     }
   }
+  //https://openrouter.ai/api/v1/parameters/$model
 }

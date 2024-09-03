@@ -200,7 +200,6 @@ class SetCommand extends Command<int> {
           return ExitCode.usage.code;
         }
         final session = await SessionService.loadSession(
-      
           id: id,
         );
         if (session == null) {
@@ -258,12 +257,12 @@ class SetCommand extends Command<int> {
         argResults!.options.isEmpty) {
       return ExitCode.usage.code;
     }
+
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
     if (argResults?['config'] == true) {
       _logger.info(jsonEncode(configuration));
       return ExitCode.success.code;
     }
-
-    configuration ??= await ConfigService.loadConfig().getOrThrow();
 
     if (key != null) {
       String? secretEnvPath;
@@ -310,7 +309,7 @@ class SetCommand extends Command<int> {
       chatPrompt: chatPrompt ?? configuration!.chatPrompt,
     );
 
-    await ConfigService.saveConfig( newConfig: newConfig);
+    await ConfigService.saveConfig(newConfig: newConfig);
 
     return ExitCode.success.code;
   }

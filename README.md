@@ -110,7 +110,7 @@ $ buddy --help
 ## Roadmap
 
 - Refactoring
-- Support for RAG (Retrieval-Augmented Generation)
+- Support for RAG (Retrieval-Augmented Generation) using Object_Box
 - Installation script for binary executable and setup
 - Support for Google Vertex AI API
 - Markdown support
