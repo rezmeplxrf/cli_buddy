@@ -3820,3 +3820,787 @@ abstract class _RateLimit implements RateLimit {
   _$$RateLimitImplCopyWith<_$RateLimitImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+ParameterInfo _$ParameterInfoFromJson(Map<String, dynamic> json) {
+  return _ParameterInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ParameterInfo {
+  @JsonKey(name: 'model')
+  String? get model => throw _privateConstructorUsedError;
+  @JsonKey(name: 'supported_parameters')
+  List<String>? get supportedParameters => throw _privateConstructorUsedError;
+  @JsonKey(name: 'frequency_penalty_p10')
+  int? get frequencyPenaltyP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'frequency_penalty_p50')
+  int? get frequencyPenaltyP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'frequency_penalty_p90')
+  double? get frequencyPenaltyP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'min_p_p10')
+  int? get minPP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'min_p_p50')
+  int? get minPP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'min_p_p90')
+  int? get minPP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'presence_penalty_p10')
+  int? get presencePenaltyP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'presence_penalty_p50')
+  int? get presencePenaltyP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'presence_penalty_p90')
+  double? get presencePenaltyP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'repetition_penalty_p10')
+  int? get repetitionPenaltyP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'repetition_penalty_p50')
+  int? get repetitionPenaltyP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'repetition_penalty_p90')
+  int? get repetitionPenaltyP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'temperature_p10')
+  int? get temperatureP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'temperature_p50')
+  double? get temperatureP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'temperature_p90')
+  int? get temperatureP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_a_p10')
+  int? get topAP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_a_p50')
+  int? get topAP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_a_p90')
+  int? get topAP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_k_p10')
+  int? get topKP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_k_p50')
+  int? get topKP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_k_p90')
+  int? get topKP90 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_p_p10')
+  int? get topPP10 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_p_p50')
+  int? get topPP50 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_p_p90')
+  int? get topPP90 => throw _privateConstructorUsedError;
+
+  /// Serializes this ParameterInfo to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ParameterInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ParameterInfoCopyWith<ParameterInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ParameterInfoCopyWith<$Res> {
+  factory $ParameterInfoCopyWith(
+          ParameterInfo value, $Res Function(ParameterInfo) then) =
+      _$ParameterInfoCopyWithImpl<$Res, ParameterInfo>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'model') String? model,
+      @JsonKey(name: 'supported_parameters') List<String>? supportedParameters,
+      @JsonKey(name: 'frequency_penalty_p10') int? frequencyPenaltyP10,
+      @JsonKey(name: 'frequency_penalty_p50') int? frequencyPenaltyP50,
+      @JsonKey(name: 'frequency_penalty_p90') double? frequencyPenaltyP90,
+      @JsonKey(name: 'min_p_p10') int? minPP10,
+      @JsonKey(name: 'min_p_p50') int? minPP50,
+      @JsonKey(name: 'min_p_p90') int? minPP90,
+      @JsonKey(name: 'presence_penalty_p10') int? presencePenaltyP10,
+      @JsonKey(name: 'presence_penalty_p50') int? presencePenaltyP50,
+      @JsonKey(name: 'presence_penalty_p90') double? presencePenaltyP90,
+      @JsonKey(name: 'repetition_penalty_p10') int? repetitionPenaltyP10,
+      @JsonKey(name: 'repetition_penalty_p50') int? repetitionPenaltyP50,
+      @JsonKey(name: 'repetition_penalty_p90') int? repetitionPenaltyP90,
+      @JsonKey(name: 'temperature_p10') int? temperatureP10,
+      @JsonKey(name: 'temperature_p50') double? temperatureP50,
+      @JsonKey(name: 'temperature_p90') int? temperatureP90,
+      @JsonKey(name: 'top_a_p10') int? topAP10,
+      @JsonKey(name: 'top_a_p50') int? topAP50,
+      @JsonKey(name: 'top_a_p90') int? topAP90,
+      @JsonKey(name: 'top_k_p10') int? topKP10,
+      @JsonKey(name: 'top_k_p50') int? topKP50,
+      @JsonKey(name: 'top_k_p90') int? topKP90,
+      @JsonKey(name: 'top_p_p10') int? topPP10,
+      @JsonKey(name: 'top_p_p50') int? topPP50,
+      @JsonKey(name: 'top_p_p90') int? topPP90});
+}
+
+/// @nodoc
+class _$ParameterInfoCopyWithImpl<$Res, $Val extends ParameterInfo>
+    implements $ParameterInfoCopyWith<$Res> {
+  _$ParameterInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ParameterInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? model = freezed,
+    Object? supportedParameters = freezed,
+    Object? frequencyPenaltyP10 = freezed,
+    Object? frequencyPenaltyP50 = freezed,
+    Object? frequencyPenaltyP90 = freezed,
+    Object? minPP10 = freezed,
+    Object? minPP50 = freezed,
+    Object? minPP90 = freezed,
+    Object? presencePenaltyP10 = freezed,
+    Object? presencePenaltyP50 = freezed,
+    Object? presencePenaltyP90 = freezed,
+    Object? repetitionPenaltyP10 = freezed,
+    Object? repetitionPenaltyP50 = freezed,
+    Object? repetitionPenaltyP90 = freezed,
+    Object? temperatureP10 = freezed,
+    Object? temperatureP50 = freezed,
+    Object? temperatureP90 = freezed,
+    Object? topAP10 = freezed,
+    Object? topAP50 = freezed,
+    Object? topAP90 = freezed,
+    Object? topKP10 = freezed,
+    Object? topKP50 = freezed,
+    Object? topKP90 = freezed,
+    Object? topPP10 = freezed,
+    Object? topPP50 = freezed,
+    Object? topPP90 = freezed,
+  }) {
+    return _then(_value.copyWith(
+      model: freezed == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String?,
+      supportedParameters: freezed == supportedParameters
+          ? _value.supportedParameters
+          : supportedParameters // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      frequencyPenaltyP10: freezed == frequencyPenaltyP10
+          ? _value.frequencyPenaltyP10
+          : frequencyPenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      frequencyPenaltyP50: freezed == frequencyPenaltyP50
+          ? _value.frequencyPenaltyP50
+          : frequencyPenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      frequencyPenaltyP90: freezed == frequencyPenaltyP90
+          ? _value.frequencyPenaltyP90
+          : frequencyPenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      minPP10: freezed == minPP10
+          ? _value.minPP10
+          : minPP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minPP50: freezed == minPP50
+          ? _value.minPP50
+          : minPP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minPP90: freezed == minPP90
+          ? _value.minPP90
+          : minPP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP10: freezed == presencePenaltyP10
+          ? _value.presencePenaltyP10
+          : presencePenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP50: freezed == presencePenaltyP50
+          ? _value.presencePenaltyP50
+          : presencePenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP90: freezed == presencePenaltyP90
+          ? _value.presencePenaltyP90
+          : presencePenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      repetitionPenaltyP10: freezed == repetitionPenaltyP10
+          ? _value.repetitionPenaltyP10
+          : repetitionPenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      repetitionPenaltyP50: freezed == repetitionPenaltyP50
+          ? _value.repetitionPenaltyP50
+          : repetitionPenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      repetitionPenaltyP90: freezed == repetitionPenaltyP90
+          ? _value.repetitionPenaltyP90
+          : repetitionPenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      temperatureP10: freezed == temperatureP10
+          ? _value.temperatureP10
+          : temperatureP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      temperatureP50: freezed == temperatureP50
+          ? _value.temperatureP50
+          : temperatureP50 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      temperatureP90: freezed == temperatureP90
+          ? _value.temperatureP90
+          : temperatureP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP10: freezed == topAP10
+          ? _value.topAP10
+          : topAP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP50: freezed == topAP50
+          ? _value.topAP50
+          : topAP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP90: freezed == topAP90
+          ? _value.topAP90
+          : topAP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP10: freezed == topKP10
+          ? _value.topKP10
+          : topKP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP50: freezed == topKP50
+          ? _value.topKP50
+          : topKP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP90: freezed == topKP90
+          ? _value.topKP90
+          : topKP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP10: freezed == topPP10
+          ? _value.topPP10
+          : topPP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP50: freezed == topPP50
+          ? _value.topPP50
+          : topPP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP90: freezed == topPP90
+          ? _value.topPP90
+          : topPP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ParameterInfoImplCopyWith<$Res>
+    implements $ParameterInfoCopyWith<$Res> {
+  factory _$$ParameterInfoImplCopyWith(
+          _$ParameterInfoImpl value, $Res Function(_$ParameterInfoImpl) then) =
+      __$$ParameterInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'model') String? model,
+      @JsonKey(name: 'supported_parameters') List<String>? supportedParameters,
+      @JsonKey(name: 'frequency_penalty_p10') int? frequencyPenaltyP10,
+      @JsonKey(name: 'frequency_penalty_p50') int? frequencyPenaltyP50,
+      @JsonKey(name: 'frequency_penalty_p90') double? frequencyPenaltyP90,
+      @JsonKey(name: 'min_p_p10') int? minPP10,
+      @JsonKey(name: 'min_p_p50') int? minPP50,
+      @JsonKey(name: 'min_p_p90') int? minPP90,
+      @JsonKey(name: 'presence_penalty_p10') int? presencePenaltyP10,
+      @JsonKey(name: 'presence_penalty_p50') int? presencePenaltyP50,
+      @JsonKey(name: 'presence_penalty_p90') double? presencePenaltyP90,
+      @JsonKey(name: 'repetition_penalty_p10') int? repetitionPenaltyP10,
+      @JsonKey(name: 'repetition_penalty_p50') int? repetitionPenaltyP50,
+      @JsonKey(name: 'repetition_penalty_p90') int? repetitionPenaltyP90,
+      @JsonKey(name: 'temperature_p10') int? temperatureP10,
+      @JsonKey(name: 'temperature_p50') double? temperatureP50,
+      @JsonKey(name: 'temperature_p90') int? temperatureP90,
+      @JsonKey(name: 'top_a_p10') int? topAP10,
+      @JsonKey(name: 'top_a_p50') int? topAP50,
+      @JsonKey(name: 'top_a_p90') int? topAP90,
+      @JsonKey(name: 'top_k_p10') int? topKP10,
+      @JsonKey(name: 'top_k_p50') int? topKP50,
+      @JsonKey(name: 'top_k_p90') int? topKP90,
+      @JsonKey(name: 'top_p_p10') int? topPP10,
+      @JsonKey(name: 'top_p_p50') int? topPP50,
+      @JsonKey(name: 'top_p_p90') int? topPP90});
+}
+
+/// @nodoc
+class __$$ParameterInfoImplCopyWithImpl<$Res>
+    extends _$ParameterInfoCopyWithImpl<$Res, _$ParameterInfoImpl>
+    implements _$$ParameterInfoImplCopyWith<$Res> {
+  __$$ParameterInfoImplCopyWithImpl(
+      _$ParameterInfoImpl _value, $Res Function(_$ParameterInfoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ParameterInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? model = freezed,
+    Object? supportedParameters = freezed,
+    Object? frequencyPenaltyP10 = freezed,
+    Object? frequencyPenaltyP50 = freezed,
+    Object? frequencyPenaltyP90 = freezed,
+    Object? minPP10 = freezed,
+    Object? minPP50 = freezed,
+    Object? minPP90 = freezed,
+    Object? presencePenaltyP10 = freezed,
+    Object? presencePenaltyP50 = freezed,
+    Object? presencePenaltyP90 = freezed,
+    Object? repetitionPenaltyP10 = freezed,
+    Object? repetitionPenaltyP50 = freezed,
+    Object? repetitionPenaltyP90 = freezed,
+    Object? temperatureP10 = freezed,
+    Object? temperatureP50 = freezed,
+    Object? temperatureP90 = freezed,
+    Object? topAP10 = freezed,
+    Object? topAP50 = freezed,
+    Object? topAP90 = freezed,
+    Object? topKP10 = freezed,
+    Object? topKP50 = freezed,
+    Object? topKP90 = freezed,
+    Object? topPP10 = freezed,
+    Object? topPP50 = freezed,
+    Object? topPP90 = freezed,
+  }) {
+    return _then(_$ParameterInfoImpl(
+      model: freezed == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String?,
+      supportedParameters: freezed == supportedParameters
+          ? _value._supportedParameters
+          : supportedParameters // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      frequencyPenaltyP10: freezed == frequencyPenaltyP10
+          ? _value.frequencyPenaltyP10
+          : frequencyPenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      frequencyPenaltyP50: freezed == frequencyPenaltyP50
+          ? _value.frequencyPenaltyP50
+          : frequencyPenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      frequencyPenaltyP90: freezed == frequencyPenaltyP90
+          ? _value.frequencyPenaltyP90
+          : frequencyPenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      minPP10: freezed == minPP10
+          ? _value.minPP10
+          : minPP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minPP50: freezed == minPP50
+          ? _value.minPP50
+          : minPP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      minPP90: freezed == minPP90
+          ? _value.minPP90
+          : minPP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP10: freezed == presencePenaltyP10
+          ? _value.presencePenaltyP10
+          : presencePenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP50: freezed == presencePenaltyP50
+          ? _value.presencePenaltyP50
+          : presencePenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      presencePenaltyP90: freezed == presencePenaltyP90
+          ? _value.presencePenaltyP90
+          : presencePenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      repetitionPenaltyP10: freezed == repetitionPenaltyP10
+          ? _value.repetitionPenaltyP10
+          : repetitionPenaltyP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      repetitionPenaltyP50: freezed == repetitionPenaltyP50
+          ? _value.repetitionPenaltyP50
+          : repetitionPenaltyP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      repetitionPenaltyP90: freezed == repetitionPenaltyP90
+          ? _value.repetitionPenaltyP90
+          : repetitionPenaltyP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      temperatureP10: freezed == temperatureP10
+          ? _value.temperatureP10
+          : temperatureP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      temperatureP50: freezed == temperatureP50
+          ? _value.temperatureP50
+          : temperatureP50 // ignore: cast_nullable_to_non_nullable
+              as double?,
+      temperatureP90: freezed == temperatureP90
+          ? _value.temperatureP90
+          : temperatureP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP10: freezed == topAP10
+          ? _value.topAP10
+          : topAP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP50: freezed == topAP50
+          ? _value.topAP50
+          : topAP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topAP90: freezed == topAP90
+          ? _value.topAP90
+          : topAP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP10: freezed == topKP10
+          ? _value.topKP10
+          : topKP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP50: freezed == topKP50
+          ? _value.topKP50
+          : topKP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topKP90: freezed == topKP90
+          ? _value.topKP90
+          : topKP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP10: freezed == topPP10
+          ? _value.topPP10
+          : topPP10 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP50: freezed == topPP50
+          ? _value.topPP50
+          : topPP50 // ignore: cast_nullable_to_non_nullable
+              as int?,
+      topPP90: freezed == topPP90
+          ? _value.topPP90
+          : topPP90 // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ParameterInfoImpl implements _ParameterInfo {
+  const _$ParameterInfoImpl(
+      {@JsonKey(name: 'model') this.model,
+      @JsonKey(name: 'supported_parameters')
+      final List<String>? supportedParameters,
+      @JsonKey(name: 'frequency_penalty_p10') this.frequencyPenaltyP10,
+      @JsonKey(name: 'frequency_penalty_p50') this.frequencyPenaltyP50,
+      @JsonKey(name: 'frequency_penalty_p90') this.frequencyPenaltyP90,
+      @JsonKey(name: 'min_p_p10') this.minPP10,
+      @JsonKey(name: 'min_p_p50') this.minPP50,
+      @JsonKey(name: 'min_p_p90') this.minPP90,
+      @JsonKey(name: 'presence_penalty_p10') this.presencePenaltyP10,
+      @JsonKey(name: 'presence_penalty_p50') this.presencePenaltyP50,
+      @JsonKey(name: 'presence_penalty_p90') this.presencePenaltyP90,
+      @JsonKey(name: 'repetition_penalty_p10') this.repetitionPenaltyP10,
+      @JsonKey(name: 'repetition_penalty_p50') this.repetitionPenaltyP50,
+      @JsonKey(name: 'repetition_penalty_p90') this.repetitionPenaltyP90,
+      @JsonKey(name: 'temperature_p10') this.temperatureP10,
+      @JsonKey(name: 'temperature_p50') this.temperatureP50,
+      @JsonKey(name: 'temperature_p90') this.temperatureP90,
+      @JsonKey(name: 'top_a_p10') this.topAP10,
+      @JsonKey(name: 'top_a_p50') this.topAP50,
+      @JsonKey(name: 'top_a_p90') this.topAP90,
+      @JsonKey(name: 'top_k_p10') this.topKP10,
+      @JsonKey(name: 'top_k_p50') this.topKP50,
+      @JsonKey(name: 'top_k_p90') this.topKP90,
+      @JsonKey(name: 'top_p_p10') this.topPP10,
+      @JsonKey(name: 'top_p_p50') this.topPP50,
+      @JsonKey(name: 'top_p_p90') this.topPP90})
+      : _supportedParameters = supportedParameters;
+
+  factory _$ParameterInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ParameterInfoImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'model')
+  final String? model;
+  final List<String>? _supportedParameters;
+  @override
+  @JsonKey(name: 'supported_parameters')
+  List<String>? get supportedParameters {
+    final value = _supportedParameters;
+    if (value == null) return null;
+    if (_supportedParameters is EqualUnmodifiableListView)
+      return _supportedParameters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'frequency_penalty_p10')
+  final int? frequencyPenaltyP10;
+  @override
+  @JsonKey(name: 'frequency_penalty_p50')
+  final int? frequencyPenaltyP50;
+  @override
+  @JsonKey(name: 'frequency_penalty_p90')
+  final double? frequencyPenaltyP90;
+  @override
+  @JsonKey(name: 'min_p_p10')
+  final int? minPP10;
+  @override
+  @JsonKey(name: 'min_p_p50')
+  final int? minPP50;
+  @override
+  @JsonKey(name: 'min_p_p90')
+  final int? minPP90;
+  @override
+  @JsonKey(name: 'presence_penalty_p10')
+  final int? presencePenaltyP10;
+  @override
+  @JsonKey(name: 'presence_penalty_p50')
+  final int? presencePenaltyP50;
+  @override
+  @JsonKey(name: 'presence_penalty_p90')
+  final double? presencePenaltyP90;
+  @override
+  @JsonKey(name: 'repetition_penalty_p10')
+  final int? repetitionPenaltyP10;
+  @override
+  @JsonKey(name: 'repetition_penalty_p50')
+  final int? repetitionPenaltyP50;
+  @override
+  @JsonKey(name: 'repetition_penalty_p90')
+  final int? repetitionPenaltyP90;
+  @override
+  @JsonKey(name: 'temperature_p10')
+  final int? temperatureP10;
+  @override
+  @JsonKey(name: 'temperature_p50')
+  final double? temperatureP50;
+  @override
+  @JsonKey(name: 'temperature_p90')
+  final int? temperatureP90;
+  @override
+  @JsonKey(name: 'top_a_p10')
+  final int? topAP10;
+  @override
+  @JsonKey(name: 'top_a_p50')
+  final int? topAP50;
+  @override
+  @JsonKey(name: 'top_a_p90')
+  final int? topAP90;
+  @override
+  @JsonKey(name: 'top_k_p10')
+  final int? topKP10;
+  @override
+  @JsonKey(name: 'top_k_p50')
+  final int? topKP50;
+  @override
+  @JsonKey(name: 'top_k_p90')
+  final int? topKP90;
+  @override
+  @JsonKey(name: 'top_p_p10')
+  final int? topPP10;
+  @override
+  @JsonKey(name: 'top_p_p50')
+  final int? topPP50;
+  @override
+  @JsonKey(name: 'top_p_p90')
+  final int? topPP90;
+
+  @override
+  String toString() {
+    return 'ParameterInfo(model: $model, supportedParameters: $supportedParameters, frequencyPenaltyP10: $frequencyPenaltyP10, frequencyPenaltyP50: $frequencyPenaltyP50, frequencyPenaltyP90: $frequencyPenaltyP90, minPP10: $minPP10, minPP50: $minPP50, minPP90: $minPP90, presencePenaltyP10: $presencePenaltyP10, presencePenaltyP50: $presencePenaltyP50, presencePenaltyP90: $presencePenaltyP90, repetitionPenaltyP10: $repetitionPenaltyP10, repetitionPenaltyP50: $repetitionPenaltyP50, repetitionPenaltyP90: $repetitionPenaltyP90, temperatureP10: $temperatureP10, temperatureP50: $temperatureP50, temperatureP90: $temperatureP90, topAP10: $topAP10, topAP50: $topAP50, topAP90: $topAP90, topKP10: $topKP10, topKP50: $topKP50, topKP90: $topKP90, topPP10: $topPP10, topPP50: $topPP50, topPP90: $topPP90)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ParameterInfoImpl &&
+            (identical(other.model, model) || other.model == model) &&
+            const DeepCollectionEquality()
+                .equals(other._supportedParameters, _supportedParameters) &&
+            (identical(other.frequencyPenaltyP10, frequencyPenaltyP10) ||
+                other.frequencyPenaltyP10 == frequencyPenaltyP10) &&
+            (identical(other.frequencyPenaltyP50, frequencyPenaltyP50) ||
+                other.frequencyPenaltyP50 == frequencyPenaltyP50) &&
+            (identical(other.frequencyPenaltyP90, frequencyPenaltyP90) ||
+                other.frequencyPenaltyP90 == frequencyPenaltyP90) &&
+            (identical(other.minPP10, minPP10) || other.minPP10 == minPP10) &&
+            (identical(other.minPP50, minPP50) || other.minPP50 == minPP50) &&
+            (identical(other.minPP90, minPP90) || other.minPP90 == minPP90) &&
+            (identical(other.presencePenaltyP10, presencePenaltyP10) ||
+                other.presencePenaltyP10 == presencePenaltyP10) &&
+            (identical(other.presencePenaltyP50, presencePenaltyP50) ||
+                other.presencePenaltyP50 == presencePenaltyP50) &&
+            (identical(other.presencePenaltyP90, presencePenaltyP90) ||
+                other.presencePenaltyP90 == presencePenaltyP90) &&
+            (identical(other.repetitionPenaltyP10, repetitionPenaltyP10) ||
+                other.repetitionPenaltyP10 == repetitionPenaltyP10) &&
+            (identical(other.repetitionPenaltyP50, repetitionPenaltyP50) ||
+                other.repetitionPenaltyP50 == repetitionPenaltyP50) &&
+            (identical(other.repetitionPenaltyP90, repetitionPenaltyP90) ||
+                other.repetitionPenaltyP90 == repetitionPenaltyP90) &&
+            (identical(other.temperatureP10, temperatureP10) ||
+                other.temperatureP10 == temperatureP10) &&
+            (identical(other.temperatureP50, temperatureP50) ||
+                other.temperatureP50 == temperatureP50) &&
+            (identical(other.temperatureP90, temperatureP90) ||
+                other.temperatureP90 == temperatureP90) &&
+            (identical(other.topAP10, topAP10) || other.topAP10 == topAP10) &&
+            (identical(other.topAP50, topAP50) || other.topAP50 == topAP50) &&
+            (identical(other.topAP90, topAP90) || other.topAP90 == topAP90) &&
+            (identical(other.topKP10, topKP10) || other.topKP10 == topKP10) &&
+            (identical(other.topKP50, topKP50) || other.topKP50 == topKP50) &&
+            (identical(other.topKP90, topKP90) || other.topKP90 == topKP90) &&
+            (identical(other.topPP10, topPP10) || other.topPP10 == topPP10) &&
+            (identical(other.topPP50, topPP50) || other.topPP50 == topPP50) &&
+            (identical(other.topPP90, topPP90) || other.topPP90 == topPP90));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        model,
+        const DeepCollectionEquality().hash(_supportedParameters),
+        frequencyPenaltyP10,
+        frequencyPenaltyP50,
+        frequencyPenaltyP90,
+        minPP10,
+        minPP50,
+        minPP90,
+        presencePenaltyP10,
+        presencePenaltyP50,
+        presencePenaltyP90,
+        repetitionPenaltyP10,
+        repetitionPenaltyP50,
+        repetitionPenaltyP90,
+        temperatureP10,
+        temperatureP50,
+        temperatureP90,
+        topAP10,
+        topAP50,
+        topAP90,
+        topKP10,
+        topKP50,
+        topKP90,
+        topPP10,
+        topPP50,
+        topPP90
+      ]);
+
+  /// Create a copy of ParameterInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ParameterInfoImplCopyWith<_$ParameterInfoImpl> get copyWith =>
+      __$$ParameterInfoImplCopyWithImpl<_$ParameterInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ParameterInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ParameterInfo implements ParameterInfo {
+  const factory _ParameterInfo(
+      {@JsonKey(name: 'model') final String? model,
+      @JsonKey(name: 'supported_parameters')
+      final List<String>? supportedParameters,
+      @JsonKey(name: 'frequency_penalty_p10') final int? frequencyPenaltyP10,
+      @JsonKey(name: 'frequency_penalty_p50') final int? frequencyPenaltyP50,
+      @JsonKey(name: 'frequency_penalty_p90') final double? frequencyPenaltyP90,
+      @JsonKey(name: 'min_p_p10') final int? minPP10,
+      @JsonKey(name: 'min_p_p50') final int? minPP50,
+      @JsonKey(name: 'min_p_p90') final int? minPP90,
+      @JsonKey(name: 'presence_penalty_p10') final int? presencePenaltyP10,
+      @JsonKey(name: 'presence_penalty_p50') final int? presencePenaltyP50,
+      @JsonKey(name: 'presence_penalty_p90') final double? presencePenaltyP90,
+      @JsonKey(name: 'repetition_penalty_p10') final int? repetitionPenaltyP10,
+      @JsonKey(name: 'repetition_penalty_p50') final int? repetitionPenaltyP50,
+      @JsonKey(name: 'repetition_penalty_p90') final int? repetitionPenaltyP90,
+      @JsonKey(name: 'temperature_p10') final int? temperatureP10,
+      @JsonKey(name: 'temperature_p50') final double? temperatureP50,
+      @JsonKey(name: 'temperature_p90') final int? temperatureP90,
+      @JsonKey(name: 'top_a_p10') final int? topAP10,
+      @JsonKey(name: 'top_a_p50') final int? topAP50,
+      @JsonKey(name: 'top_a_p90') final int? topAP90,
+      @JsonKey(name: 'top_k_p10') final int? topKP10,
+      @JsonKey(name: 'top_k_p50') final int? topKP50,
+      @JsonKey(name: 'top_k_p90') final int? topKP90,
+      @JsonKey(name: 'top_p_p10') final int? topPP10,
+      @JsonKey(name: 'top_p_p50') final int? topPP50,
+      @JsonKey(name: 'top_p_p90') final int? topPP90}) = _$ParameterInfoImpl;
+
+  factory _ParameterInfo.fromJson(Map<String, dynamic> json) =
+      _$ParameterInfoImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'model')
+  String? get model;
+  @override
+  @JsonKey(name: 'supported_parameters')
+  List<String>? get supportedParameters;
+  @override
+  @JsonKey(name: 'frequency_penalty_p10')
+  int? get frequencyPenaltyP10;
+  @override
+  @JsonKey(name: 'frequency_penalty_p50')
+  int? get frequencyPenaltyP50;
+  @override
+  @JsonKey(name: 'frequency_penalty_p90')
+  double? get frequencyPenaltyP90;
+  @override
+  @JsonKey(name: 'min_p_p10')
+  int? get minPP10;
+  @override
+  @JsonKey(name: 'min_p_p50')
+  int? get minPP50;
+  @override
+  @JsonKey(name: 'min_p_p90')
+  int? get minPP90;
+  @override
+  @JsonKey(name: 'presence_penalty_p10')
+  int? get presencePenaltyP10;
+  @override
+  @JsonKey(name: 'presence_penalty_p50')
+  int? get presencePenaltyP50;
+  @override
+  @JsonKey(name: 'presence_penalty_p90')
+  double? get presencePenaltyP90;
+  @override
+  @JsonKey(name: 'repetition_penalty_p10')
+  int? get repetitionPenaltyP10;
+  @override
+  @JsonKey(name: 'repetition_penalty_p50')
+  int? get repetitionPenaltyP50;
+  @override
+  @JsonKey(name: 'repetition_penalty_p90')
+  int? get repetitionPenaltyP90;
+  @override
+  @JsonKey(name: 'temperature_p10')
+  int? get temperatureP10;
+  @override
+  @JsonKey(name: 'temperature_p50')
+  double? get temperatureP50;
+  @override
+  @JsonKey(name: 'temperature_p90')
+  int? get temperatureP90;
+  @override
+  @JsonKey(name: 'top_a_p10')
+  int? get topAP10;
+  @override
+  @JsonKey(name: 'top_a_p50')
+  int? get topAP50;
+  @override
+  @JsonKey(name: 'top_a_p90')
+  int? get topAP90;
+  @override
+  @JsonKey(name: 'top_k_p10')
+  int? get topKP10;
+  @override
+  @JsonKey(name: 'top_k_p50')
+  int? get topKP50;
+  @override
+  @JsonKey(name: 'top_k_p90')
+  int? get topKP90;
+  @override
+  @JsonKey(name: 'top_p_p10')
+  int? get topPP10;
+  @override
+  @JsonKey(name: 'top_p_p50')
+  int? get topPP50;
+  @override
+  @JsonKey(name: 'top_p_p90')
+  int? get topPP90;
+
+  /// Create a copy of ParameterInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ParameterInfoImplCopyWith<_$ParameterInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

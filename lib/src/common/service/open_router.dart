@@ -264,5 +264,32 @@ ${lightCyan.wrap(promptForDebug)}
           details: {'error': e.toString()}).toFailure();
     }
   }
-  //https://openrouter.ai/api/v1/parameters/$model
+
+  static Future<Result<ParameterInfo, CustomException>> getParameterInfo(
+      {required String model}) async {
+    final encodedModel = Uri.encodeComponent(model);
+    final url = 'https://openrouter.ai/api/v1/parameters/$encodedModel';
+    openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
+    final header = {
+      'Authorization': 'Bearer $openrouterKey',
+      'Accept': 'application/json',
+      'User-Agent': 'InsightSentry/CLI Buddy',
+    };
+    try {
+      final response = await dio.get<Map<String, dynamic>>(url,
+          options: Options(headers: header));
+      if (response.statusCode == 200 && response.data == null) {
+        throw Exception('response.data is Empty');
+      }
+      final data = response.data?['data'] as Map<String, dynamic>;
+      final parameterInfo = ParameterInfo.fromJson(data);
+      return parameterInfo.toSuccess();
+    } catch (e) {
+      _logger?.err('Failed to get parameter info from OpenRouter. Error: $e');
+      return CustomException(
+          message: 'Failed to get parameter info from OpenRouter',
+          stack: 'OpenRouterService.getParameterInfo',
+          details: {'error': e.toString()}).toFailure();
+    }
+  }
 }

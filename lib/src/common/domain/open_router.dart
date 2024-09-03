@@ -222,3 +222,39 @@ class RateLimit with _$RateLimit {
   factory RateLimit.fromJson(Map<String, Object?> json) =>
       _$RateLimitFromJson(json);
 }
+
+
+@freezed
+class ParameterInfo with _$ParameterInfo {
+  const factory ParameterInfo({
+    @JsonKey(name: 'model') String? model,
+    @JsonKey(name: 'supported_parameters') List<String>? supportedParameters,
+    @JsonKey(name: 'frequency_penalty_p10') int? frequencyPenaltyP10,
+    @JsonKey(name: 'frequency_penalty_p50') int? frequencyPenaltyP50,
+    @JsonKey(name: 'frequency_penalty_p90') double? frequencyPenaltyP90,
+    @JsonKey(name: 'min_p_p10') int? minPP10,
+    @JsonKey(name: 'min_p_p50') int? minPP50,
+    @JsonKey(name: 'min_p_p90') int? minPP90,
+    @JsonKey(name: 'presence_penalty_p10') int? presencePenaltyP10,
+    @JsonKey(name: 'presence_penalty_p50') int? presencePenaltyP50,
+    @JsonKey(name: 'presence_penalty_p90') double? presencePenaltyP90,
+    @JsonKey(name: 'repetition_penalty_p10') int? repetitionPenaltyP10,
+    @JsonKey(name: 'repetition_penalty_p50') int? repetitionPenaltyP50,
+    @JsonKey(name: 'repetition_penalty_p90') int? repetitionPenaltyP90,
+    @JsonKey(name: 'temperature_p10') int? temperatureP10,
+    @JsonKey(name: 'temperature_p50') double? temperatureP50,
+    @JsonKey(name: 'temperature_p90') int? temperatureP90,
+    @JsonKey(name: 'top_a_p10') int? topAP10,
+    @JsonKey(name: 'top_a_p50') int? topAP50,
+    @JsonKey(name: 'top_a_p90') int? topAP90,
+    @JsonKey(name: 'top_k_p10') int? topKP10,
+    @JsonKey(name: 'top_k_p50') int? topKP50,
+    @JsonKey(name: 'top_k_p90') int? topKP90,
+    @JsonKey(name: 'top_p_p10') int? topPP10,
+    @JsonKey(name: 'top_p_p50') int? topPP50,
+    @JsonKey(name: 'top_p_p90') int? topPP90,
+  }) = _ParameterInfo;
+
+  factory ParameterInfo.fromJson(Map<String, Object?> json) =>
+      _$ParameterInfoFromJson(json);
+}
