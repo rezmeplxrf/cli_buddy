@@ -18,12 +18,13 @@ String fallbackModel = 'openai/gpt-4o';
 Parameters? parametersCache;
 
 class ConfigService {
-   factory ConfigService() => _instance;
+  factory ConfigService() => _instance;
   ConfigService._internal();
   static final ConfigService _instance = ConfigService._internal();
+static void setLogger(Logger? logger) => _logger = logger;
 
-  static Future<Result<Configuration, CustomException>> loadConfig(
-      Logger logger) async {
+  static Logger? _logger;
+  static Future<Result<Configuration, CustomException>> loadConfig() async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
@@ -34,7 +35,8 @@ class ConfigService {
       if (!configFile.existsSync()) {
         final clickableLink =
             '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-        logger.info('Created a new config file at ${blue.wrap(clickableLink)}');
+        _logger
+            ?.info('Created a new config file at ${blue.wrap(clickableLink)}');
         config = Configuration.fromJson({});
       } else {
         final configContent = await configFile.readAsString();
@@ -49,7 +51,7 @@ class ConfigService {
 
       return config.toSuccess();
     } catch (e) {
-      logger.err(e.toString());
+      _logger?.err(e.toString());
       return CustomException(
         message: 'Something went wrong while loading config file',
         stack: 'ConfigService.loadConfigFile',
@@ -58,8 +60,7 @@ class ConfigService {
     }
   }
 
-  static Future<void> saveConfig(Logger logger,
-      {required Configuration newConfig}) async {
+  static Future<void> saveConfig({required Configuration newConfig}) async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
@@ -71,23 +72,21 @@ class ConfigService {
 
       final clickableLink =
           '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-      logger.info('\nConfig file: ${blue.wrap(clickableLink)}\n');
+      _logger?.info('\nConfig file: ${blue.wrap(clickableLink)}\n');
 
       // Reload the configuration
-      await loadConfig(logger);
+      await loadConfig();
     } catch (e) {
-      logger.err(e.toString());
+      _logger?.err(e.toString());
     }
   }
 
-  static Future<Result<String, CustomException>> loadOpenrouterKey(
-    Logger logger,
-  ) async {
-    configuration ??= await loadConfig(logger).getOrThrow();
+  static Future<Result<String, CustomException>> loadOpenrouterKey() async {
+    configuration ??= await loadConfig().getOrThrow();
 
     final secretEnvPath = configuration?.secretEnvPath;
     if (secretEnvPath == null) {
-      logger.err('secret_env_path not found in buddy.config file');
+      _logger?.err('secret_env_path not found in buddy.config file');
       return CustomException(
               message: 'secret_env_path not found',
               stack: 'ConfigService.loadOpenrouterKey')
@@ -114,6 +113,7 @@ class ConfigService {
             .toFailure();
       }
     } catch (e) {
+      _logger?.err(e.toString());
       return CustomException(
         message: 'Error while loading api key',
         stack: 'ConfigService.loadOpenrouterKey',
@@ -123,5 +123,4 @@ class ConfigService {
       env.clear();
     }
   }
-
 }

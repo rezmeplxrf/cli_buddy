@@ -203,3 +203,110 @@ Map<String, dynamic> _$$UsageImplToJson(_$UsageImpl instance) =>
       'completion_tokens': instance.completionTokens,
       'total_tokens': instance.totalTokens,
     };
+
+_$ORModelListImpl _$$ORModelListImplFromJson(Map<String, dynamic> json) =>
+    _$ORModelListImpl(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String,
+      pricing: json['pricing'] == null
+          ? null
+          : Pricing.fromJson(json['pricing'] as Map<String, dynamic>),
+      contextLength: (json['contextLength'] as num?)?.toInt(),
+      architecture: json['architecture'] == null
+          ? null
+          : Architecture.fromJson(json['architecture'] as Map<String, dynamic>),
+      topProvider: json['topProvider'] == null
+          ? null
+          : TopProvider.fromJson(json['topProvider'] as Map<String, dynamic>),
+      perRequestLimits: json['perRequestLimits'] == null
+          ? null
+          : PerRequestLimits.fromJson(
+              json['perRequestLimits'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ORModelListImplToJson(_$ORModelListImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'description': instance.description,
+      'pricing': instance.pricing,
+      'contextLength': instance.contextLength,
+      'architecture': instance.architecture,
+      'topProvider': instance.topProvider,
+      'perRequestLimits': instance.perRequestLimits,
+    };
+
+_$PricingImpl _$$PricingImplFromJson(Map<String, dynamic> json) =>
+    _$PricingImpl(
+      prompt: json['prompt'] as String?,
+      completion: json['completion'] as String?,
+      image: json['image'] as String?,
+      request: json['request'] as String?,
+    );
+
+Map<String, dynamic> _$$PricingImplToJson(_$PricingImpl instance) =>
+    <String, dynamic>{
+      'prompt': instance.prompt,
+      'completion': instance.completion,
+      'image': instance.image,
+      'request': instance.request,
+    };
+
+_$ArchitectureImpl _$$ArchitectureImplFromJson(Map<String, dynamic> json) =>
+    _$ArchitectureImpl(
+      modality: json['modality'] as String?,
+      tokenizer: json['tokenizer'] as String?,
+      instructType: json['instructType'] as String?,
+    );
+
+Map<String, dynamic> _$$ArchitectureImplToJson(_$ArchitectureImpl instance) =>
+    <String, dynamic>{
+      'modality': instance.modality,
+      'tokenizer': instance.tokenizer,
+      'instructType': instance.instructType,
+    };
+
+_$TopProviderImpl _$$TopProviderImplFromJson(Map<String, dynamic> json) =>
+    _$TopProviderImpl(
+      maxCompletionTokens: (json['maxCompletionTokens'] as num?)?.toInt(),
+      isModerated: json['isModerated'] as bool?,
+    );
+
+Map<String, dynamic> _$$TopProviderImplToJson(_$TopProviderImpl instance) =>
+    <String, dynamic>{
+      'maxCompletionTokens': instance.maxCompletionTokens,
+      'isModerated': instance.isModerated,
+    };
+
+_$PerRequestLimitsImpl _$$PerRequestLimitsImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PerRequestLimitsImpl(
+      promptTokens: json['promptTokens'] as String?,
+      completionTokens: json['completionTokens'] as String?,
+    );
+
+Map<String, dynamic> _$$PerRequestLimitsImplToJson(
+        _$PerRequestLimitsImpl instance) =>
+    <String, dynamic>{
+      'promptTokens': instance.promptTokens,
+      'completionTokens': instance.completionTokens,
+    };
+
+_$ORCreditsImpl _$$ORCreditsImplFromJson(Map<String, dynamic> json) =>
+    _$ORCreditsImpl(
+      limit: (json['limit'] as num?)?.toInt(),
+      usage: (json['usage'] as num?)?.toDouble(),
+      isFreeTier: json['is_free_tier'] as bool,
+      requestsLimit: (json['requestsLimit'] as num).toInt(),
+      interval: json['interval'] as String,
+    );
+
+Map<String, dynamic> _$$ORCreditsImplToJson(_$ORCreditsImpl instance) =>
+    <String, dynamic>{
+      'limit': instance.limit,
+      'usage': instance.usage,
+      'is_free_tier': instance.isFreeTier,
+      'requestsLimit': instance.requestsLimit,
+      'interval': instance.interval,
+    };

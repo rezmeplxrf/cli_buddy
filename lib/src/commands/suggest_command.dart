@@ -55,7 +55,7 @@ class SuggestionCommand extends Command<int> {
     }
 
     final initialResult = await openRouter.invoke(
-        session: session, logger: _logger, shouldDebug: shouldDebug);
+        session: session,  shouldDebug: shouldDebug);
     if (initialResult.isError()) {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;
@@ -96,7 +96,7 @@ class SuggestionCommand extends Command<int> {
 
       case ActionType.explain:
         final explainResult = await ActionService.explain(
-            initialSession, _logger,
+            initialSession,
             shouldDebug: shouldDebug);
         if (explainResult.isError()) {
           _logger.err('An Error occured while asking for explanations');

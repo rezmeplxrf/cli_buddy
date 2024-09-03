@@ -12,6 +12,9 @@ class ActionService {
   factory ActionService() => _instance;
   ActionService._internal();
   static final ActionService _instance = ActionService._internal();
+  static void setLogger(Logger? logger) => _logger = logger;
+
+  static Logger? _logger;
 
   static Future<void> copy(String content) async {
     final shell = Shell();
@@ -60,26 +63,25 @@ class ActionService {
     }
   }
 
-  static Future<void> saveToFile(
-      String fileName, String content, Logger logger) async {
+  static Future<void> saveToFile(String fileName, String content) async {
     final file = File(fileName);
 
     if (file.existsSync()) {
-      final shouldOverwrite = logger.confirm(
+      final shouldOverwrite = _logger?.confirm(
         'File already exists. Do you want to overwrite it?',
       );
 
-      if (!shouldOverwrite) {
+      if (shouldOverwrite == null || !shouldOverwrite) {
         return;
       }
     }
 
     await file.writeAsString(content);
-    logger.info('Output saved to $fileName');
+    _logger?.info('Output saved to $fileName');
   }
 
   static Future<Result<ChatSession, CustomException>> explain(
-      ChatSession session, Logger logger,
+      ChatSession session,
       {required bool shouldDebug}) async {
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final newMsg = Message(
@@ -89,8 +91,8 @@ class ActionService {
 
     final newSession =
         session.copyWith(messages: [...session.messages, newMsg]);
-    final newResult = await openRouter.invoke(
-        session: newSession, logger: logger, shouldDebug: shouldDebug);
+    final newResult =
+        await openRouter.invoke(session: newSession, shouldDebug: shouldDebug);
     return newResult;
   }
 }

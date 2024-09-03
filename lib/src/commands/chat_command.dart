@@ -49,7 +49,7 @@ class ChatCommand extends Command<int> {
     ChatSession? session;
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     if (sessionId != null && sessionId is int) {
-      session = await SessionService.loadSession(_logger, id: sessionId);
+      session = await SessionService.loadSession(id: sessionId);
       final prompt = args.join(' ');
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
@@ -72,7 +72,7 @@ class ChatCommand extends Command<int> {
       shouldDebug = true;
     }
     final initialResult = await openRouter.invoke(
-        session: session!, logger: _logger, shouldDebug: shouldDebug);
+        session: session!, shouldDebug: shouldDebug);
     if (initialResult.isError()) {
       _logger.err('An Error occurred');
       return ExitCode.tempFail.code;
@@ -97,7 +97,7 @@ class ChatCommand extends Command<int> {
           timestamp: DateTime.now().millisecondsSinceEpoch);
       session = session!.copyWith(messages: [...session.messages, newMsg]);
       final newResult = await openRouter.invoke(
-          session: session, logger: _logger, shouldDebug: shouldDebug);
+          session: session, shouldDebug: shouldDebug);
       if (newResult.isError()) {
         _logger.err('An Error occurred');
         return ExitCode.tempFail.code;

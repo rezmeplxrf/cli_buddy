@@ -13,6 +13,10 @@ class SessionService {
   SessionService._internal();
   static final SessionService _instance = SessionService._internal();
 
+  static void setLogger(Logger? logger) => _logger = logger;
+  
+  static Logger? _logger;
+
   static Future<List<ChatSession>?> listSessions(
     Logger logger,
   ) async {
@@ -48,11 +52,10 @@ class SessionService {
     }
   }
 
-  static Future<void> saveSession(
-    Logger logger, {
+  static Future<void> saveSession({
     required ChatSession session,
   }) async {
-    configuration ??= await ConfigService.loadConfig(logger).getOrThrow();
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     try {
@@ -70,17 +73,16 @@ class SessionService {
         }
       }
     } catch (e) {
-      logger
-        ..err(
+      _logger
+        ?..err(
           'Error while saving session',
         )
         ..detail(e.toString());
     }
   }
 
-  static Future<ChatSession?> loadSession(Logger logger,
-      {required int id}) async {
-    configuration ??= await ConfigService.loadConfig(logger).getOrThrow();
+  static Future<ChatSession?> loadSession({required int id}) async {
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     try {
@@ -89,7 +91,7 @@ class SessionService {
 
       final sessionFile = File(sessionFilePath);
       if (!sessionFile.existsSync()) {
-        logger.err('Session file not found: $sessionFilePath');
+        _logger?.err('Session file not found: $sessionFilePath');
         return null;
       }
 
@@ -97,8 +99,8 @@ class SessionService {
       return ChatSession.fromJson(
           jsonDecode(sessionContent) as Map<String, dynamic>);
     } catch (e) {
-      logger
-        ..err(
+      _logger
+        ?..err(
           'Error loading session from file',
         )
         ..detail(e.toString());

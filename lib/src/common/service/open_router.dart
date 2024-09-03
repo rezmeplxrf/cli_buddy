@@ -20,9 +20,11 @@ class OpenRouterService {
   OpenRouterService._internal();
   static final OpenRouterService _instance = OpenRouterService._internal();
 
+  static void setLogger(Logger? logger) => _logger = logger;
+
+  static Logger? _logger;
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
-    required Logger logger,
     required bool shouldDebug,
     int? overrideMaxMsg,
 
@@ -32,14 +34,14 @@ class OpenRouterService {
   }) async {
     final skipLog = shouldSkipLog != null && shouldSkipLog;
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
-    openrouterKey ??=
-        await ConfigService.loadOpenrouterKey(logger).getOrThrow();
+    openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
 
     final headers = {
       'HTTP-Referer': 'rfway.org',
       'X-Title': 'CLI Buddy',
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $openrouterKey'
+      'Authorization': 'Bearer $openrouterKey',
+      'User-Agent': 'InsightSentry/CLI Buddy',
     };
 
     final model = (session.model != null)
@@ -59,7 +61,7 @@ class OpenRouterService {
       prompt.addAll(parameters.toJson());
     }
 
-    logger.info(
+    _logger?.info(
       '\n',
     );
     if (shouldDebug) {
@@ -71,12 +73,12 @@ ${lightCyan.wrap(promptForDebug)}
 
 ## Response
 ''';
-      logger.info(log);
+      _logger?.info(log);
     }
     Progress? progress;
     if (!skipLog) {
       const waitingMsg = 'Waiting for response...';
-      progress = logger.progress(
+      progress = _logger?.progress(
         green.wrap(waitingMsg)!,
         options: const ProgressOptions(
           animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
@@ -101,6 +103,7 @@ ${lightCyan.wrap(promptForDebug)}
     final msg = StringBuffer();
 
     ChatSession? newSession;
+    Usage? usage;
     final responses = <ORResponse>[];
     var index = 0;
     var lineStart = 0;
@@ -128,12 +131,15 @@ ${lightCyan.wrap(promptForDebug)}
             final decodedJson = json.decode(jsonString) as Map<String, dynamic>;
 
             final response = ORResponse.fromJson(decodedJson);
+            if (response.usage?.completionTokens != null) {
+              usage = response.usage;
+            }
             responses.add(response);
             final content = response.choices?.first.delta?.content;
             if (response.choices != null && content!.isNotEmpty) {
               msg.write(content);
               if (shouldDebug) {
-                logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
+                _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
                 if (!skipLog) {
                   stdout.write(cyan.wrap(content));
@@ -164,25 +170,23 @@ ${lightCyan.wrap(promptForDebug)}
     }
 
     if (responses.isNotEmpty) {
-      final lastResponse = responses.last;
       final aiResponse = Message(
         role: Role.assistant,
         content: msg.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
-        usage: lastResponse.usage,
+        usage: usage,
       );
       newSession = session.copyWith(
           messages: [...session.messages, aiResponse],
           model: model,
           parameters: parameters);
-      final tokenUsage = lastResponse.usage;
 
       final usageLog =
-          'Token usage | Prompt: ${tokenUsage?.promptTokens} | Completion: ${tokenUsage?.completionTokens} | Total: ${tokenUsage?.totalTokens}\n';
-      logger.info(darkGray.wrap(usageLog));
+          'Token usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens}\n';
+      _logger?.info(darkGray.wrap(usageLog));
     }
     if (newSession != null) {
-      unawaited(SessionService.saveSession(logger, session: session));
+      unawaited(SessionService.saveSession(session: session));
       return Success(newSession);
     } else {
       throw CustomException(
@@ -199,5 +203,71 @@ ${lightCyan.wrap(promptForDebug)}
       return session.copyWith(messages: trimmedMessages);
     }
     return session;
+  }
+
+  static Future<Result<List<ORModelList>, CustomException>>
+      getModelList() async {
+    openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
+    const url = 'https://openrouter.ai/api/v1/models';
+    final header = {
+      'Authorization': 'Bearer $openrouterKey',
+      'User-Agent': 'InsightSentry/CLI Buddy',
+    };
+    try {
+      final response = await dio.get<Map<String, dynamic>>(url,
+          options: Options(headers: header));
+      final list = <ORModelList>[];
+      if (response.data == null) {
+        throw Exception('response.data is Empty');
+      }
+      for (final model
+          in response.data!['data'] as List<Map<String, dynamic>>) {
+        final name = model['name'] as String?;
+        if (name != null &&
+            (name.startsWith('Flavor') || name.startsWith('Auto'))) {
+          continue;
+        }
+        list.add(ORModelList.fromJson(model));
+      }
+      return list.toSuccess();
+    } catch (e) {
+      _logger?.err('Failed to load models from OpenRouter');
+      return CustomException(
+          message: 'Failed to load models from OpenRouter',
+          stack: 'OpenRouterService.getCloudAIModelList',
+          details: {'error': e.toString()}).toFailure();
+    }
+  }
+
+  static Future<Result<ORCredits, CustomException>> checkCredits() async {
+    const url = 'https://openrouter.ai/api/v1/auth/key';
+    openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
+    final headers = {
+      'Authorization': 'Bearer $openrouterKey',
+      'User-Agent': 'InsightSentry/CLI Buddy',
+    };
+    try {
+      final response = await dio.get<Map<String, dynamic>>(url,
+          options: Options(headers: headers));
+
+      final data = response.data?['data'] as Map<String, dynamic>;
+
+      final credits = ORCredits(
+        limit: data['limit'] as int?,
+        usage: double.tryParse(data['usage'].toString()),
+        isFreeTier: data['is_free_tier'] as bool? ?? true,
+        // ignore: avoid_dynamic_calls
+        requestsLimit: data['rate_limit']['requests'] as int? ?? 0,
+        // ignore: avoid_dynamic_calls
+        interval: data['rate_limit']['interval'] as String? ?? '',
+      );
+      return credits.toSuccess();
+    } catch (e) {
+      _logger?.err('Failed to load credit data from OpenRouter');
+      return CustomException(
+          message: 'Failed to load credit data from OpenRouter',
+          stack: 'OpenRouterService.getCloudAIModelList',
+          details: {'error': e.toString()}).toFailure();
+    }
   }
 }

@@ -51,7 +51,7 @@ class CodeCommand extends Command<int> {
     ChatSession? session;
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     if (sessionId != null && sessionId is int) {
-      session = await SessionService.loadSession(_logger, id: sessionId);
+      session = await SessionService.loadSession(id: sessionId);
       final prompt = args.join(' ');
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
@@ -74,8 +74,8 @@ class CodeCommand extends Command<int> {
       shouldDebug = true;
     }
     try {
-      final initialResult = await openRouter.invoke(
-          session: session!, logger: _logger, shouldDebug: shouldDebug);
+      final initialResult =
+          await openRouter.invoke(session: session!, shouldDebug: shouldDebug);
       if (initialResult.isError()) {
         _logger.err('An Error occurred');
         return ExitCode.tempFail.code;
@@ -126,9 +126,9 @@ class CodeCommand extends Command<int> {
             final fileName = _logger.prompt(
               'Enter the name of the file you want to save the output:',
             );
-            await ActionService.saveToFile(fileName, lastMsg, _logger);
+            await ActionService.saveToFile(fileName, lastMsg);
           case ActionType.explain:
-            final explainResult = await ActionService.explain(session, _logger,
+            final explainResult = await ActionService.explain(session,
                 shouldDebug: shouldDebug);
             session = explainResult.getOrThrow();
           case ActionType.chat:
@@ -140,8 +140,9 @@ class CodeCommand extends Command<int> {
                 content: prompt,
                 timestamp: DateTime.now().millisecondsSinceEpoch);
             session = session.copyWith(messages: [...session.messages, newMsg]);
+
             final chatResult = await openRouter.invoke(
-                session: session, logger: _logger, shouldDebug: shouldDebug);
+                session: session, shouldDebug: shouldDebug);
             session = chatResult.getOrThrow();
           case ActionType.exit:
             return ExitCode.success.code;

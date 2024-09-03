@@ -200,7 +200,7 @@ class SetCommand extends Command<int> {
           return ExitCode.usage.code;
         }
         final session = await SessionService.loadSession(
-          _logger,
+      
           id: id,
         );
         if (session == null) {
@@ -263,7 +263,7 @@ class SetCommand extends Command<int> {
       return ExitCode.success.code;
     }
 
-    configuration ??= await ConfigService.loadConfig(_logger).getOrThrow();
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
 
     if (key != null) {
       String? secretEnvPath;
@@ -276,12 +276,12 @@ class SetCommand extends Command<int> {
       }
       final secretEnvFile = File(secretEnvPath);
       await secretEnvFile.writeAsString('openrouter_key = "$key"\n');
-      await ConfigService.saveConfig(_logger,
+      await ConfigService.saveConfig(
           newConfig: configuration!.copyWith(secretEnvPath: secretEnvPath));
       _logger.info(
           'Created secret.env and set API key successfully at $secretEnvPath');
     } else if (path != null && key == null) {
-      await ConfigService.saveConfig(_logger,
+      await ConfigService.saveConfig(
           newConfig: configuration!.copyWith(secretEnvPath: path));
     }
 
@@ -310,7 +310,7 @@ class SetCommand extends Command<int> {
       chatPrompt: chatPrompt ?? configuration!.chatPrompt,
     );
 
-    await ConfigService.saveConfig(_logger, newConfig: newConfig);
+    await ConfigService.saveConfig( newConfig: newConfig);
 
     return ExitCode.success.code;
   }

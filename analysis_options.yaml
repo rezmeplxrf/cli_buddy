@@ -8,6 +8,7 @@ analyzer:
     lines_longer_than_80_chars: ignore
     no_default_cases: ignore
     require_trailing_commas: ignore
+    use_setters_to_change_properties: ignore
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"

@@ -41,7 +41,6 @@ class Delta with _$Delta {
     String? role,
     String? content,
     @JsonKey(name: 'tool_calls') List<ToolCall>? toolCalls,
-  
   }) = _Delta;
 
   factory Delta.fromJson(Map<String, Object?> json) => _$DeltaFromJson(json);
@@ -57,7 +56,6 @@ class Logprobs with _$Logprobs {
   factory Logprobs.fromJson(Map<String, Object?> json) =>
       _$LogprobsFromJson(json);
 }
-
 
 @freezed
 class Content with _$Content {
@@ -83,7 +81,6 @@ class TopLogprobs with _$TopLogprobs {
   factory TopLogprobs.fromJson(Map<String, Object?> json) =>
       _$TopLogprobsFromJson(json);
 }
-
 
 @freezed
 class ToolCall with _$ToolCall {
@@ -130,4 +127,82 @@ class Usage with _$Usage {
   }) = _Usage;
 
   factory Usage.fromJson(Map<String, Object?> json) => _$UsageFromJson(json);
+}
+
+@freezed
+class ORModelList with _$ORModelList {
+  const factory ORModelList({
+    required String id,
+    required String name,
+    required String description,
+    required Pricing? pricing,
+    required int? contextLength,
+    required Architecture? architecture,
+    required TopProvider? topProvider,
+    required PerRequestLimits? perRequestLimits,
+  }) = _ORModelList;
+
+  factory ORModelList.fromJson(Map<String, dynamic> json) =>
+      _$ORModelListFromJson(json);
+}
+
+@freezed
+class Pricing with _$Pricing {
+  const factory Pricing({
+    required String? prompt,
+    required String? completion,
+    required String? image,
+    required String? request,
+  }) = _Pricing;
+
+  factory Pricing.fromJson(Map<String, dynamic> json) =>
+      _$PricingFromJson(json);
+}
+
+@freezed
+class Architecture with _$Architecture {
+  const factory Architecture({
+    required String? modality,
+    required String? tokenizer,
+    required String? instructType,
+  }) = _Architecture;
+
+  factory Architecture.fromJson(Map<String, dynamic> json) =>
+      _$ArchitectureFromJson(json);
+}
+
+@freezed
+class TopProvider with _$TopProvider {
+  const factory TopProvider({
+    required int? maxCompletionTokens,
+    required bool? isModerated,
+  }) = _TopProvider;
+
+  factory TopProvider.fromJson(Map<String, dynamic> json) =>
+      _$TopProviderFromJson(json);
+}
+
+@freezed
+class PerRequestLimits with _$PerRequestLimits {
+  const factory PerRequestLimits({
+    required String? promptTokens,
+    required String? completionTokens,
+  }) = _PerRequestLimits;
+
+  factory PerRequestLimits.fromJson(Map<String, dynamic> json) =>
+      _$PerRequestLimitsFromJson(json);
+}
+
+@freezed
+class ORCredits with _$ORCredits {
+  const factory ORCredits({
+    required int? limit,
+    required double? usage,
+    @JsonKey(name: 'is_free_tier') required bool isFreeTier,
+    required int requestsLimit,
+    required String interval,
+  }) = _ORCredits;
+
+  factory ORCredits.fromJson(Map<String, dynamic> json) =>
+      _$ORCreditsFromJson(json);
 }
