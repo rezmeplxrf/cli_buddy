@@ -23,6 +23,7 @@ class OpenRouterService {
       {required ChatSession session,
       required Logger logger,
       required bool shouldDebug}) async {
+   
     openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
     defaultModel ??= await ConfigService.loadDefaultModel(logger);
     defaultParameters ??= await ConfigService.loadDefaultParameters(logger);

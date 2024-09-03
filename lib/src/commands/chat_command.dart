@@ -71,18 +71,16 @@ class ChatCommand extends Command<int> {
     if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
+    final initialResult = await openRouter.invoke(
+        session: session!, logger: _logger, shouldDebug: shouldDebug);
+    if (initialResult.isError()) {
+      _logger.err('An Error occurred');
+      return ExitCode.tempFail.code;
+    }
+    session = initialResult.getOrThrow();
 
     while (true) {
-      final initialResult = await openRouter.invoke(
-          session: session!, logger: _logger, shouldDebug: shouldDebug);
-      if (initialResult.isError()) {
-        _logger.err('An Error occurred');
-        return ExitCode.tempFail.code;
-      }
-      session = initialResult.getOrThrow();
-
       final promptCompleter = Completer<String>();
-
       // to block the event loop
       await Future.microtask(() {
         final prompt = _logger.prompt(
@@ -92,11 +90,12 @@ class ChatCommand extends Command<int> {
       });
 
       final prompt = await promptCompleter.future;
+
       final newMsg = Message(
           role: Role.user,
           content: prompt,
           timestamp: DateTime.now().millisecondsSinceEpoch);
-      session = session.copyWith(messages: [...session.messages, newMsg]);
+      session = session!.copyWith(messages: [...session.messages, newMsg]);
       final newResult = await openRouter.invoke(
           session: session, logger: _logger, shouldDebug: shouldDebug);
       if (newResult.isError()) {
