@@ -7,6 +7,7 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
+import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
@@ -19,10 +20,18 @@ class OpenRouterService {
   OpenRouterService._internal();
   static final OpenRouterService _instance = OpenRouterService._internal();
 
-  Future<Result<ChatSession, CustomException>> invoke(
-      {required ChatSession session,
-      required Logger logger,
-      required bool shouldDebug}) async {
+  Future<Result<ChatSession, CustomException>> invoke({
+    required ChatSession session,
+    required Logger logger,
+    required bool shouldDebug,
+    int? overrideMaxMsg,
+
+    /// Whether to skip logging. Used when there is no terminal or when markdown logging is needed.
+    /// In order to use markdown in console, real time logging must be disabled.
+    bool? shouldSkipLog,
+  }) async {
+    final skipLog = shouldSkipLog != null && shouldSkipLog;
+    final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??=
         await ConfigService.loadOpenrouterKey(logger).getOrThrow();
 
@@ -39,7 +48,7 @@ class OpenRouterService {
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
 
-    final trimedSession = _removeOldMessages(session);
+    final trimedSession = _removeOldMessages(session, maxMsg);
     final prompt = <String, dynamic>{
       'model': model,
       'stream': true,
@@ -64,13 +73,16 @@ ${lightCyan.wrap(promptForDebug)}
 ''';
       logger.info(log);
     }
-    const waitingMsg = 'Waiting for response...';
-    final progress = logger.progress(
-      green.wrap(waitingMsg)!,
-      options: const ProgressOptions(
-        animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
-      ),
-    );
+    Progress? progress;
+    if (!skipLog) {
+      const waitingMsg = 'Waiting for response...';
+      progress = logger.progress(
+        green.wrap(waitingMsg)!,
+        options: const ProgressOptions(
+          animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
+        ),
+      );
+    }
 
     final response = await dio.post<ResponseBody>(
       _baseUrl,
@@ -84,14 +96,15 @@ ${lightCyan.wrap(promptForDebug)}
     final responses = <ORResponse>[];
     var index = 0;
     var lineStart = 0;
-    final consoleWidth = stdout.terminalColumns - 20;
+    final consoleWidth =
+        (stdout.hasTerminal) ? stdout.terminalColumns - 20 : 80;
     var firstChunk = false;
 
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
-      if (!firstChunk) {
+      if (!firstChunk && !skipLog) {
         firstChunk = true;
-        progress.complete('');
+        progress?.complete('');
       }
 
       final decodedString = utf8.decode(chunk);
@@ -114,12 +127,14 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                stdout.write(cyan.wrap(content));
-                index = msg.length;
+                if (!skipLog) {
+                  stdout.write(cyan.wrap(content));
+                  index = msg.length;
 
-                if ((index - lineStart) >= consoleWidth) {
-                  stdout.writeln();
-                  lineStart = index;
+                  if ((index - lineStart) >= consoleWidth) {
+                    stdout.writeln();
+                    lineStart = index;
+                  }
                 }
               }
             }
@@ -136,8 +151,10 @@ ${lightCyan.wrap(promptForDebug)}
         }
       }
     }
-
-    stdout.writeln();
+    if (!skipLog) {
+      stdout.writeln();
+    }
+    
 
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
@@ -158,7 +175,7 @@ ${lightCyan.wrap(promptForDebug)}
       logger.info(darkGray.wrap(usageLog));
     }
     if (newSession != null) {
-      unawaited(ConfigService.saveSession(logger, session: session));
+      unawaited(SessionService.saveSession(logger, session: session));
       return Success(newSession);
     } else {
       throw CustomException(
@@ -168,10 +185,9 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  ChatSession _removeOldMessages(ChatSession session) {
-    if (session.messages.length > configuration!.maxMessages) {
-      final excessMessagesCount =
-          session.messages.length - configuration!.maxMessages;
+  ChatSession _removeOldMessages(ChatSession session, int maxMsg) {
+    if (session.messages.length > maxMsg) {
+      final excessMessagesCount = session.messages.length - maxMsg;
       final trimmedMessages = session.messages.sublist(excessMessagesCount);
       return session.copyWith(messages: trimmedMessages);
     }

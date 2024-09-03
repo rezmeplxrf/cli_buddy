@@ -18,9 +18,13 @@ String fallbackModel = 'openai/gpt-4o';
 Parameters? parametersCache;
 
 class ConfigService {
+   factory ConfigService() => _instance;
+  ConfigService._internal();
+  static final ConfigService _instance = ConfigService._internal();
+
   static Future<Result<Configuration, CustomException>> loadConfig(
       Logger logger) async {
-    defaultDir = SysInfoService.getConfigDirectory();
+    defaultDir ??= SysInfoService.getConfigDirectory();
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
     final configFile = File(configFilePath);
@@ -56,7 +60,7 @@ class ConfigService {
 
   static Future<void> saveConfig(Logger logger,
       {required Configuration newConfig}) async {
-    defaultDir = SysInfoService.getConfigDirectory();
+    defaultDir ??= SysInfoService.getConfigDirectory();
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
     final configFile = File(configFilePath);
@@ -120,61 +124,4 @@ class ConfigService {
     }
   }
 
-  static Future<void> saveSession(
-    Logger logger, {
-    required ChatSession session,
-  }) async {
-    configuration ??= await loadConfig(logger).getOrThrow();
-    defaultDir = SysInfoService.getConfigDirectory();
-
-    try {
-      if (configuration!.saveSession) {
-        if (defaultDir != null) {
-          final sessionsPath = p.join(defaultDir!, 'sessions');
-          final sessionFilePath = p.join(sessionsPath, '${session.id}.json');
-          final sessionDir = Directory(sessionsPath);
-          if (!sessionDir.existsSync()) {
-            sessionDir.createSync(recursive: true);
-          } else {
-            final sessionFile = File(sessionFilePath);
-            await sessionFile.writeAsString(jsonEncode(session.toJson()));
-          }
-        }
-      }
-    } catch (e) {
-      logger
-        ..err(
-          'Error while saving session',
-        )
-        ..detail(e.toString());
-    }
-  }
-
-  static Future<ChatSession?> loadSession(Logger logger,
-      {required int id}) async {
-    configuration ??= await loadConfig(logger).getOrThrow();
-    defaultDir = SysInfoService.getConfigDirectory();
-
-    try {
-      final sessionsPath = p.join(defaultDir!, 'sessions');
-      final sessionFilePath = p.join(sessionsPath, '$id.json');
-
-      final sessionFile = File(sessionFilePath);
-      if (!sessionFile.existsSync()) {
-        logger.err('Session file not found: $sessionFilePath');
-        return null;
-      }
-
-      final sessionContent = await sessionFile.readAsString();
-      return ChatSession.fromJson(
-          jsonDecode(sessionContent) as Map<String, dynamic>);
-    } catch (e) {
-      logger
-        ..err(
-          'Error loading session from file',
-        )
-        ..detail(e.toString());
-      return null;
-    }
-  }
 }

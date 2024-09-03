@@ -3,6 +3,7 @@ analyzer:
     always_use_package_imports: ignore
     avoid_print: ignore
     eol_at_end_of_file: ignore
+    flutter_style_todos: ignore
     invalid_annotation_target: ignore
     lines_longer_than_80_chars: ignore
     no_default_cases: ignore

@@ -1,3 +1,7 @@
+# 0.0.5
+
+* Fixed some logic and refractored the code.
+
 # 0.0.4
 
 * Changed set command and logic.

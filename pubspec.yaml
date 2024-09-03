@@ -1,6 +1,6 @@
 name: cli_buddy
 description: A CLI tool to call any AI to ask, auto-complete, and generate code directly from any command line tool.
-version: 0.0.4+2
+version: 0.0.5
 homepage: https://www.rfway.org
 repository: https://github.com/rezmeplxrf/cli_buddy
 topics:
@@ -14,6 +14,7 @@ environment:
 
 dependencies:
   args: ^2.5.0
+  barbecue: ^0.5.0
   cli_completion: ^0.5.1
   dio: ^5.6.0
   dotenv: ^4.2.0

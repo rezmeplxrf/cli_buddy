@@ -4,9 +4,9 @@ import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/action.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
-import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
+import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 /// {@template code_command}
@@ -51,7 +51,7 @@ class CodeCommand extends Command<int> {
     ChatSession? session;
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     if (sessionId != null && sessionId is int) {
-      session = await ConfigService.loadSession(_logger, id: sessionId);
+      session = await SessionService.loadSession(_logger, id: sessionId);
       final prompt = args.join(' ');
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
