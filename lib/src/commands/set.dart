@@ -24,6 +24,13 @@ class SetCommand extends Command<int> {
         help: 'Set path to the secret.env file in the buddy.config',
         valueHelp: 'String',
       )
+      ..addFlag(
+        'config',
+        abbr: 'c',
+        help:
+            'Load the current config file and display the values if does not exist, create a new one',
+        negatable: false,
+      )
       ..addOption(
         'api-key',
         abbr: 'k',
@@ -252,7 +259,9 @@ class SetCommand extends Command<int> {
     );
 
     await ConfigService.saveConfig(_logger, newConfig: newConfig);
-
+    if (argResults?['config'] == true) {
+      _logger.info(jsonEncode(configuration));
+    }
     return ExitCode.success.code;
   }
 }

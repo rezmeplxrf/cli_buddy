@@ -84,7 +84,7 @@ ${lightCyan.wrap(promptForDebug)}
     final responses = <ORResponse>[];
     var index = 0;
     var lineStart = 0;
-    final consoleWidth = stdout.terminalColumns;
+    final consoleWidth = stdout.terminalColumns - 20;
     var firstChunk = false;
 
     await for (final chunk in response.data!.stream) {

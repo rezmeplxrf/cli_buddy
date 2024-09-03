@@ -42,7 +42,7 @@ class ConfigService {
       explainPromptCache = config.explainPrompt ?? defaultExplainPrompt;
       codePromptCache = config.codePrompt ?? defaultCodePrompt;
       chatPromptCache = config.chatPrompt ?? defaultChatPrompt;
-      logger.info('Current Parameters: ${parametersCache?.toJson()}');
+
       return config.toSuccess();
     } catch (e) {
       logger.err(e.toString());
@@ -67,7 +67,7 @@ class ConfigService {
 
       final clickableLink =
           '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-      logger.info('Updated: $clickableLink');
+      logger.info('Config file: $clickableLink');
 
       // Reload the configuration
       await loadConfig(logger);
