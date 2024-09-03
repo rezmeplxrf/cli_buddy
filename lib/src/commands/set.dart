@@ -37,11 +37,11 @@ class SetCommand extends Command<int> {
           abbr: 'l',
           help:
               'List the saved chat histories in the default session folder in a readable format or view the specific chat history ',
-          valueHelp: 'String',
+          valueHelp: 'String or Int',
           allowedHelp: {
             'list':
-                'List the saved chat histories in the default session folder in a table format',
-            '<message id>':
+                'List the saved chat hbuddistories in the default session folder in a table format',
+            'message id':
                 'View the specific chat history in a table. Required value is id of the session',
           })
       ..addOption(
