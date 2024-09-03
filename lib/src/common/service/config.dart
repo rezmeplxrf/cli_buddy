@@ -10,7 +10,7 @@ import 'package:path/path.dart' as p;
 String? openrouterKey;
 String? defaultModel;
 Parameters? defaultParameters;
-String fallbackModel = 'openai/gpt-4o-2024-08-06';
+String fallbackModel = 'openai/gpt-4o-mini';
 int? defaultMaxMessages = 20;
 
 class ConfigService {

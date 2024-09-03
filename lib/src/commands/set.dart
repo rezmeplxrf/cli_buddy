@@ -17,6 +17,7 @@ class SetCommand extends Command<int> {
     required Logger logger,
   }) : _logger = logger {
     argParser
+    
       ..addOption(
         'secret',
         abbr: 's',
@@ -60,6 +61,8 @@ class SetCommand extends Command<int> {
     final configPath = argResults?['config'];
     final model = argResults?['model'];
 
+  
+
     if (path == null && key == null && model == null) {
       _logger.err(
           'Please provide a path using --secret or -s, a key using --key or -k, or a model using --model or -m');
@@ -94,7 +97,25 @@ class SetCommand extends Command<int> {
     } else {
       _logger.info(
           'Config file not found. Creating a new config file at $clickableLink');
-      config = {};
+      config = {
+        'secret_env_path': 'secret.env',
+        'default_model': 'openai/gpt-4o-mini',
+        'max_tokens': null,
+        'temperature': 0.3,
+        'top_p': null,
+        'top_k': null,
+        'frequency_penalty': null,
+        'presence_penalty': null,
+        'repetition_penalty': null,
+        'min_p': null,
+        'top_a': null,
+        'seed': null,
+        'logit_bias': null,
+        'logprobs': null,
+        'top_logprobs': null,
+        'response_format': null,
+        'stop': null
+      };
     }
 
     if (key != null) {
@@ -110,8 +131,7 @@ class SetCommand extends Command<int> {
       config['secret_env_path'] = path;
       _logger.info(
           'Saved Path to the secret.env ($path) successfully at $clickableLink');
-    }
-
+    } 
     if (model != null) {
       config['default_model'] = model;
       _logger
