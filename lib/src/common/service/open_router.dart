@@ -23,27 +23,21 @@ class OpenRouterService {
       {required ChatSession session,
       required Logger logger,
       required bool shouldDebug}) async {
-    openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
-    defaultModel ??= await ConfigService.loadDefaultModel(logger);
-    defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
-    defaultMaxMessages ??= await ConfigService.loadMaxMessagesSent(logger);
-    if (openrouterKey == null) {
-      throw CustomException(
-        message: 'openrouter_key not found in .env file',
-        stack: 'OpenRouterService.invoke',
-      );
-    }
+    openrouterKey ??=
+        await ConfigService.loadOpenrouterKey(logger).getOrThrow();
+
     final headers = {
-      'HTTP-Referer': 'insightsentry.com',
+      'HTTP-Referer': 'rfway.org',
       'X-Title': 'CLI Buddy',
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $openrouterKey'
     };
 
-    final model =
-        (session.model != null) ? session.model : defaultModel ?? fallbackModel;
+    final model = (session.model != null)
+        ? session.model
+        : configuration?.defaultModel ?? fallbackModel;
     final parameters =
-        (session.parameters != null) ? session.parameters : defaultParameters;
+        (session.parameters != null) ? session.parameters : parametersCache;
 
     final trimedSession = _trimSessionMessages(session);
     final prompt = <String, dynamic>{
@@ -175,7 +169,7 @@ ${lightCyan.wrap(promptForDebug)}
   }
 
   ChatSession _trimSessionMessages(ChatSession session) {
-    if (session.messages.length > defaultMaxMessages!) {
+    if (session.messages.length > configuration!.maxMessages) {
       final trimmedMessages = session.messages
           .where((message) => message.role != Role.user)
           .toList();
@@ -184,7 +178,7 @@ ${lightCyan.wrap(promptForDebug)}
           .toList();
 
       while (
-          trimmedMessages.length + userMessages.length > defaultMaxMessages! &&
+          trimmedMessages.length + userMessages.length > configuration!.maxMessages &&
               userMessages.isNotEmpty) {
         userMessages.removeAt(0);
       }

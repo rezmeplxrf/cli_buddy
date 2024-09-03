@@ -16,12 +16,10 @@ class SuggestionCommand extends Command<int> {
   SuggestionCommand({
     required Logger logger,
   }) : _logger = logger {
-    argParser
- 
-      .addFlag('raw',
-          abbr: 'r',
-          help: 'get raw outputs of prompt and api requests',
-          negatable: false);
+    argParser.addFlag('raw',
+        abbr: 'r',
+        help: 'get raw outputs of prompt and api requests',
+        negatable: false);
   }
 
   @override
@@ -62,7 +60,6 @@ class SuggestionCommand extends Command<int> {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;
     }
-
 
     final action = _logger.chooseOne(
       'Your action:',

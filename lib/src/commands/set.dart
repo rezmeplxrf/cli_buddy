@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
+import 'package:result_dart/result_dart.dart';
 
 /// {@template set_command}
 ///
@@ -30,13 +32,6 @@ class SetCommand extends Command<int> {
         valueHelp: 'api key',
       )
       ..addOption(
-        'config',
-        abbr: 'c',
-        help:
-            'Sets path to the existing buddy.config file. Note that custom path will not persist so it must be provided each time. Also if the file does not exist, new one will be created at the default path.',
-        valueHelp: 'path',
-      )
-      ..addOption(
         'model',
         abbr: 'm',
         help: 'sets the default AI model',
@@ -46,7 +41,7 @@ class SetCommand extends Command<int> {
 
   @override
   String get description =>
-      'Sets the path of the existing secret.env file, creates a new one with the API key, or sets the default model ';
+      'Sets the configuration values or create new one if it does not exist.';
 
   @override
   String get name => 'set';
@@ -57,89 +52,41 @@ class SetCommand extends Command<int> {
   Future<int> run() async {
     final path = argResults?['secret'];
     final key = argResults?['key'];
-    final configPath = argResults?['config'];
     final model = argResults?['model'];
 
-    if (path == null && key == null && model == null) {
-      _logger.err(
-          'Please provide a path using --secret or -s, a key using --key or -k, or a model using --model or -m');
+    if (argResults == null ||
+        argResults?.options == null ||
+        argResults!.options.isEmpty) {
       return ExitCode.usage.code;
     }
-    if (path != null && key != null) {
-      _logger.warn('--secret will be ignored since --key is provided');
-    }
 
-    final configDir = SysInfoService.getConfigDirectory();
-    if (configDir == null) {
-      _logger.err('Unsupported OS');
-      return ExitCode.osError.code;
-    }
-
-    final configFilePath = configPath ?? p.join(configDir, 'buddy.config');
-    final configFile = File(configFilePath as String);
-    // ANSI escape code for clickable link (some terminals don't support this)
-    final clickableLink =
-        '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-    Map<String, dynamic> config;
-
-    if (configFile.existsSync()) {
-      final content = await configFile.readAsString();
-      try {
-        config = jsonDecode(content) as Map<String, dynamic>;
-      } catch (e) {
-        _logger.err(
-            'Failed to parse config file. Please ensure it is valid JSON.');
-        return ExitCode.data.code;
-      }
-    } else {
-      _logger.info(
-          'Config file not found. Creating a new config file at $clickableLink');
-      config = {
-        'secret_env_path': 'secret.env',
-        'default_model': 'openai/gpt-4o-mini',
-        'max_tokens': null,
-        'temperature': 0.3,
-        'top_p': null,
-        'top_k': null,
-        'frequency_penalty': null,
-        'presence_penalty': null,
-        'repetition_penalty': null,
-        'min_p': null,
-        'top_a': null,
-        'seed': null,
-        'logit_bias': null,
-        'logprobs': null,
-        'top_logprobs': null,
-        'response_format': null,
-        'stop': null
-      };
-      // Create the file with the default configuration
-      final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
-      await configFile.writeAsString(updatedContent);
-    }
+    configuration ??= await ConfigService.loadConfig(_logger).getOrThrow();
 
     if (key != null) {
-      final secretEnvPath = p.join(configDir, 'secret.env');
+      String? secretEnvPath;
+      if (path != null) {
+        /// if path and key are both provided, create a new secret.env file with the key in the provided path and update config file
+        secretEnvPath = p.join(path.toString(), 'secret.env');
+      } else {
+        secretEnvPath = p.join(defaultDir!, 'secret.env');
+      }
       final secretEnvFile = File(secretEnvPath);
-
       await secretEnvFile.writeAsString('openrouter_key = "$key"\n');
-      config['secret_env_path'] = secretEnvPath;
-
+      await ConfigService.saveConfig(_logger,
+          newConfig: configuration!.copyWith(secretEnvPath: secretEnvPath));
       _logger.info(
           'Created secret.env and set API key successfully at $secretEnvPath');
-    } else if (path != null) {
-      config['secret_env_path'] = path;
-      _logger.info(
-          'Saved Path to the secret.env ($path) successfully at $clickableLink');
-    }
-    if (model != null) {
-      config['default_model'] = model;
-      _logger
-          .info('Saved Default Model ($model) successfully at $clickableLink');
     }
 
-    final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
-    await configFile.writeAsString(updatedContent);
+    if (path != null && key == null) {
+      await ConfigService.saveConfig(_logger,
+          newConfig: configuration!.copyWith(secretEnvPath: path.toString()));
+    }
+
+    if (model != null) {
+      await ConfigService.saveConfig(_logger,
+          newConfig: configuration!.copyWith(defaultModel: model.toString()));
+    }
 
     return ExitCode.success.code;
   }

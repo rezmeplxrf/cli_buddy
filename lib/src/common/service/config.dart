@@ -1,137 +1,124 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cli_buddy/src/common/domain/config.dart';
+import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
+import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:dotenv/dotenv.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
+import 'package:result_dart/result_dart.dart';
 
 String? openrouterKey;
-String? defaultModel;
-Parameters? defaultParameters;
-String fallbackModel = 'openai/gpt-4o-mini';
-int? defaultMaxMessages = 20;
-String? customPath;
+Configuration? configuration;
+String? defaultDir;
+String fallbackModel = 'openai/gpt-4o';
+Parameters? parametersCache;
 
 class ConfigService {
-  static Map<String, dynamic>? _configData;
+  static Future<Result<Configuration, CustomException>> loadConfig(
+      Logger logger) async {
+    defaultDir = SysInfoService.getConfigDirectory();
 
-  static Future<void> _loadConfigFile(Logger logger) async {
-    if (_configData != null) {
-      return;
-    }
-    final configDir = SysInfoService.getConfigDirectory();
-    if (configDir == null) {
-      logger.err('Unsupported OS');
-      return;
-    }
-
-    final configFilePath = customPath ?? p.join(configDir, 'buddy.config');
+    final configFilePath = p.join(defaultDir!, 'buddy.config');
     final configFile = File(configFilePath);
-    if (!configFile.existsSync()) {
-      logger.err(
-          "Config file not found. Please create 'buddy.config' file and add the necessary configurations.");
-      return;
-    }
 
     try {
-      final configContent = await configFile.readAsString();
-      _configData = jsonDecode(configContent) as Map<String, dynamic>;
+      Configuration? config;
+      if (!configFile.existsSync()) {
+        final clickableLink =
+            '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
+        logger.info(
+            'Config file not found. Creating a new config file at $clickableLink');
+
+        config = Configuration.fromJson({});
+      } else {
+        final configContent = await configFile.readAsString();
+        config = Configuration.fromJson(
+            jsonDecode(configContent) as Map<String, dynamic>);
+      }
+      parametersCache = Parameters.fromJson(config.toJson());
+      cmdPromptCache = config.cmdPrompt ?? defaultCommandPrompt;
+      explainPromptCache = config.explainPrompt ?? defaultExplainPrompt;
+      codePromptCache = config.codePrompt ?? defaultCodePrompt;
+      chatPromptCache = config.chatPrompt ?? defaultChatPrompt;
+      logger.info('Current Parameters: ${parametersCache?.toJson()}');
+      return config.toSuccess();
     } catch (e) {
-      logger
-        ..err('Error parsing config file')
-        ..detail(e.toString());
+      logger.err(e.toString());
+      return CustomException(
+        message: 'Something went wrong while loading config file',
+        stack: 'ConfigService.loadConfigFile',
+        details: {'error': e.toString()},
+      ).toFailure();
     }
   }
 
-  static Future<String?> loadOpenrouterKey(
+  static Future<void> saveConfig(Logger logger,
+      {required Configuration newConfig}) async {
+    defaultDir = SysInfoService.getConfigDirectory();
+
+    final configFilePath = p.join(defaultDir!, 'buddy.config');
+    final configFile = File(configFilePath);
+
+    try {
+      final configJson = jsonEncode(newConfig.toJson());
+      await configFile.writeAsString(configJson);
+
+      final clickableLink =
+          '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
+      logger.info('Config is updated successfully at $clickableLink');
+
+      // Reload the configuration
+      await loadConfig(logger);
+    } catch (e) {
+      logger.err(e.toString());
+    }
+  }
+
+  static Future<Result<String, CustomException>> loadOpenrouterKey(
     Logger logger,
   ) async {
-    await _loadConfigFile(logger);
-    if (_configData == null) {
-      return null;
-    }
+    configuration ??= await loadConfig(logger).getOrThrow();
 
-    final secretEnvPath = _configData!['secret_env_path'] as String?;
+    final secretEnvPath = configuration?.secretEnvPath;
     if (secretEnvPath == null) {
       logger.err('secret_env_path not found in buddy.config file');
-      return null;
+      return CustomException(
+              message: 'secret_env_path not found',
+              stack: 'ConfigService.loadOpenrouterKey')
+          .toFailure();
     }
-
+    final env = DotEnv(includePlatformEnvironment: true)..load([secretEnvPath]);
     try {
-      final env = DotEnv(includePlatformEnvironment: true)
-        ..load([secretEnvPath]);
       final keyExists = env.isDefined('openrouter_key');
-      String? key;
+
       if (keyExists) {
-        key = env['openrouter_key'];
+        final key = env['openrouter_key'];
+        if (key == null) {
+          return CustomException(
+                  message: 'Api key is not found',
+                  stack: 'ConfigService.loadOpenrouterKey')
+              .toFailure();
+        } else {
+          return key.toSuccess();
+        }
       } else {
-        logger.err('openrouter_key not found in .env file');
+        return CustomException(
+                message: 'Api key is not found',
+                stack: 'ConfigService.loadOpenrouterKey')
+            .toFailure();
       }
+    } catch (e) {
+      return CustomException(
+        message: 'Error while loading api key',
+        stack: 'ConfigService.loadOpenrouterKey',
+        details: {'error': e.toString()},
+      ).toFailure();
+    } finally {
       env.clear();
-      return key;
-    } catch (e) {
-      logger
-        ..err('Error loading .env file')
-        ..detail(e.toString());
-      return null;
-    }
-  }
-
-  static Future<String?> loadDefaultModel(
-    Logger logger,
-  ) async {
-    await _loadConfigFile(
-      logger,
-    );
-    if (_configData == null) {
-      return null;
-    }
-
-    final defaultModel = _configData!['default_model'] as String?;
-    if (defaultModel == null) {
-      logger.warn(
-          'default_model not found in buddy.config file. We will use fallback model which is $fallbackModel');
-    }
-    return defaultModel;
-  }
-
-  static Future<int?> loadMaxMessagesSent(
-    Logger logger,
-  ) async {
-    await _loadConfigFile(
-      logger,
-    );
-    await _loadConfigFile(logger);
-    if (_configData == null) {
-      return null;
-    }
-
-    final maxMessagesSent = _configData!['max_messages_sent'] as int?;
-
-    return maxMessagesSent ?? defaultMaxMessages;
-  }
-
-  static Future<Parameters?> loadDefaultParameters(
-    Logger logger,
-  ) async {
-    await _loadConfigFile(
-      logger,
-    );
-    await _loadConfigFile(logger);
-    if (_configData == null) {
-      return null;
-    }
-
-    try {
-      final parameters = Parameters.fromJson(_configData!);
-      return parameters;
-    } catch (e) {
-      logger
-        ..err('Error parsing parameters from config file')
-        ..detail(e.toString());
-      return null;
     }
   }
 
@@ -139,29 +126,21 @@ class ConfigService {
     Logger logger, {
     required ChatSession session,
   }) async {
-    final configFile = File('buddy.config');
-    if (!configFile.existsSync()) {
-      return;
-    }
+    configuration ??= await loadConfig(logger).getOrThrow();
+    defaultDir = SysInfoService.getConfigDirectory();
+
     try {
-      final configContent = await configFile.readAsString();
-      final jsonMap = jsonDecode(configContent) as Map<String, dynamic>;
-
-      final shouldSaveSession = jsonMap['save_session'] as bool? ?? true;
-      if (shouldSaveSession) {
-        final appDir = SysInfoService.getConfigDirectory();
-        if (appDir != null) {
-          final sessionsPath = p.join(appDir, 'sessions');
+      if (configuration!.saveSession) {
+        if (defaultDir != null) {
+          final sessionsPath = p.join(defaultDir!, 'sessions');
           final sessionFilePath = p.join(sessionsPath, '${session.id}.json');
-
           final sessionDir = Directory(sessionsPath);
           if (!sessionDir.existsSync()) {
             sessionDir.createSync(recursive: true);
+          } else {
+            final sessionFile = File(sessionFilePath);
+            await sessionFile.writeAsString(jsonEncode(session.toJson()));
           }
-
-          final sessionFile = File(sessionFilePath);
-          await sessionFile.writeAsString(jsonEncode(session.toJson()));
-          return;
         }
       }
     } catch (e) {
@@ -175,25 +154,22 @@ class ConfigService {
 
   static Future<ChatSession?> loadSession(Logger logger,
       {required int id}) async {
+    configuration ??= await loadConfig(logger).getOrThrow();
+    defaultDir = SysInfoService.getConfigDirectory();
+
     try {
-      final appDir = SysInfoService.getConfigDirectory();
-      if (appDir == null) {
-        logger.err('Unsupported OS');
+      final sessionsPath = p.join(defaultDir!, 'sessions');
+      final sessionFilePath = p.join(sessionsPath, '$id.json');
+
+      final sessionFile = File(sessionFilePath);
+      if (!sessionFile.existsSync()) {
+        logger.err('Session file not found: $sessionFilePath');
         return null;
-      } else {
-        final sessionsPath = p.join(appDir, 'sessions');
-        final sessionFilePath = p.join(sessionsPath, '$id.json');
-
-        final sessionFile = File(sessionFilePath);
-        if (!sessionFile.existsSync()) {
-          logger.err('Session file not found: $sessionFilePath');
-          return null;
-        }
-
-        final sessionContent = await sessionFile.readAsString();
-        final sessionJson = jsonDecode(sessionContent) as Map<String, dynamic>;
-        return ChatSession.fromJson(sessionJson);
       }
+
+      final sessionContent = await sessionFile.readAsString();
+      return ChatSession.fromJson(
+          jsonDecode(sessionContent) as Map<String, dynamic>);
     } catch (e) {
       logger
         ..err(

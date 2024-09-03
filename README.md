@@ -40,7 +40,7 @@ Simply run `buddy set -k <your openrouter key>`
 ```json
 {
   "secret_env_path": "secret.env",
-  "default_model": "openai/gpt-4o-mini",
+  "default_model": "openai/gpt-4o-mini-2024-07-18",
   "max_tokens": null,
   "temperature": 0.3,
   "top_p": null,
@@ -52,11 +52,17 @@ Simply run `buddy set -k <your openrouter key>`
   "top_a": null,
   "seed": null,
   "logit_bias": null,
-  "logprobs": true,
-  "top_logprobs": 1,
+  "logprobs": null,
+  "top_logprobs": null,
   "response_format": null,
-  "stop": null
+  "stop": null,
+  "save_session": false,
+  "cmd_prompt": null,
+  "explain_prompt": null,
+  "code_prompt":null,
+  "chat_prompt": null
 }
+
 ```
 
 ## Usage
