@@ -23,15 +23,15 @@ class OpenRouterService {
   static void setLogger(Logger? logger) => _logger = logger;
 
   static Logger? _logger;
-  Future<Result<ChatSession, CustomException>> invoke({
-    required ChatSession session,
-    required bool shouldDebug,
-    int? overrideMaxMsg,
+  Future<Result<ChatSession, CustomException>> invoke(
+      {required ChatSession session,
+      required bool shouldDebug,
+      int? overrideMaxMsg,
 
-    /// Whether to skip logging. Used when there is no terminal or when markdown logging is needed.
-    /// In order to use markdown in console, real time logging must be disabled.
-    bool? shouldSkipLog,
-  }) async {
+      /// Whether to skip logging. Used when there is no terminal or when markdown is needed.
+      /// In order to use markdown in console, real time logging must be disabled.
+      bool? shouldSkipLog,
+      bool? markdown}) async {
     final skipLog = shouldSkipLog != null && shouldSkipLog;
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
@@ -113,7 +113,7 @@ ${lightCyan.wrap(promptForDebug)}
 
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
-      if (!firstChunk && !skipLog) {
+      if (!firstChunk) {
         firstChunk = true;
         progress?.complete('');
       }
@@ -136,7 +136,7 @@ ${lightCyan.wrap(promptForDebug)}
             }
             responses.add(response);
             final content = response.choices?.first.delta?.content;
-            if (response.choices != null && content!.isNotEmpty) {
+            if (content != null && content.isNotEmpty) {
               msg.write(content);
               if (shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
@@ -168,6 +168,7 @@ ${lightCyan.wrap(promptForDebug)}
     if (!skipLog) {
       stdout.writeln();
     }
+    // TODO: if markdown and skipLog is true, print out markdown applied msg here
 
     if (responses.isNotEmpty) {
       final aiResponse = Message(
