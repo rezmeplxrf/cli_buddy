@@ -39,13 +39,13 @@ class SetCommand extends Command<int> {
       )
       ..addOption(
         'save-session',
-        abbr: 'S',
+        abbr: 'e',
         help: 'Set save session flag',
         valueHelp: 'bool',
       )
       ..addOption(
         'max-messages',
-        abbr: 'n',
+        abbr: 'a',
         help: 'Set max messages',
         valueHelp: 'int',
       )
@@ -57,109 +57,92 @@ class SetCommand extends Command<int> {
       )
       ..addOption(
         'max-tokens',
-        abbr: 'M',
+        abbr: 'x',
         help: 'Set max tokens',
         valueHelp: 'int',
       )
       ..addOption(
         'top-p',
-        abbr: 'p',
         help: 'Set top_p',
         valueHelp: 'int',
       )
       ..addOption(
         'top-k',
-        abbr: 'K',
         help: 'Set top_k',
         valueHelp: 'int',
       )
       ..addOption(
         'freq-penalty',
-        abbr: 'f',
         help: 'Set frequency penalty',
         valueHelp: 'double',
       )
       ..addOption(
         'presence-penalty',
-        abbr: 'r',
         help: 'Set presence penalty',
         valueHelp: 'double',
       )
       ..addOption(
         'repetition-penalty',
-        abbr: 'e',
         help: 'Set repetition penalty',
         valueHelp: 'double',
       )
       ..addOption(
         'min-p',
-        abbr: 'n',
         help: 'Set min_p',
         valueHelp: 'double',
       )
       ..addOption(
         'top-a',
-        abbr: 'a',
         help: 'Set top_a',
         valueHelp: 'double',
       )
       ..addOption(
         'seed',
-        abbr: 'd',
         help: 'Set seed',
         valueHelp: 'int',
       )
       ..addOption(
         'logit-bias',
-        abbr: 'l',
         help: 'Set logit bias',
-        valueHelp: 'Map<String, dynamic>',
+        valueHelp: 'Map',
       )
       ..addOption(
         'logprobs',
-        abbr: 'g',
         help: 'Set logprobs',
         valueHelp: 'int',
       )
       ..addOption(
         'top-logprobs',
-        abbr: 'q',
         help: 'Set top logprobs',
         valueHelp: 'int',
       )
       ..addOption(
         'response-format',
-        abbr: 'F',
         help: 'Set response format',
-        valueHelp: 'String',
+        valueHelp: 'Map',
       )
       ..addOption(
         'stop-seq',
-        abbr: 'Q',
         help: 'Set stop sequences',
-        valueHelp: 'List<String>',
+        valueHelp: 'List<int>',
       )
       ..addOption(
         'cmd-prompt',
-        abbr: 'C',
         help: 'Set command prompt',
         valueHelp: 'String',
       )
       ..addOption(
         'explain-prompt',
-        abbr: 'X',
         help: 'Set explain prompt',
         valueHelp: 'String',
       )
       ..addOption(
         'code-prompt',
-        abbr: 'O',
         help: 'Set code prompt',
         valueHelp: 'String',
       )
       ..addOption(
         'chat-prompt',
-        abbr: 'H',
         help: 'Set chat prompt',
         valueHelp: 'String',
       );

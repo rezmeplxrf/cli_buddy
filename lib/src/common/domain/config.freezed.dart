@@ -20,7 +20,7 @@ Configuration _$ConfigurationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Configuration {
-  @JsonKey(name: 'secret_env_path')
+  @JsonKey(name: 'secret_env_path', defaultValue: null)
   String? get secretEnvPath => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: false, name: 'save_session')
   bool get saveSession => throw _privateConstructorUsedError;
@@ -85,7 +85,8 @@ abstract class $ConfigurationCopyWith<$Res> {
       _$ConfigurationCopyWithImpl<$Res, Configuration>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'secret_env_path') String? secretEnvPath,
+      {@JsonKey(name: 'secret_env_path', defaultValue: null)
+      String? secretEnvPath,
       @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -265,7 +266,8 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'secret_env_path') String? secretEnvPath,
+      {@JsonKey(name: 'secret_env_path', defaultValue: null)
+      String? secretEnvPath,
       @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -438,7 +440,8 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
-      {@JsonKey(name: 'secret_env_path') required this.secretEnvPath,
+      {@JsonKey(name: 'secret_env_path', defaultValue: null)
+      required this.secretEnvPath,
       @JsonKey(defaultValue: false, name: 'save_session')
       required this.saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -482,7 +485,7 @@ class _$ConfigurationImpl implements _Configuration {
       _$$ConfigurationImplFromJson(json);
 
   @override
-  @JsonKey(name: 'secret_env_path')
+  @JsonKey(name: 'secret_env_path', defaultValue: null)
   final String? secretEnvPath;
   @override
   @JsonKey(defaultValue: false, name: 'save_session')
@@ -674,7 +677,8 @@ class _$ConfigurationImpl implements _Configuration {
 
 abstract class _Configuration implements Configuration {
   const factory _Configuration(
-      {@JsonKey(name: 'secret_env_path') required final String? secretEnvPath,
+      {@JsonKey(name: 'secret_env_path', defaultValue: null)
+      required final String? secretEnvPath,
       @JsonKey(defaultValue: false, name: 'save_session')
       required final bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -715,7 +719,7 @@ abstract class _Configuration implements Configuration {
       _$ConfigurationImpl.fromJson;
 
   @override
-  @JsonKey(name: 'secret_env_path')
+  @JsonKey(name: 'secret_env_path', defaultValue: null)
   String? get secretEnvPath;
   @override
   @JsonKey(defaultValue: false, name: 'save_session')

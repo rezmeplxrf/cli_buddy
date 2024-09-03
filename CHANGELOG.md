@@ -1,3 +1,7 @@
+# 0.0.4
+
+* Changed set command and logic.
+
 # 0.0.3
 
 * Added set-path and set-model commands.
