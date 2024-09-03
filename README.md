@@ -126,5 +126,3 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
-
----
