@@ -84,10 +84,13 @@ $ buddy --help
 
 ## RoadMap
 
-
+- Refractoring
 - Support Rag
+- Installation script for binary executable and set up
 
 
 
-**Contributions**
-Contributions are welcome! Feel free to open issues or submit pull requests.
+## Contributions
+
+Contributions are welcome!
+Feel free to open issues or submit pull requests.
