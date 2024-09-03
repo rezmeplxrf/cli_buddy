@@ -69,7 +69,7 @@ class ConfigService {
 
       final clickableLink =
           '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-      logger.info('Config is updated successfully at $clickableLink');
+      logger.info('Updated: $clickableLink');
 
       // Reload the configuration
       await loadConfig(logger);

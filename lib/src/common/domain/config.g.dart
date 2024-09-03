@@ -25,8 +25,8 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       logitBias: json['logit_bias'] as Map<String, dynamic>?,
       logprobs: (json['logprobs'] as num?)?.toInt(),
       topLogprobs: (json['top_logprobs'] as num?)?.toInt(),
-      responseFormat: json['response_format'] as String?,
-      stop: (json['stop'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      responseFormat: json['response_format'] as Map<String, dynamic>?,
+      stop: json['stop'] as List<dynamic>?,
       cmdPrompt: json['cmd_prompt'] as String? ??
           'If there is a lack of details, provide most logical solution.\nEnsure the output is a valid shell command.\nIf multiple steps required try to combine them together in one command.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```.\n',
       explainPrompt: json['explain_prompt'] as String? ??

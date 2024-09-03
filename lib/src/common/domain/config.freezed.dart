@@ -55,10 +55,11 @@ mixin _$Configuration {
   @JsonKey(defaultValue: null, name: 'top_logprobs')
   int? get topLogprobs => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'response_format')
-  String? get responseFormat => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get responseFormat =>
+      throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'stop')
-  List<String>? get stop => throw _privateConstructorUsedError;
-  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+  List<dynamic>? get stop => throw _privateConstructorUsedError;
+  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
   String? get cmdPrompt => throw _privateConstructorUsedError;
   @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
   String? get explainPrompt => throw _privateConstructorUsedError;
@@ -107,9 +108,9 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
-      String? responseFormat,
-      @JsonKey(defaultValue: null, name: 'stop') List<String>? stop,
-      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+      Map<String, dynamic>? responseFormat,
+      @JsonKey(defaultValue: null, name: 'stop') List<dynamic>? stop,
+      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
       String? cmdPrompt,
       @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
       String? explainPrompt,
@@ -230,11 +231,11 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       responseFormat: freezed == responseFormat
           ? _value.responseFormat
           : responseFormat // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Map<String, dynamic>?,
       stop: freezed == stop
           ? _value.stop
           : stop // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
+              as List<dynamic>?,
       cmdPrompt: freezed == cmdPrompt
           ? _value.cmdPrompt
           : cmdPrompt // ignore: cast_nullable_to_non_nullable
@@ -287,9 +288,9 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
-      String? responseFormat,
-      @JsonKey(defaultValue: null, name: 'stop') List<String>? stop,
-      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+      Map<String, dynamic>? responseFormat,
+      @JsonKey(defaultValue: null, name: 'stop') List<dynamic>? stop,
+      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
       String? cmdPrompt,
       @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
       String? explainPrompt,
@@ -406,13 +407,13 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
           : topLogprobs // ignore: cast_nullable_to_non_nullable
               as int?,
       responseFormat: freezed == responseFormat
-          ? _value.responseFormat
+          ? _value._responseFormat
           : responseFormat // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Map<String, dynamic>?,
       stop: freezed == stop
           ? _value._stop
           : stop // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
+              as List<dynamic>?,
       cmdPrompt: freezed == cmdPrompt
           ? _value.cmdPrompt
           : cmdPrompt // ignore: cast_nullable_to_non_nullable
@@ -462,9 +463,10 @@ class _$ConfigurationImpl implements _Configuration {
       final Map<String, dynamic>? logitBias,
       @JsonKey(defaultValue: null, name: 'logprobs') this.logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') this.topLogprobs,
-      @JsonKey(defaultValue: null, name: 'response_format') this.responseFormat,
-      @JsonKey(defaultValue: null, name: 'stop') final List<String>? stop,
-      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+      @JsonKey(defaultValue: null, name: 'response_format')
+      final Map<String, dynamic>? responseFormat,
+      @JsonKey(defaultValue: null, name: 'stop') final List<dynamic>? stop,
+      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
       this.cmdPrompt,
       @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
       this.explainPrompt,
@@ -473,6 +475,7 @@ class _$ConfigurationImpl implements _Configuration {
       @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
       this.chatPrompt})
       : _logitBias = logitBias,
+        _responseFormat = responseFormat,
         _stop = stop;
 
   factory _$ConfigurationImpl.fromJson(Map<String, dynamic> json) =>
@@ -537,13 +540,21 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(defaultValue: null, name: 'top_logprobs')
   final int? topLogprobs;
+  final Map<String, dynamic>? _responseFormat;
   @override
   @JsonKey(defaultValue: null, name: 'response_format')
-  final String? responseFormat;
-  final List<String>? _stop;
+  Map<String, dynamic>? get responseFormat {
+    final value = _responseFormat;
+    if (value == null) return null;
+    if (_responseFormat is EqualUnmodifiableMapView) return _responseFormat;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  final List<dynamic>? _stop;
   @override
   @JsonKey(defaultValue: null, name: 'stop')
-  List<String>? get stop {
+  List<dynamic>? get stop {
     final value = _stop;
     if (value == null) return null;
     if (_stop is EqualUnmodifiableListView) return _stop;
@@ -552,7 +563,7 @@ class _$ConfigurationImpl implements _Configuration {
   }
 
   @override
-  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
   final String? cmdPrompt;
   @override
   @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
@@ -603,8 +614,8 @@ class _$ConfigurationImpl implements _Configuration {
                 other.logprobs == logprobs) &&
             (identical(other.topLogprobs, topLogprobs) ||
                 other.topLogprobs == topLogprobs) &&
-            (identical(other.responseFormat, responseFormat) ||
-                other.responseFormat == responseFormat) &&
+            const DeepCollectionEquality()
+                .equals(other._responseFormat, _responseFormat) &&
             const DeepCollectionEquality().equals(other._stop, _stop) &&
             (identical(other.cmdPrompt, cmdPrompt) ||
                 other.cmdPrompt == cmdPrompt) &&
@@ -637,7 +648,7 @@ class _$ConfigurationImpl implements _Configuration {
         const DeepCollectionEquality().hash(_logitBias),
         logprobs,
         topLogprobs,
-        responseFormat,
+        const DeepCollectionEquality().hash(_responseFormat),
         const DeepCollectionEquality().hash(_stop),
         cmdPrompt,
         explainPrompt,
@@ -689,9 +700,9 @@ abstract class _Configuration implements Configuration {
       @JsonKey(defaultValue: null, name: 'logprobs') final int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') final int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
-      final String? responseFormat,
-      @JsonKey(defaultValue: null, name: 'stop') final List<String>? stop,
-      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+      final Map<String, dynamic>? responseFormat,
+      @JsonKey(defaultValue: null, name: 'stop') final List<dynamic>? stop,
+      @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
       final String? cmdPrompt,
       @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)
       final String? explainPrompt,
@@ -756,12 +767,12 @@ abstract class _Configuration implements Configuration {
   int? get topLogprobs;
   @override
   @JsonKey(defaultValue: null, name: 'response_format')
-  String? get responseFormat;
+  Map<String, dynamic>? get responseFormat;
   @override
   @JsonKey(defaultValue: null, name: 'stop')
-  List<String>? get stop;
+  List<dynamic>? get stop;
   @override
-  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCmdprompt)
+  @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
   String? get cmdPrompt;
   @override
   @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)

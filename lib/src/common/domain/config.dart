@@ -32,8 +32,8 @@ class Configuration with _$Configuration {
     @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
     @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
     @JsonKey(defaultValue: null, name: 'response_format')
-    String? responseFormat,
-    @JsonKey(defaultValue: null, name: 'stop') List<String>? stop,
+    Map<String, dynamic>? responseFormat,
+    @JsonKey(defaultValue: null, name: 'stop') List<dynamic>? stop,
     @JsonKey(name: 'cmd_prompt', defaultValue: defaultCommandPrompt)
     String? cmdPrompt,
     @JsonKey(name: 'explain_prompt', defaultValue: defaultExplainPrompt)

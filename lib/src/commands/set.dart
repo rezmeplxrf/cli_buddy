@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
@@ -20,22 +19,149 @@ class SetCommand extends Command<int> {
   }) : _logger = logger {
     argParser
       ..addOption(
-        'secret',
+        'secret-path',
         abbr: 's',
-        help: 'Sets path to the secret.env file',
-        valueHelp: 'path',
+        help: 'Set path to the secret.env file in the buddy.config',
+        valueHelp: 'String',
       )
       ..addOption(
-        'key',
+        'api-key',
         abbr: 'k',
-        help: 'Create a secret.env and set the provided API key in the file',
-        valueHelp: 'api key',
+        help:
+            "Set API key in the secret.env file. If secret.env doesn't exist, create a new secret.env",
+        valueHelp: 'String',
       )
       ..addOption(
         'model',
         abbr: 'm',
-        help: 'sets the default AI model',
-        valueHelp: 'model name',
+        help: 'Set the default AI model',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'save-session',
+        abbr: 'S',
+        help: 'Set save session flag',
+        valueHelp: 'bool',
+      )
+      ..addOption(
+        'max-messages',
+        abbr: 'n',
+        help: 'Set max messages',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'temperature',
+        abbr: 't',
+        help: 'Set temperature',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'max-tokens',
+        abbr: 'M',
+        help: 'Set max tokens',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'top-p',
+        abbr: 'p',
+        help: 'Set top_p',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'top-k',
+        abbr: 'K',
+        help: 'Set top_k',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'freq-penalty',
+        abbr: 'f',
+        help: 'Set frequency penalty',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'presence-penalty',
+        abbr: 'r',
+        help: 'Set presence penalty',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'repetition-penalty',
+        abbr: 'e',
+        help: 'Set repetition penalty',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'min-p',
+        abbr: 'n',
+        help: 'Set min_p',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'top-a',
+        abbr: 'a',
+        help: 'Set top_a',
+        valueHelp: 'double',
+      )
+      ..addOption(
+        'seed',
+        abbr: 'd',
+        help: 'Set seed',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'logit-bias',
+        abbr: 'l',
+        help: 'Set logit bias',
+        valueHelp: 'Map<String, dynamic>',
+      )
+      ..addOption(
+        'logprobs',
+        abbr: 'g',
+        help: 'Set logprobs',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'top-logprobs',
+        abbr: 'q',
+        help: 'Set top logprobs',
+        valueHelp: 'int',
+      )
+      ..addOption(
+        'response-format',
+        abbr: 'F',
+        help: 'Set response format',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'stop-seq',
+        abbr: 'Q',
+        help: 'Set stop sequences',
+        valueHelp: 'List<String>',
+      )
+      ..addOption(
+        'cmd-prompt',
+        abbr: 'C',
+        help: 'Set command prompt',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'explain-prompt',
+        abbr: 'X',
+        help: 'Set explain prompt',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'code-prompt',
+        abbr: 'O',
+        help: 'Set code prompt',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'chat-prompt',
+        abbr: 'H',
+        help: 'Set chat prompt',
+        valueHelp: 'String',
       );
   }
 
@@ -50,9 +176,44 @@ class SetCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final path = argResults?['secret'];
-    final key = argResults?['key'];
-    final model = argResults?['model'];
+    final path = argResults?['secret-path'] as String?;
+    final key = argResults?['api-key'] as String?;
+    final model = argResults?['model'] as String?;
+    final saveSession = argResults?['save-session'] == 'true';
+    final maxMessages =
+        int.tryParse(argResults?['max-messages'] as String? ?? '');
+    final temperature =
+        double.tryParse(argResults?['temperature'] as String? ?? '');
+    final maxTokens = int.tryParse(argResults?['max-tokens'] as String? ?? '');
+    final topP = int.tryParse(argResults?['top-p'] as String? ?? '');
+    final topK = int.tryParse(argResults?['top-k'] as String? ?? '');
+    final frequencyPenalty =
+        double.tryParse(argResults?['freq-penalty'] as String? ?? '');
+    final presencePenalty =
+        double.tryParse(argResults?['presence-penalty'] as String? ?? '');
+    final repetitionPenalty =
+        double.tryParse(argResults?['repetition-penalty'] as String? ?? '');
+    final minP = double.tryParse(argResults?['min-p'] as String? ?? '');
+    final topA = double.tryParse(argResults?['top-a'] as String? ?? '');
+    final seed = int.tryParse(argResults?['seed'] as String? ?? '');
+    final logitBias = argResults?['logit-bias'] != null
+        ? jsonDecode(argResults!['logit-bias'] as String)
+            as Map<String, dynamic>
+        : null;
+    final logprobs = int.tryParse(argResults?['logprobs'] as String? ?? '');
+    final topLogprobs =
+        int.tryParse(argResults?['top-logprobs'] as String? ?? '');
+    final formatArg = argResults?['response-format'] as String?;
+    final responseFormat = (formatArg != null)
+        ? jsonDecode(formatArg) as Map<String, dynamic>
+        : null;
+    final stopArg = argResults?['stop-seq'] as String?;
+    final stop =
+        (stopArg != null) ? jsonDecode(stopArg) as List<dynamic> : null;
+    final cmdPrompt = argResults?['cmd-prompt'] as String?;
+    final explainPrompt = argResults?['explain-prompt'] as String?;
+    final codePrompt = argResults?['code-prompt'] as String?;
+    final chatPrompt = argResults?['chat-prompt'] as String?;
 
     if (argResults == null ||
         argResults?.options == null ||
@@ -66,7 +227,7 @@ class SetCommand extends Command<int> {
       String? secretEnvPath;
       if (path != null) {
         /// if path and key are both provided, create a new secret.env file with the key in the provided path and update config file
-        secretEnvPath = p.join(path.toString(), 'secret.env');
+        secretEnvPath = p.join(path, 'secret.env');
       } else {
         secretEnvPath = p.join(defaultDir!, 'secret.env');
       }
@@ -80,13 +241,35 @@ class SetCommand extends Command<int> {
 
     if (path != null && key == null) {
       await ConfigService.saveConfig(_logger,
-          newConfig: configuration!.copyWith(secretEnvPath: path.toString()));
+          newConfig: configuration!.copyWith(secretEnvPath: path));
     }
 
-    if (model != null) {
-      await ConfigService.saveConfig(_logger,
-          newConfig: configuration!.copyWith(defaultModel: model.toString()));
-    }
+    final newConfig = configuration!.copyWith(
+      defaultModel: model ?? configuration!.defaultModel,
+      saveSession: saveSession,
+      maxMessages: maxMessages ?? configuration!.maxMessages,
+      temperature: temperature ?? configuration!.temperature,
+      maxTokens: maxTokens ?? configuration!.maxTokens,
+      topP: topP ?? configuration!.topP,
+      topK: topK ?? configuration!.topK,
+      frequencyPenalty: frequencyPenalty ?? configuration!.frequencyPenalty,
+      presencePenalty: presencePenalty ?? configuration!.presencePenalty,
+      repetitionPenalty: repetitionPenalty ?? configuration!.repetitionPenalty,
+      minP: minP ?? configuration!.minP,
+      topA: topA ?? configuration!.topA,
+      seed: seed ?? configuration!.seed,
+      logitBias: logitBias ?? configuration!.logitBias,
+      logprobs: logprobs ?? configuration!.logprobs,
+      topLogprobs: topLogprobs ?? configuration!.topLogprobs,
+      responseFormat: responseFormat ?? configuration!.responseFormat,
+      stop: stop ?? configuration!.stop,
+      cmdPrompt: cmdPrompt ?? configuration!.cmdPrompt,
+      explainPrompt: explainPrompt ?? configuration!.explainPrompt,
+      codePrompt: codePrompt ?? configuration!.codePrompt,
+      chatPrompt: chatPrompt ?? configuration!.chatPrompt,
+    );
+
+    await ConfigService.saveConfig(_logger, newConfig: newConfig);
 
     return ExitCode.success.code;
   }
