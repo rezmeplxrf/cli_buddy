@@ -8,7 +8,7 @@ pubspec.lock
 .github/
 .git_backup/
 *.env
-
+temp/
 
 
 # Files generated during tests
