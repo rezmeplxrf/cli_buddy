@@ -7,7 +7,8 @@ part 'config.g.dart';
 @freezed
 class Configuration with _$Configuration {
   const factory Configuration({
-    @JsonKey(name: 'secret_env_path') required String? secretEnvPath,
+    @JsonKey(name: 'secret_env_path', defaultValue: null)
+    required String? secretEnvPath,
     @JsonKey(defaultValue: false, name: 'save_session')
     required bool saveSession,
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,

@@ -39,7 +39,7 @@ class OpenRouterService {
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
 
-    final trimedSession = _trimSessionMessages(session);
+    final trimedSession = _removeOldMessages(session);
     final prompt = <String, dynamic>{
       'model': model,
       'stream': true,
@@ -168,22 +168,12 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  ChatSession _trimSessionMessages(ChatSession session) {
+  ChatSession _removeOldMessages(ChatSession session) {
     if (session.messages.length > configuration!.maxMessages) {
-      final trimmedMessages = session.messages
-          .where((message) => message.role != Role.user)
-          .toList();
-      final userMessages = session.messages
-          .where((message) => message.role == Role.user)
-          .toList();
-
-      while (
-          trimmedMessages.length + userMessages.length > configuration!.maxMessages &&
-              userMessages.isNotEmpty) {
-        userMessages.removeAt(0);
-      }
-
-      return session.copyWith(messages: [...trimmedMessages, ...userMessages]);
+      final excessMessagesCount =
+          session.messages.length - configuration!.maxMessages;
+      final trimmedMessages = session.messages.sublist(excessMessagesCount);
+      return session.copyWith(messages: trimmedMessages);
     }
     return session;
   }

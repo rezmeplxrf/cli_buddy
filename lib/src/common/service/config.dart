@@ -30,9 +30,7 @@ class ConfigService {
       if (!configFile.existsSync()) {
         final clickableLink =
             '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-        logger.info(
-            'Config file not found. Creating a new config file at $clickableLink');
-
+        logger.info('Created a new config file at $clickableLink');
         config = Configuration.fromJson({});
       } else {
         final configContent = await configFile.readAsString();
