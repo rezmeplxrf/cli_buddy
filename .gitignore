@@ -9,6 +9,8 @@ pubspec.lock
 .git_backup/
 *.env
 
+
+
 # Files generated during tests
 .test_coverage.dart
 coverage/
