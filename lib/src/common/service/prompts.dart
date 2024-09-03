@@ -5,14 +5,12 @@ If there is a lack of details, provide most logical solution.
 Ensure the output is a valid shell command.
 If multiple steps required try to combine them together in one command.
 Provide only plain text without Markdown formatting.
-Do not provide markdown formatting such as ```.
-''';
+Do not provide markdown formatting such as ```.''';
 
 const defaultExplainPrompt = '''
 Provide short and concise explanation of your previous response about command or code.
 Provide only plain text without Markdown formatting.
-Do not provide markdown formatting such as ```
-''';
+Do not provide markdown formatting such as ```.''';
 
 const defaultCodePrompt = """
 Provide only code as output without any description.
@@ -20,13 +18,11 @@ Provide only code in plain text format without Markdown formatting.
 Do not include symbols such as ``` or ```python.
 If there is a lack of details, provide most logical solution.
 You are not allowed to ask for more details.
-For example if the prompt is "Hello world Python", you should return "print('Hello world')".
-""";
+For example if the prompt is "Hello world Python", you should return "print('Hello world')".""";
 
 const defaultChatPrompt = '''
 Provide concise response unless asked for more details.
-Avoid using any markdown formatting such as ```, *, #.
-''';
+Avoid using any markdown formatting such as ```, *, #.''';
 
 String cmdPromptCache = defaultCommandPrompt;
 String explainPromptCache = defaultExplainPrompt;
