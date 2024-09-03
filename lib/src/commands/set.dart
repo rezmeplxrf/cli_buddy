@@ -17,7 +17,6 @@ class SetCommand extends Command<int> {
     required Logger logger,
   }) : _logger = logger {
     argParser
-    
       ..addOption(
         'secret',
         abbr: 's',
@@ -60,8 +59,6 @@ class SetCommand extends Command<int> {
     final key = argResults?['key'];
     final configPath = argResults?['config'];
     final model = argResults?['model'];
-
-  
 
     if (path == null && key == null && model == null) {
       _logger.err(
@@ -116,6 +113,9 @@ class SetCommand extends Command<int> {
         'response_format': null,
         'stop': null
       };
+      // Create the file with the default configuration
+      final updatedContent = const JsonEncoder.withIndent('  ').convert(config);
+      await configFile.writeAsString(updatedContent);
     }
 
     if (key != null) {
@@ -131,7 +131,7 @@ class SetCommand extends Command<int> {
       config['secret_env_path'] = path;
       _logger.info(
           'Saved Path to the secret.env ($path) successfully at $clickableLink');
-    } 
+    }
     if (model != null) {
       config['default_model'] = model;
       _logger

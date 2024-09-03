@@ -12,6 +12,7 @@ String? defaultModel;
 Parameters? defaultParameters;
 String fallbackModel = 'openai/gpt-4o-mini';
 int? defaultMaxMessages = 20;
+String? customPath;
 
 class ConfigService {
   static Map<String, dynamic>? _configData;
@@ -20,8 +21,14 @@ class ConfigService {
     if (_configData != null) {
       return;
     }
+    final configDir = SysInfoService.getConfigDirectory();
+    if (configDir == null) {
+      logger.err('Unsupported OS');
+      return;
+    }
 
-    final configFile = File('buddy.config');
+    final configFilePath = customPath ?? p.join(configDir, 'buddy.config');
+    final configFile = File(configFilePath);
     if (!configFile.existsSync()) {
       logger.err(
           "Config file not found. Please create 'buddy.config' file and add the necessary configurations.");
@@ -38,7 +45,9 @@ class ConfigService {
     }
   }
 
-  static Future<String?> loadOpenrouterKey(Logger logger) async {
+  static Future<String?> loadOpenrouterKey(
+    Logger logger,
+  ) async {
     await _loadConfigFile(logger);
     if (_configData == null) {
       return null;
@@ -70,8 +79,12 @@ class ConfigService {
     }
   }
 
-  static Future<String?> loadDefaultModel(Logger logger) async {
-    await _loadConfigFile(logger);
+  static Future<String?> loadDefaultModel(
+    Logger logger,
+  ) async {
+    await _loadConfigFile(
+      logger,
+    );
     if (_configData == null) {
       return null;
     }
@@ -84,7 +97,12 @@ class ConfigService {
     return defaultModel;
   }
 
-  static Future<int?> loadMaxMessagesSent(Logger logger) async {
+  static Future<int?> loadMaxMessagesSent(
+    Logger logger,
+  ) async {
+    await _loadConfigFile(
+      logger,
+    );
     await _loadConfigFile(logger);
     if (_configData == null) {
       return null;
@@ -95,7 +113,12 @@ class ConfigService {
     return maxMessagesSent ?? defaultMaxMessages;
   }
 
-  static Future<Parameters?> loadDefaultParameters(Logger logger) async {
+  static Future<Parameters?> loadDefaultParameters(
+    Logger logger,
+  ) async {
+    await _loadConfigFile(
+      logger,
+    );
     await _loadConfigFile(logger);
     if (_configData == null) {
       return null;

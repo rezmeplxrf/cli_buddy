@@ -17,13 +17,8 @@ class SuggestionCommand extends Command<int> {
     required Logger logger,
   }) : _logger = logger {
     argParser
-      ..addFlag(
-        'desc',
-        abbr: 'd',
-        help: 'Also describes the command',
-        negatable: false,
-      )
-      ..addFlag('raw',
+ 
+      .addFlag('raw',
           abbr: 'r',
           help: 'get raw outputs of prompt and api requests',
           negatable: false);
@@ -68,15 +63,6 @@ class SuggestionCommand extends Command<int> {
       return ExitCode.tempFail.code;
     }
 
-    if (argResults?['desc'] == true) {
-      final initialSession = initialResult.getOrThrow();
-      final newResult = await ActionService.explain(initialSession, _logger,
-          shouldDebug: shouldDebug);
-      if (newResult.isError()) {
-        _logger.err('An Error occured while asking for descriptions');
-        return ExitCode.tempFail.code;
-      }
-    }
 
     final action = _logger.chooseOne(
       'Your action:',
