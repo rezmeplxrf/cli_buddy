@@ -112,6 +112,7 @@ $ buddy --help
 - Support for RAG (Retrieval-Augmented Generation)
 - Installation script for binary executable and setup
 - Support for Google Vertex AI API
+- Markdown support
 
 ## Contributions
 
