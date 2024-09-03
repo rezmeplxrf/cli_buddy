@@ -31,7 +31,7 @@ class ChatCommand extends Command<int> {
   }
 
   @override
-  String get description => 'Chats with the AI';
+  String get description => 'Chat with the AI';
 
   @override
   String get name => 'chat';

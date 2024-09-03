@@ -33,7 +33,7 @@ class CodeCommand extends Command<int> {
   }
 
   @override
-  String get description => 'Generate code based on prompt';
+  String get description => 'Generates code based on prompt';
 
   @override
   String get name => 'code';
@@ -81,7 +81,6 @@ class CodeCommand extends Command<int> {
         return ExitCode.tempFail.code;
       }
       session = initialResult.getOrThrow();
-     
 
       while (true) {
         final actionCompleter = Completer<ActionType>();

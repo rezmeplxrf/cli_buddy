@@ -64,9 +64,9 @@ ${lightCyan.wrap(promptForDebug)}
 ''';
       logger.info(log);
     }
-
+    const waitingMsg = 'Waiting for response...';
     final progress = logger.progress(
-      'Waiting for response...',
+      green.wrap(waitingMsg)!,
       options: const ProgressOptions(
         animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
       ),
@@ -114,7 +114,7 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                stdout.write(content);
+                stdout.write(cyan.wrap(content));
                 index = msg.length;
 
                 if ((index - lineStart) >= consoleWidth) {

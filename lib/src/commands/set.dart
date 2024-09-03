@@ -258,10 +258,11 @@ class SetCommand extends Command<int> {
       chatPrompt: chatPrompt ?? configuration!.chatPrompt,
     );
 
-    await ConfigService.saveConfig(_logger, newConfig: newConfig);
     if (argResults?['config'] == true) {
       _logger.info(jsonEncode(configuration));
     }
+    await ConfigService.saveConfig(_logger, newConfig: newConfig);
+
     return ExitCode.success.code;
   }
 }
