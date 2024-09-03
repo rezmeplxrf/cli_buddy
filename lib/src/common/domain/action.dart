@@ -1,1 +1,1 @@
-enum ActionType { run, copy, explain, file, chat }
+enum ActionType { run, copy, explain, file, chat, exit }

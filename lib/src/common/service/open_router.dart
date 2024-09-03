@@ -83,12 +83,20 @@ ${lightCyan.wrap(promptForDebug)}
         ),
       );
     }
-
-    final response = await dio.post<ResponseBody>(
-      _baseUrl,
-      options: Options(headers: headers, responseType: ResponseType.stream),
-      data: prompt,
-    );
+    Response<ResponseBody>? response;
+    try {
+      response = await dio.post<ResponseBody>(
+        _baseUrl,
+        options: Options(headers: headers, responseType: ResponseType.stream),
+        data: prompt,
+      );
+    } catch (e) {
+      return CustomException(
+        message: 'Error while making API request.',
+        stack: 'OpenRouterService.invoke',
+        details: {'error': e.toString()},
+      ).toFailure();
+    }
 
     final msg = StringBuffer();
 
@@ -154,7 +162,6 @@ ${lightCyan.wrap(promptForDebug)}
     if (!skipLog) {
       stdout.writeln();
     }
-    
 
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;

@@ -67,6 +67,7 @@ class SuggestionCommand extends Command<int> {
         ActionType.copy,
         ActionType.run,
         ActionType.explain,
+        ActionType.exit
       ],
       defaultValue: ActionType.copy,
       display: (choice) {
@@ -76,7 +77,9 @@ class SuggestionCommand extends Command<int> {
           case ActionType.run:
             return 'run';
           case ActionType.explain:
-            return 'Explain';
+            return 'explain';
+          case ActionType.exit:
+            return 'exit';
           default:
             throw UnimplementedError();
         }
@@ -99,6 +102,8 @@ class SuggestionCommand extends Command<int> {
           _logger.err('An Error occured while asking for explanations');
           return ExitCode.tempFail.code;
         }
+      case ActionType.exit:
+        return ExitCode.success.code;
       default:
         throw UnimplementedError();
     }

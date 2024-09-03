@@ -91,9 +91,10 @@ class CodeCommand extends Command<int> {
             'Your action:',
             choices: [
               ActionType.file,
-              ActionType.chat,
               ActionType.copy,
+              ActionType.chat,
               ActionType.explain,
+              ActionType.exit
             ],
             defaultValue: ActionType.copy,
             display: (choice) {
@@ -106,6 +107,8 @@ class CodeCommand extends Command<int> {
                   return 'chat';
                 case ActionType.file:
                   return 'file';
+                case ActionType.exit:
+                  return 'exit';
                 default:
                   throw UnimplementedError();
               }
@@ -140,6 +143,8 @@ class CodeCommand extends Command<int> {
             final chatResult = await openRouter.invoke(
                 session: session, logger: _logger, shouldDebug: shouldDebug);
             session = chatResult.getOrThrow();
+          case ActionType.exit:
+            return ExitCode.success.code;
           default:
             throw UnimplementedError();
         }
