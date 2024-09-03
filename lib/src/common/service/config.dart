@@ -11,6 +11,7 @@ String? openrouterKey;
 String? defaultModel;
 Parameters? defaultParameters;
 String fallbackModel = 'openai/gpt-4o-2024-08-06';
+int? defaultMaxMessages = 20;
 
 class ConfigService {
   static Map<String, dynamic>? _configData;
@@ -81,6 +82,17 @@ class ConfigService {
           'default_model not found in buddy.config file. We will use fallback model which is $fallbackModel');
     }
     return defaultModel;
+  }
+
+  static Future<int?> loadMaxMessagesSent(Logger logger) async {
+    await _loadConfigFile(logger);
+    if (_configData == null) {
+      return null;
+    }
+
+    final maxMessagesSent = _configData!['max_messages_sent'] as int?;
+
+    return maxMessagesSent ?? defaultMaxMessages;
   }
 
   static Future<Parameters?> loadDefaultParameters(Logger logger) async {

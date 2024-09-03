@@ -13,7 +13,6 @@ import 'package:result_dart/result_dart.dart';
 final openRouter = OpenRouterService();
 const _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
-// TODO: if messages exceed max token, remove the user messages from the first
 class OpenRouterService {
   factory OpenRouterService() => _instance;
   OpenRouterService._internal();
@@ -26,6 +25,7 @@ class OpenRouterService {
     openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
     defaultModel ??= await ConfigService.loadDefaultModel(logger);
     defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
+    defaultMaxMessages = await ConfigService.loadMaxMessagesSent(logger);
     if (openrouterKey == null) {
       throw CustomException(
         message: 'openrouter_key not found in .env file',
@@ -38,14 +38,17 @@ class OpenRouterService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $openrouterKey'
     };
+
     final model =
         (session.model != null) ? session.model : defaultModel ?? fallbackModel;
     final parameters =
         (session.parameters != null) ? session.parameters : defaultParameters;
+    // TODO: test
+    final trimedSession = _trimSessionMessages(session);
     final prompt = <String, dynamic>{
       'model': model,
       'stream': true,
-      'messages': session.messages,
+      'messages': trimedSession.messages,
     };
 
     if (parameters != null) {
@@ -85,9 +88,9 @@ ${lightCyan.wrap(promptForDebug)}
 
     ChatSession? newSession;
     final responses = <ORResponse>[];
-    var chunkCount = 0;
+
     await for (final chunk in response.data!.stream) {
-      chunkCount++;
+  
       if (chunk.isEmpty) continue;
       final decodedString = utf8.decode(chunk);
       final parts = decodedString.split('\n');
@@ -109,8 +112,8 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                // increment #
-                progress?.update(chunkCount.toString());
+             
+                progress?.update(msg.length.toString());
               }
             }
 
@@ -128,7 +131,6 @@ ${lightCyan.wrap(promptForDebug)}
     }
 
     progress?.complete();
-    logger.info(msg.toString());
 
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
@@ -157,5 +159,25 @@ ${lightCyan.wrap(promptForDebug)}
           details: {'api_responses': responses},
           stack: 'OpenRouterService.invoke');
     }
+  }
+
+  ChatSession _trimSessionMessages(ChatSession session) {
+    if (session.messages.length > defaultMaxMessages!) {
+      final trimmedMessages = session.messages
+          .where((message) => message.role != Role.user)
+          .toList();
+      final userMessages = session.messages
+          .where((message) => message.role == Role.user)
+          .toList();
+
+      while (
+          trimmedMessages.length + userMessages.length > defaultMaxMessages! &&
+              userMessages.isNotEmpty) {
+        userMessages.removeAt(0);
+      }
+
+      return session.copyWith(messages: [...trimmedMessages, ...userMessages]);
+    }
+    return session;
   }
 }
