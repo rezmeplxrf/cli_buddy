@@ -216,12 +216,13 @@ ${lightCyan.wrap(promptForDebug)}
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: header));
+      //  print(response.data);
       final list = <ORModelList>[];
       if (response.data == null) {
         throw Exception('response.data is Empty');
       }
-      for (final model
-          in response.data!['data'] as List<Map<String, dynamic>>) {
+      for (final data in response.data!['data'] as List<dynamic>) {
+        final model = data as Map<String, dynamic>;
         final name = model['name'] as String?;
         if (name != null &&
             (name.startsWith('Flavor') || name.startsWith('Auto'))) {
@@ -239,7 +240,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  static Future<Result<ORCredits, CustomException>> checkCredits() async {
+  static Future<Result<ORCredit, CustomException>> checkCredits() async {
     const url = 'https://openrouter.ai/api/v1/auth/key';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     final headers = {
@@ -252,15 +253,7 @@ ${lightCyan.wrap(promptForDebug)}
 
       final data = response.data?['data'] as Map<String, dynamic>;
 
-      final credits = ORCredits(
-        limit: data['limit'] as int?,
-        usage: double.tryParse(data['usage'].toString()),
-        isFreeTier: data['is_free_tier'] as bool? ?? true,
-        // ignore: avoid_dynamic_calls
-        requestsLimit: data['rate_limit']['requests'] as int? ?? 0,
-        // ignore: avoid_dynamic_calls
-        interval: data['rate_limit']['interval'] as String? ?? '',
-      );
+      final credits = ORCredit.fromJson(data);
       return credits.toSuccess();
     } catch (e) {
       _logger?.err('Failed to load credit data from OpenRouter');

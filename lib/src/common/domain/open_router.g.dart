@@ -212,17 +212,17 @@ _$ORModelListImpl _$$ORModelListImplFromJson(Map<String, dynamic> json) =>
       pricing: json['pricing'] == null
           ? null
           : Pricing.fromJson(json['pricing'] as Map<String, dynamic>),
-      contextLength: (json['contextLength'] as num?)?.toInt(),
+      contextLength: (json['context_length'] as num?)?.toInt(),
       architecture: json['architecture'] == null
           ? null
           : Architecture.fromJson(json['architecture'] as Map<String, dynamic>),
-      topProvider: json['topProvider'] == null
+      topProvider: json['top_provider'] == null
           ? null
-          : TopProvider.fromJson(json['topProvider'] as Map<String, dynamic>),
-      perRequestLimits: json['perRequestLimits'] == null
+          : TopProvider.fromJson(json['top_provider'] as Map<String, dynamic>),
+      perRequestLimits: json['per_request_limits'] == null
           ? null
           : PerRequestLimits.fromJson(
-              json['perRequestLimits'] as Map<String, dynamic>),
+              json['per_request_limits'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ORModelListImplToJson(_$ORModelListImpl instance) =>
@@ -231,10 +231,10 @@ Map<String, dynamic> _$$ORModelListImplToJson(_$ORModelListImpl instance) =>
       'name': instance.name,
       'description': instance.description,
       'pricing': instance.pricing,
-      'contextLength': instance.contextLength,
+      'context_length': instance.contextLength,
       'architecture': instance.architecture,
-      'topProvider': instance.topProvider,
-      'perRequestLimits': instance.perRequestLimits,
+      'top_provider': instance.topProvider,
+      'per_request_limits': instance.perRequestLimits,
     };
 
 _$PricingImpl _$$PricingImplFromJson(Map<String, dynamic> json) =>
@@ -257,56 +257,74 @@ _$ArchitectureImpl _$$ArchitectureImplFromJson(Map<String, dynamic> json) =>
     _$ArchitectureImpl(
       modality: json['modality'] as String?,
       tokenizer: json['tokenizer'] as String?,
-      instructType: json['instructType'] as String?,
+      instructType: json['instruct_type'] as String?,
     );
 
 Map<String, dynamic> _$$ArchitectureImplToJson(_$ArchitectureImpl instance) =>
     <String, dynamic>{
       'modality': instance.modality,
       'tokenizer': instance.tokenizer,
-      'instructType': instance.instructType,
+      'instruct_type': instance.instructType,
     };
 
 _$TopProviderImpl _$$TopProviderImplFromJson(Map<String, dynamic> json) =>
     _$TopProviderImpl(
-      maxCompletionTokens: (json['maxCompletionTokens'] as num?)?.toInt(),
-      isModerated: json['isModerated'] as bool?,
+      contextLength: (json['context_length'] as num?)?.toInt(),
+      maxCompletionTokens: (json['max_completion_tokens'] as num?)?.toInt(),
+      isModerated: json['is_moderated'] as bool?,
     );
 
 Map<String, dynamic> _$$TopProviderImplToJson(_$TopProviderImpl instance) =>
     <String, dynamic>{
-      'maxCompletionTokens': instance.maxCompletionTokens,
-      'isModerated': instance.isModerated,
+      'context_length': instance.contextLength,
+      'max_completion_tokens': instance.maxCompletionTokens,
+      'is_moderated': instance.isModerated,
     };
 
 _$PerRequestLimitsImpl _$$PerRequestLimitsImplFromJson(
         Map<String, dynamic> json) =>
     _$PerRequestLimitsImpl(
-      promptTokens: json['promptTokens'] as String?,
-      completionTokens: json['completionTokens'] as String?,
+      promptTokens: json['prompt_tokens'] as String?,
+      completionTokens: json['completion_tokens'] as String?,
     );
 
 Map<String, dynamic> _$$PerRequestLimitsImplToJson(
         _$PerRequestLimitsImpl instance) =>
     <String, dynamic>{
-      'promptTokens': instance.promptTokens,
-      'completionTokens': instance.completionTokens,
+      'prompt_tokens': instance.promptTokens,
+      'completion_tokens': instance.completionTokens,
     };
 
-_$ORCreditsImpl _$$ORCreditsImplFromJson(Map<String, dynamic> json) =>
-    _$ORCreditsImpl(
+_$ORCreditImpl _$$ORCreditImplFromJson(Map<String, dynamic> json) =>
+    _$ORCreditImpl(
+      label: json['label'] as String?,
       limit: (json['limit'] as num?)?.toInt(),
       usage: (json['usage'] as num?)?.toDouble(),
-      isFreeTier: json['is_free_tier'] as bool,
-      requestsLimit: (json['requestsLimit'] as num).toInt(),
-      interval: json['interval'] as String,
+      limitRemaining: (json['limit_remaining'] as num?)?.toInt(),
+      isFreeTier: json['is_free_tier'] as bool?,
+      rateLimit: json['rate_limit'] == null
+          ? null
+          : RateLimit.fromJson(json['rate_limit'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ORCreditsImplToJson(_$ORCreditsImpl instance) =>
+Map<String, dynamic> _$$ORCreditImplToJson(_$ORCreditImpl instance) =>
     <String, dynamic>{
+      'label': instance.label,
       'limit': instance.limit,
       'usage': instance.usage,
+      'limit_remaining': instance.limitRemaining,
       'is_free_tier': instance.isFreeTier,
-      'requestsLimit': instance.requestsLimit,
+      'rate_limit': instance.rateLimit,
+    };
+
+_$RateLimitImpl _$$RateLimitImplFromJson(Map<String, dynamic> json) =>
+    _$RateLimitImpl(
+      requests: (json['requests'] as num?)?.toInt(),
+      interval: json['interval'] as String?,
+    );
+
+Map<String, dynamic> _$$RateLimitImplToJson(_$RateLimitImpl instance) =>
+    <String, dynamic>{
+      'requests': instance.requests,
       'interval': instance.interval,
     };

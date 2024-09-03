@@ -136,9 +136,10 @@ class ORModelList with _$ORModelList {
     required String name,
     required String description,
     required Pricing? pricing,
-    required int? contextLength,
+    @JsonKey(name: 'context_length') required int? contextLength,
     required Architecture? architecture,
-    required TopProvider? topProvider,
+    @JsonKey(name: 'top_provider') required TopProvider? topProvider,
+    @JsonKey(name: 'per_request_limits')
     required PerRequestLimits? perRequestLimits,
   }) = _ORModelList;
 
@@ -164,7 +165,7 @@ class Architecture with _$Architecture {
   const factory Architecture({
     required String? modality,
     required String? tokenizer,
-    required String? instructType,
+    @JsonKey(name: 'instruct_type') required String? instructType,
   }) = _Architecture;
 
   factory Architecture.fromJson(Map<String, dynamic> json) =>
@@ -174,8 +175,9 @@ class Architecture with _$Architecture {
 @freezed
 class TopProvider with _$TopProvider {
   const factory TopProvider({
-    required int? maxCompletionTokens,
-    required bool? isModerated,
+    @JsonKey(name: 'context_length') required int? contextLength,
+    @JsonKey(name: 'max_completion_tokens') required int? maxCompletionTokens,
+    @JsonKey(name: 'is_moderated') required bool? isModerated,
   }) = _TopProvider;
 
   factory TopProvider.fromJson(Map<String, dynamic> json) =>
@@ -185,8 +187,8 @@ class TopProvider with _$TopProvider {
 @freezed
 class PerRequestLimits with _$PerRequestLimits {
   const factory PerRequestLimits({
-    required String? promptTokens,
-    required String? completionTokens,
+    @JsonKey(name: 'prompt_tokens') required String? promptTokens,
+    @JsonKey(name: 'completion_tokens') required String? completionTokens,
   }) = _PerRequestLimits;
 
   factory PerRequestLimits.fromJson(Map<String, dynamic> json) =>
@@ -194,15 +196,27 @@ class PerRequestLimits with _$PerRequestLimits {
 }
 
 @freezed
-class ORCredits with _$ORCredits {
-  const factory ORCredits({
-    required int? limit,
-    required double? usage,
-    @JsonKey(name: 'is_free_tier') required bool isFreeTier,
-    required int requestsLimit,
-    required String interval,
-  }) = _ORCredits;
+class ORCredit with _$ORCredit {
+  const factory ORCredit({
+    @JsonKey(name: 'label') String? label,
+    @JsonKey(name: 'limit') int? limit,
+    @JsonKey(name: 'usage') double? usage,
+    @JsonKey(name: 'limit_remaining') int? limitRemaining,
+    @JsonKey(name: 'is_free_tier') bool? isFreeTier,
+    @JsonKey(name: 'rate_limit') RateLimit? rateLimit,
+  }) = _ORCredit;
 
-  factory ORCredits.fromJson(Map<String, dynamic> json) =>
-      _$ORCreditsFromJson(json);
+  factory ORCredit.fromJson(Map<String, Object?> json) =>
+      _$ORCreditFromJson(json);
+}
+
+@freezed
+class RateLimit with _$RateLimit {
+  const factory RateLimit({
+    @JsonKey(name: 'requests') int? requests,
+    @JsonKey(name: 'interval') String? interval,
+  }) = _RateLimit;
+
+  factory RateLimit.fromJson(Map<String, Object?> json) =>
+      _$RateLimitFromJson(json);
 }

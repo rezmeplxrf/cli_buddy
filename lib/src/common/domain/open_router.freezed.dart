@@ -2181,9 +2181,12 @@ mixin _$ORModelList {
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   Pricing? get pricing => throw _privateConstructorUsedError;
+  @JsonKey(name: 'context_length')
   int? get contextLength => throw _privateConstructorUsedError;
   Architecture? get architecture => throw _privateConstructorUsedError;
+  @JsonKey(name: 'top_provider')
   TopProvider? get topProvider => throw _privateConstructorUsedError;
+  @JsonKey(name: 'per_request_limits')
   PerRequestLimits? get perRequestLimits => throw _privateConstructorUsedError;
 
   /// Serializes this ORModelList to a JSON map.
@@ -2207,10 +2210,10 @@ abstract class $ORModelListCopyWith<$Res> {
       String name,
       String description,
       Pricing? pricing,
-      int? contextLength,
+      @JsonKey(name: 'context_length') int? contextLength,
       Architecture? architecture,
-      TopProvider? topProvider,
-      PerRequestLimits? perRequestLimits});
+      @JsonKey(name: 'top_provider') TopProvider? topProvider,
+      @JsonKey(name: 'per_request_limits') PerRequestLimits? perRequestLimits});
 
   $PricingCopyWith<$Res>? get pricing;
   $ArchitectureCopyWith<$Res>? get architecture;
@@ -2348,10 +2351,10 @@ abstract class _$$ORModelListImplCopyWith<$Res>
       String name,
       String description,
       Pricing? pricing,
-      int? contextLength,
+      @JsonKey(name: 'context_length') int? contextLength,
       Architecture? architecture,
-      TopProvider? topProvider,
-      PerRequestLimits? perRequestLimits});
+      @JsonKey(name: 'top_provider') TopProvider? topProvider,
+      @JsonKey(name: 'per_request_limits') PerRequestLimits? perRequestLimits});
 
   @override
   $PricingCopyWith<$Res>? get pricing;
@@ -2430,10 +2433,10 @@ class _$ORModelListImpl implements _ORModelList {
       required this.name,
       required this.description,
       required this.pricing,
-      required this.contextLength,
+      @JsonKey(name: 'context_length') required this.contextLength,
       required this.architecture,
-      required this.topProvider,
-      required this.perRequestLimits});
+      @JsonKey(name: 'top_provider') required this.topProvider,
+      @JsonKey(name: 'per_request_limits') required this.perRequestLimits});
 
   factory _$ORModelListImpl.fromJson(Map<String, dynamic> json) =>
       _$$ORModelListImplFromJson(json);
@@ -2447,12 +2450,15 @@ class _$ORModelListImpl implements _ORModelList {
   @override
   final Pricing? pricing;
   @override
+  @JsonKey(name: 'context_length')
   final int? contextLength;
   @override
   final Architecture? architecture;
   @override
+  @JsonKey(name: 'top_provider')
   final TopProvider? topProvider;
   @override
+  @JsonKey(name: 'per_request_limits')
   final PerRequestLimits? perRequestLimits;
 
   @override
@@ -2507,9 +2513,10 @@ abstract class _ORModelList implements ORModelList {
       required final String name,
       required final String description,
       required final Pricing? pricing,
-      required final int? contextLength,
+      @JsonKey(name: 'context_length') required final int? contextLength,
       required final Architecture? architecture,
-      required final TopProvider? topProvider,
+      @JsonKey(name: 'top_provider') required final TopProvider? topProvider,
+      @JsonKey(name: 'per_request_limits')
       required final PerRequestLimits? perRequestLimits}) = _$ORModelListImpl;
 
   factory _ORModelList.fromJson(Map<String, dynamic> json) =
@@ -2524,12 +2531,15 @@ abstract class _ORModelList implements ORModelList {
   @override
   Pricing? get pricing;
   @override
+  @JsonKey(name: 'context_length')
   int? get contextLength;
   @override
   Architecture? get architecture;
   @override
+  @JsonKey(name: 'top_provider')
   TopProvider? get topProvider;
   @override
+  @JsonKey(name: 'per_request_limits')
   PerRequestLimits? get perRequestLimits;
 
   /// Create a copy of ORModelList
@@ -2753,6 +2763,7 @@ Architecture _$ArchitectureFromJson(Map<String, dynamic> json) {
 mixin _$Architecture {
   String? get modality => throw _privateConstructorUsedError;
   String? get tokenizer => throw _privateConstructorUsedError;
+  @JsonKey(name: 'instruct_type')
   String? get instructType => throw _privateConstructorUsedError;
 
   /// Serializes this Architecture to a JSON map.
@@ -2771,7 +2782,10 @@ abstract class $ArchitectureCopyWith<$Res> {
           Architecture value, $Res Function(Architecture) then) =
       _$ArchitectureCopyWithImpl<$Res, Architecture>;
   @useResult
-  $Res call({String? modality, String? tokenizer, String? instructType});
+  $Res call(
+      {String? modality,
+      String? tokenizer,
+      @JsonKey(name: 'instruct_type') String? instructType});
 }
 
 /// @nodoc
@@ -2818,7 +2832,10 @@ abstract class _$$ArchitectureImplCopyWith<$Res>
       __$$ArchitectureImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? modality, String? tokenizer, String? instructType});
+  $Res call(
+      {String? modality,
+      String? tokenizer,
+      @JsonKey(name: 'instruct_type') String? instructType});
 }
 
 /// @nodoc
@@ -2861,7 +2878,7 @@ class _$ArchitectureImpl implements _Architecture {
   const _$ArchitectureImpl(
       {required this.modality,
       required this.tokenizer,
-      required this.instructType});
+      @JsonKey(name: 'instruct_type') required this.instructType});
 
   factory _$ArchitectureImpl.fromJson(Map<String, dynamic> json) =>
       _$$ArchitectureImplFromJson(json);
@@ -2871,6 +2888,7 @@ class _$ArchitectureImpl implements _Architecture {
   @override
   final String? tokenizer;
   @override
+  @JsonKey(name: 'instruct_type')
   final String? instructType;
 
   @override
@@ -2916,6 +2934,7 @@ abstract class _Architecture implements Architecture {
   const factory _Architecture(
       {required final String? modality,
       required final String? tokenizer,
+      @JsonKey(name: 'instruct_type')
       required final String? instructType}) = _$ArchitectureImpl;
 
   factory _Architecture.fromJson(Map<String, dynamic> json) =
@@ -2926,6 +2945,7 @@ abstract class _Architecture implements Architecture {
   @override
   String? get tokenizer;
   @override
+  @JsonKey(name: 'instruct_type')
   String? get instructType;
 
   /// Create a copy of Architecture
@@ -2942,7 +2962,11 @@ TopProvider _$TopProviderFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TopProvider {
+  @JsonKey(name: 'context_length')
+  int? get contextLength => throw _privateConstructorUsedError;
+  @JsonKey(name: 'max_completion_tokens')
   int? get maxCompletionTokens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_moderated')
   bool? get isModerated => throw _privateConstructorUsedError;
 
   /// Serializes this TopProvider to a JSON map.
@@ -2961,7 +2985,10 @@ abstract class $TopProviderCopyWith<$Res> {
           TopProvider value, $Res Function(TopProvider) then) =
       _$TopProviderCopyWithImpl<$Res, TopProvider>;
   @useResult
-  $Res call({int? maxCompletionTokens, bool? isModerated});
+  $Res call(
+      {@JsonKey(name: 'context_length') int? contextLength,
+      @JsonKey(name: 'max_completion_tokens') int? maxCompletionTokens,
+      @JsonKey(name: 'is_moderated') bool? isModerated});
 }
 
 /// @nodoc
@@ -2979,10 +3006,15 @@ class _$TopProviderCopyWithImpl<$Res, $Val extends TopProvider>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? contextLength = freezed,
     Object? maxCompletionTokens = freezed,
     Object? isModerated = freezed,
   }) {
     return _then(_value.copyWith(
+      contextLength: freezed == contextLength
+          ? _value.contextLength
+          : contextLength // ignore: cast_nullable_to_non_nullable
+              as int?,
       maxCompletionTokens: freezed == maxCompletionTokens
           ? _value.maxCompletionTokens
           : maxCompletionTokens // ignore: cast_nullable_to_non_nullable
@@ -3003,7 +3035,10 @@ abstract class _$$TopProviderImplCopyWith<$Res>
       __$$TopProviderImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? maxCompletionTokens, bool? isModerated});
+  $Res call(
+      {@JsonKey(name: 'context_length') int? contextLength,
+      @JsonKey(name: 'max_completion_tokens') int? maxCompletionTokens,
+      @JsonKey(name: 'is_moderated') bool? isModerated});
 }
 
 /// @nodoc
@@ -3019,10 +3054,15 @@ class __$$TopProviderImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? contextLength = freezed,
     Object? maxCompletionTokens = freezed,
     Object? isModerated = freezed,
   }) {
     return _then(_$TopProviderImpl(
+      contextLength: freezed == contextLength
+          ? _value.contextLength
+          : contextLength // ignore: cast_nullable_to_non_nullable
+              as int?,
       maxCompletionTokens: freezed == maxCompletionTokens
           ? _value.maxCompletionTokens
           : maxCompletionTokens // ignore: cast_nullable_to_non_nullable
@@ -3039,19 +3079,26 @@ class __$$TopProviderImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$TopProviderImpl implements _TopProvider {
   const _$TopProviderImpl(
-      {required this.maxCompletionTokens, required this.isModerated});
+      {@JsonKey(name: 'context_length') required this.contextLength,
+      @JsonKey(name: 'max_completion_tokens') required this.maxCompletionTokens,
+      @JsonKey(name: 'is_moderated') required this.isModerated});
 
   factory _$TopProviderImpl.fromJson(Map<String, dynamic> json) =>
       _$$TopProviderImplFromJson(json);
 
   @override
+  @JsonKey(name: 'context_length')
+  final int? contextLength;
+  @override
+  @JsonKey(name: 'max_completion_tokens')
   final int? maxCompletionTokens;
   @override
+  @JsonKey(name: 'is_moderated')
   final bool? isModerated;
 
   @override
   String toString() {
-    return 'TopProvider(maxCompletionTokens: $maxCompletionTokens, isModerated: $isModerated)';
+    return 'TopProvider(contextLength: $contextLength, maxCompletionTokens: $maxCompletionTokens, isModerated: $isModerated)';
   }
 
   @override
@@ -3059,6 +3106,8 @@ class _$TopProviderImpl implements _TopProvider {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TopProviderImpl &&
+            (identical(other.contextLength, contextLength) ||
+                other.contextLength == contextLength) &&
             (identical(other.maxCompletionTokens, maxCompletionTokens) ||
                 other.maxCompletionTokens == maxCompletionTokens) &&
             (identical(other.isModerated, isModerated) ||
@@ -3068,7 +3117,7 @@ class _$TopProviderImpl implements _TopProvider {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, maxCompletionTokens, isModerated);
+      Object.hash(runtimeType, contextLength, maxCompletionTokens, isModerated);
 
   /// Create a copy of TopProvider
   /// with the given fields replaced by the non-null parameter values.
@@ -3088,15 +3137,23 @@ class _$TopProviderImpl implements _TopProvider {
 
 abstract class _TopProvider implements TopProvider {
   const factory _TopProvider(
-      {required final int? maxCompletionTokens,
-      required final bool? isModerated}) = _$TopProviderImpl;
+          {@JsonKey(name: 'context_length') required final int? contextLength,
+          @JsonKey(name: 'max_completion_tokens')
+          required final int? maxCompletionTokens,
+          @JsonKey(name: 'is_moderated') required final bool? isModerated}) =
+      _$TopProviderImpl;
 
   factory _TopProvider.fromJson(Map<String, dynamic> json) =
       _$TopProviderImpl.fromJson;
 
   @override
+  @JsonKey(name: 'context_length')
+  int? get contextLength;
+  @override
+  @JsonKey(name: 'max_completion_tokens')
   int? get maxCompletionTokens;
   @override
+  @JsonKey(name: 'is_moderated')
   bool? get isModerated;
 
   /// Create a copy of TopProvider
@@ -3113,7 +3170,9 @@ PerRequestLimits _$PerRequestLimitsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PerRequestLimits {
+  @JsonKey(name: 'prompt_tokens')
   String? get promptTokens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'completion_tokens')
   String? get completionTokens => throw _privateConstructorUsedError;
 
   /// Serializes this PerRequestLimits to a JSON map.
@@ -3132,7 +3191,9 @@ abstract class $PerRequestLimitsCopyWith<$Res> {
           PerRequestLimits value, $Res Function(PerRequestLimits) then) =
       _$PerRequestLimitsCopyWithImpl<$Res, PerRequestLimits>;
   @useResult
-  $Res call({String? promptTokens, String? completionTokens});
+  $Res call(
+      {@JsonKey(name: 'prompt_tokens') String? promptTokens,
+      @JsonKey(name: 'completion_tokens') String? completionTokens});
 }
 
 /// @nodoc
@@ -3174,7 +3235,9 @@ abstract class _$$PerRequestLimitsImplCopyWith<$Res>
       __$$PerRequestLimitsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? promptTokens, String? completionTokens});
+  $Res call(
+      {@JsonKey(name: 'prompt_tokens') String? promptTokens,
+      @JsonKey(name: 'completion_tokens') String? completionTokens});
 }
 
 /// @nodoc
@@ -3210,14 +3273,17 @@ class __$$PerRequestLimitsImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PerRequestLimitsImpl implements _PerRequestLimits {
   const _$PerRequestLimitsImpl(
-      {required this.promptTokens, required this.completionTokens});
+      {@JsonKey(name: 'prompt_tokens') required this.promptTokens,
+      @JsonKey(name: 'completion_tokens') required this.completionTokens});
 
   factory _$PerRequestLimitsImpl.fromJson(Map<String, dynamic> json) =>
       _$$PerRequestLimitsImplFromJson(json);
 
   @override
+  @JsonKey(name: 'prompt_tokens')
   final String? promptTokens;
   @override
+  @JsonKey(name: 'completion_tokens')
   final String? completionTokens;
 
   @override
@@ -3259,15 +3325,18 @@ class _$PerRequestLimitsImpl implements _PerRequestLimits {
 
 abstract class _PerRequestLimits implements PerRequestLimits {
   const factory _PerRequestLimits(
-      {required final String? promptTokens,
+      {@JsonKey(name: 'prompt_tokens') required final String? promptTokens,
+      @JsonKey(name: 'completion_tokens')
       required final String? completionTokens}) = _$PerRequestLimitsImpl;
 
   factory _PerRequestLimits.fromJson(Map<String, dynamic> json) =
       _$PerRequestLimitsImpl.fromJson;
 
   @override
+  @JsonKey(name: 'prompt_tokens')
   String? get promptTokens;
   @override
+  @JsonKey(name: 'completion_tokens')
   String? get completionTokens;
 
   /// Create a copy of PerRequestLimits
@@ -3278,64 +3347,78 @@ abstract class _PerRequestLimits implements PerRequestLimits {
       throw _privateConstructorUsedError;
 }
 
-ORCredits _$ORCreditsFromJson(Map<String, dynamic> json) {
-  return _ORCredits.fromJson(json);
+ORCredit _$ORCreditFromJson(Map<String, dynamic> json) {
+  return _ORCredit.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ORCredits {
+mixin _$ORCredit {
+  @JsonKey(name: 'label')
+  String? get label => throw _privateConstructorUsedError;
+  @JsonKey(name: 'limit')
   int? get limit => throw _privateConstructorUsedError;
+  @JsonKey(name: 'usage')
   double? get usage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'limit_remaining')
+  int? get limitRemaining => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_free_tier')
-  bool get isFreeTier => throw _privateConstructorUsedError;
-  int get requestsLimit => throw _privateConstructorUsedError;
-  String get interval => throw _privateConstructorUsedError;
+  bool? get isFreeTier => throw _privateConstructorUsedError;
+  @JsonKey(name: 'rate_limit')
+  RateLimit? get rateLimit => throw _privateConstructorUsedError;
 
-  /// Serializes this ORCredits to a JSON map.
+  /// Serializes this ORCredit to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ORCredits
+  /// Create a copy of ORCredit
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ORCreditsCopyWith<ORCredits> get copyWith =>
+  $ORCreditCopyWith<ORCredit> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ORCreditsCopyWith<$Res> {
-  factory $ORCreditsCopyWith(ORCredits value, $Res Function(ORCredits) then) =
-      _$ORCreditsCopyWithImpl<$Res, ORCredits>;
+abstract class $ORCreditCopyWith<$Res> {
+  factory $ORCreditCopyWith(ORCredit value, $Res Function(ORCredit) then) =
+      _$ORCreditCopyWithImpl<$Res, ORCredit>;
   @useResult
   $Res call(
-      {int? limit,
-      double? usage,
-      @JsonKey(name: 'is_free_tier') bool isFreeTier,
-      int requestsLimit,
-      String interval});
+      {@JsonKey(name: 'label') String? label,
+      @JsonKey(name: 'limit') int? limit,
+      @JsonKey(name: 'usage') double? usage,
+      @JsonKey(name: 'limit_remaining') int? limitRemaining,
+      @JsonKey(name: 'is_free_tier') bool? isFreeTier,
+      @JsonKey(name: 'rate_limit') RateLimit? rateLimit});
+
+  $RateLimitCopyWith<$Res>? get rateLimit;
 }
 
 /// @nodoc
-class _$ORCreditsCopyWithImpl<$Res, $Val extends ORCredits>
-    implements $ORCreditsCopyWith<$Res> {
-  _$ORCreditsCopyWithImpl(this._value, this._then);
+class _$ORCreditCopyWithImpl<$Res, $Val extends ORCredit>
+    implements $ORCreditCopyWith<$Res> {
+  _$ORCreditCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ORCredits
+  /// Create a copy of ORCredit
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? label = freezed,
     Object? limit = freezed,
     Object? usage = freezed,
-    Object? isFreeTier = null,
-    Object? requestsLimit = null,
-    Object? interval = null,
+    Object? limitRemaining = freezed,
+    Object? isFreeTier = freezed,
+    Object? rateLimit = freezed,
   }) {
     return _then(_value.copyWith(
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String?,
       limit: freezed == limit
           ? _value.limit
           : limit // ignore: cast_nullable_to_non_nullable
@@ -3344,58 +3427,81 @@ class _$ORCreditsCopyWithImpl<$Res, $Val extends ORCredits>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as double?,
-      isFreeTier: null == isFreeTier
+      limitRemaining: freezed == limitRemaining
+          ? _value.limitRemaining
+          : limitRemaining // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isFreeTier: freezed == isFreeTier
           ? _value.isFreeTier
           : isFreeTier // ignore: cast_nullable_to_non_nullable
-              as bool,
-      requestsLimit: null == requestsLimit
-          ? _value.requestsLimit
-          : requestsLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      interval: null == interval
-          ? _value.interval
-          : interval // ignore: cast_nullable_to_non_nullable
-              as String,
+              as bool?,
+      rateLimit: freezed == rateLimit
+          ? _value.rateLimit
+          : rateLimit // ignore: cast_nullable_to_non_nullable
+              as RateLimit?,
     ) as $Val);
+  }
+
+  /// Create a copy of ORCredit
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $RateLimitCopyWith<$Res>? get rateLimit {
+    if (_value.rateLimit == null) {
+      return null;
+    }
+
+    return $RateLimitCopyWith<$Res>(_value.rateLimit!, (value) {
+      return _then(_value.copyWith(rateLimit: value) as $Val);
+    });
   }
 }
 
 /// @nodoc
-abstract class _$$ORCreditsImplCopyWith<$Res>
-    implements $ORCreditsCopyWith<$Res> {
-  factory _$$ORCreditsImplCopyWith(
-          _$ORCreditsImpl value, $Res Function(_$ORCreditsImpl) then) =
-      __$$ORCreditsImplCopyWithImpl<$Res>;
+abstract class _$$ORCreditImplCopyWith<$Res>
+    implements $ORCreditCopyWith<$Res> {
+  factory _$$ORCreditImplCopyWith(
+          _$ORCreditImpl value, $Res Function(_$ORCreditImpl) then) =
+      __$$ORCreditImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {int? limit,
-      double? usage,
-      @JsonKey(name: 'is_free_tier') bool isFreeTier,
-      int requestsLimit,
-      String interval});
+      {@JsonKey(name: 'label') String? label,
+      @JsonKey(name: 'limit') int? limit,
+      @JsonKey(name: 'usage') double? usage,
+      @JsonKey(name: 'limit_remaining') int? limitRemaining,
+      @JsonKey(name: 'is_free_tier') bool? isFreeTier,
+      @JsonKey(name: 'rate_limit') RateLimit? rateLimit});
+
+  @override
+  $RateLimitCopyWith<$Res>? get rateLimit;
 }
 
 /// @nodoc
-class __$$ORCreditsImplCopyWithImpl<$Res>
-    extends _$ORCreditsCopyWithImpl<$Res, _$ORCreditsImpl>
-    implements _$$ORCreditsImplCopyWith<$Res> {
-  __$$ORCreditsImplCopyWithImpl(
-      _$ORCreditsImpl _value, $Res Function(_$ORCreditsImpl) _then)
+class __$$ORCreditImplCopyWithImpl<$Res>
+    extends _$ORCreditCopyWithImpl<$Res, _$ORCreditImpl>
+    implements _$$ORCreditImplCopyWith<$Res> {
+  __$$ORCreditImplCopyWithImpl(
+      _$ORCreditImpl _value, $Res Function(_$ORCreditImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ORCredits
+  /// Create a copy of ORCredit
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? label = freezed,
     Object? limit = freezed,
     Object? usage = freezed,
-    Object? isFreeTier = null,
-    Object? requestsLimit = null,
-    Object? interval = null,
+    Object? limitRemaining = freezed,
+    Object? isFreeTier = freezed,
+    Object? rateLimit = freezed,
   }) {
-    return _then(_$ORCreditsImpl(
+    return _then(_$ORCreditImpl(
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String?,
       limit: freezed == limit
           ? _value.limit
           : limit // ignore: cast_nullable_to_non_nullable
@@ -3404,115 +3510,313 @@ class __$$ORCreditsImplCopyWithImpl<$Res>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as double?,
-      isFreeTier: null == isFreeTier
+      limitRemaining: freezed == limitRemaining
+          ? _value.limitRemaining
+          : limitRemaining // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isFreeTier: freezed == isFreeTier
           ? _value.isFreeTier
           : isFreeTier // ignore: cast_nullable_to_non_nullable
-              as bool,
-      requestsLimit: null == requestsLimit
-          ? _value.requestsLimit
-          : requestsLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      interval: null == interval
-          ? _value.interval
-          : interval // ignore: cast_nullable_to_non_nullable
-              as String,
+              as bool?,
+      rateLimit: freezed == rateLimit
+          ? _value.rateLimit
+          : rateLimit // ignore: cast_nullable_to_non_nullable
+              as RateLimit?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ORCreditsImpl implements _ORCredits {
-  const _$ORCreditsImpl(
-      {required this.limit,
-      required this.usage,
-      @JsonKey(name: 'is_free_tier') required this.isFreeTier,
-      required this.requestsLimit,
-      required this.interval});
+class _$ORCreditImpl implements _ORCredit {
+  const _$ORCreditImpl(
+      {@JsonKey(name: 'label') this.label,
+      @JsonKey(name: 'limit') this.limit,
+      @JsonKey(name: 'usage') this.usage,
+      @JsonKey(name: 'limit_remaining') this.limitRemaining,
+      @JsonKey(name: 'is_free_tier') this.isFreeTier,
+      @JsonKey(name: 'rate_limit') this.rateLimit});
 
-  factory _$ORCreditsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ORCreditsImplFromJson(json);
+  factory _$ORCreditImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ORCreditImplFromJson(json);
 
   @override
+  @JsonKey(name: 'label')
+  final String? label;
+  @override
+  @JsonKey(name: 'limit')
   final int? limit;
   @override
+  @JsonKey(name: 'usage')
   final double? usage;
   @override
+  @JsonKey(name: 'limit_remaining')
+  final int? limitRemaining;
+  @override
   @JsonKey(name: 'is_free_tier')
-  final bool isFreeTier;
+  final bool? isFreeTier;
   @override
-  final int requestsLimit;
-  @override
-  final String interval;
+  @JsonKey(name: 'rate_limit')
+  final RateLimit? rateLimit;
 
   @override
   String toString() {
-    return 'ORCredits(limit: $limit, usage: $usage, isFreeTier: $isFreeTier, requestsLimit: $requestsLimit, interval: $interval)';
+    return 'ORCredit(label: $label, limit: $limit, usage: $usage, limitRemaining: $limitRemaining, isFreeTier: $isFreeTier, rateLimit: $rateLimit)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ORCreditsImpl &&
+            other is _$ORCreditImpl &&
+            (identical(other.label, label) || other.label == label) &&
             (identical(other.limit, limit) || other.limit == limit) &&
             (identical(other.usage, usage) || other.usage == usage) &&
+            (identical(other.limitRemaining, limitRemaining) ||
+                other.limitRemaining == limitRemaining) &&
             (identical(other.isFreeTier, isFreeTier) ||
                 other.isFreeTier == isFreeTier) &&
-            (identical(other.requestsLimit, requestsLimit) ||
-                other.requestsLimit == requestsLimit) &&
+            (identical(other.rateLimit, rateLimit) ||
+                other.rateLimit == rateLimit));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, label, limit, usage, limitRemaining, isFreeTier, rateLimit);
+
+  /// Create a copy of ORCredit
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ORCreditImplCopyWith<_$ORCreditImpl> get copyWith =>
+      __$$ORCreditImplCopyWithImpl<_$ORCreditImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ORCreditImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ORCredit implements ORCredit {
+  const factory _ORCredit(
+          {@JsonKey(name: 'label') final String? label,
+          @JsonKey(name: 'limit') final int? limit,
+          @JsonKey(name: 'usage') final double? usage,
+          @JsonKey(name: 'limit_remaining') final int? limitRemaining,
+          @JsonKey(name: 'is_free_tier') final bool? isFreeTier,
+          @JsonKey(name: 'rate_limit') final RateLimit? rateLimit}) =
+      _$ORCreditImpl;
+
+  factory _ORCredit.fromJson(Map<String, dynamic> json) =
+      _$ORCreditImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'label')
+  String? get label;
+  @override
+  @JsonKey(name: 'limit')
+  int? get limit;
+  @override
+  @JsonKey(name: 'usage')
+  double? get usage;
+  @override
+  @JsonKey(name: 'limit_remaining')
+  int? get limitRemaining;
+  @override
+  @JsonKey(name: 'is_free_tier')
+  bool? get isFreeTier;
+  @override
+  @JsonKey(name: 'rate_limit')
+  RateLimit? get rateLimit;
+
+  /// Create a copy of ORCredit
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ORCreditImplCopyWith<_$ORCreditImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RateLimit _$RateLimitFromJson(Map<String, dynamic> json) {
+  return _RateLimit.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RateLimit {
+  @JsonKey(name: 'requests')
+  int? get requests => throw _privateConstructorUsedError;
+  @JsonKey(name: 'interval')
+  String? get interval => throw _privateConstructorUsedError;
+
+  /// Serializes this RateLimit to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RateLimit
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RateLimitCopyWith<RateLimit> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RateLimitCopyWith<$Res> {
+  factory $RateLimitCopyWith(RateLimit value, $Res Function(RateLimit) then) =
+      _$RateLimitCopyWithImpl<$Res, RateLimit>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'requests') int? requests,
+      @JsonKey(name: 'interval') String? interval});
+}
+
+/// @nodoc
+class _$RateLimitCopyWithImpl<$Res, $Val extends RateLimit>
+    implements $RateLimitCopyWith<$Res> {
+  _$RateLimitCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RateLimit
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requests = freezed,
+    Object? interval = freezed,
+  }) {
+    return _then(_value.copyWith(
+      requests: freezed == requests
+          ? _value.requests
+          : requests // ignore: cast_nullable_to_non_nullable
+              as int?,
+      interval: freezed == interval
+          ? _value.interval
+          : interval // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RateLimitImplCopyWith<$Res>
+    implements $RateLimitCopyWith<$Res> {
+  factory _$$RateLimitImplCopyWith(
+          _$RateLimitImpl value, $Res Function(_$RateLimitImpl) then) =
+      __$$RateLimitImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'requests') int? requests,
+      @JsonKey(name: 'interval') String? interval});
+}
+
+/// @nodoc
+class __$$RateLimitImplCopyWithImpl<$Res>
+    extends _$RateLimitCopyWithImpl<$Res, _$RateLimitImpl>
+    implements _$$RateLimitImplCopyWith<$Res> {
+  __$$RateLimitImplCopyWithImpl(
+      _$RateLimitImpl _value, $Res Function(_$RateLimitImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RateLimit
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requests = freezed,
+    Object? interval = freezed,
+  }) {
+    return _then(_$RateLimitImpl(
+      requests: freezed == requests
+          ? _value.requests
+          : requests // ignore: cast_nullable_to_non_nullable
+              as int?,
+      interval: freezed == interval
+          ? _value.interval
+          : interval // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RateLimitImpl implements _RateLimit {
+  const _$RateLimitImpl(
+      {@JsonKey(name: 'requests') this.requests,
+      @JsonKey(name: 'interval') this.interval});
+
+  factory _$RateLimitImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RateLimitImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'requests')
+  final int? requests;
+  @override
+  @JsonKey(name: 'interval')
+  final String? interval;
+
+  @override
+  String toString() {
+    return 'RateLimit(requests: $requests, interval: $interval)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RateLimitImpl &&
+            (identical(other.requests, requests) ||
+                other.requests == requests) &&
             (identical(other.interval, interval) ||
                 other.interval == interval));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, limit, usage, isFreeTier, requestsLimit, interval);
+  int get hashCode => Object.hash(runtimeType, requests, interval);
 
-  /// Create a copy of ORCredits
+  /// Create a copy of RateLimit
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ORCreditsImplCopyWith<_$ORCreditsImpl> get copyWith =>
-      __$$ORCreditsImplCopyWithImpl<_$ORCreditsImpl>(this, _$identity);
+  _$$RateLimitImplCopyWith<_$RateLimitImpl> get copyWith =>
+      __$$RateLimitImplCopyWithImpl<_$RateLimitImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ORCreditsImplToJson(
+    return _$$RateLimitImplToJson(
       this,
     );
   }
 }
 
-abstract class _ORCredits implements ORCredits {
-  const factory _ORCredits(
-      {required final int? limit,
-      required final double? usage,
-      @JsonKey(name: 'is_free_tier') required final bool isFreeTier,
-      required final int requestsLimit,
-      required final String interval}) = _$ORCreditsImpl;
+abstract class _RateLimit implements RateLimit {
+  const factory _RateLimit(
+      {@JsonKey(name: 'requests') final int? requests,
+      @JsonKey(name: 'interval') final String? interval}) = _$RateLimitImpl;
 
-  factory _ORCredits.fromJson(Map<String, dynamic> json) =
-      _$ORCreditsImpl.fromJson;
+  factory _RateLimit.fromJson(Map<String, dynamic> json) =
+      _$RateLimitImpl.fromJson;
 
   @override
-  int? get limit;
+  @JsonKey(name: 'requests')
+  int? get requests;
   @override
-  double? get usage;
-  @override
-  @JsonKey(name: 'is_free_tier')
-  bool get isFreeTier;
-  @override
-  int get requestsLimit;
-  @override
-  String get interval;
+  @JsonKey(name: 'interval')
+  String? get interval;
 
-  /// Create a copy of ORCredits
+  /// Create a copy of RateLimit
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ORCreditsImplCopyWith<_$ORCreditsImpl> get copyWith =>
+  _$$RateLimitImplCopyWith<_$RateLimitImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
