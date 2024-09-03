@@ -46,9 +46,10 @@ For example if the prompt is "Hello world Python", you should return "print('Hel
     final shell = SysInfoService.shell;
 
     final askPrompt = '''
-You are programming and system administration assistant.
-You are managing $os operating system with $shell shell.
-Provide short responses in about 100 words, unless you are specifically asked for more details.''';
+User's system information - OS: $os with $shell shell.
+Provide concise response unless asked for more details.
+Avoid using any markdown formatting such as ```, *, #.
+''';
     return askPrompt;
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
@@ -25,7 +26,7 @@ class OpenRouterService {
     openrouterKey ??= await ConfigService.loadOpenrouterKey(logger);
     defaultModel ??= await ConfigService.loadDefaultModel(logger);
     defaultParameters ??= await ConfigService.loadDefaultParameters(logger);
-    defaultMaxMessages = await ConfigService.loadMaxMessagesSent(logger);
+    defaultMaxMessages ??= await ConfigService.loadMaxMessagesSent(logger);
     if (openrouterKey == null) {
       throw CustomException(
         message: 'openrouter_key not found in .env file',
@@ -43,7 +44,7 @@ class OpenRouterService {
         (session.model != null) ? session.model : defaultModel ?? fallbackModel;
     final parameters =
         (session.parameters != null) ? session.parameters : defaultParameters;
-    // TODO: test
+
     final trimedSession = _trimSessionMessages(session);
     final prompt = <String, dynamic>{
       'model': model,
@@ -55,7 +56,6 @@ class OpenRouterService {
       prompt.addAll(parameters.toJson());
     }
 
-    Progress? progress;
     logger.info(
       '\n',
     );
@@ -69,14 +69,14 @@ ${lightCyan.wrap(promptForDebug)}
 ## Response
 ''';
       logger.info(log);
-    } else {
-      progress = logger.progress(
-        '',
-        options: const ProgressOptions(
-          animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
-        ),
-      );
     }
+
+    final progress = logger.progress(
+      'Waiting for response...',
+      options: const ProgressOptions(
+        animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
+      ),
+    );
 
     final response = await dio.post<ResponseBody>(
       _baseUrl,
@@ -88,10 +88,18 @@ ${lightCyan.wrap(promptForDebug)}
 
     ChatSession? newSession;
     final responses = <ORResponse>[];
+    var index = 0;
+    var lineStart = 0;
+    final consoleWidth = stdout.terminalColumns;
+    var firstChunk = false;
 
     await for (final chunk in response.data!.stream) {
-  
       if (chunk.isEmpty) continue;
+      if (!firstChunk) {
+        firstChunk = true;
+        progress.complete('');
+      }
+
       final decodedString = utf8.decode(chunk);
       final parts = decodedString.split('\n');
 
@@ -112,8 +120,13 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug) {
                 logger.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-             
-                progress?.update(msg.length.toString());
+                stdout.write(content);
+                index = msg.length;
+
+                if ((index - lineStart) >= consoleWidth) {
+                  stdout.writeln();
+                  lineStart = index;
+                }
               }
             }
 
@@ -130,7 +143,7 @@ ${lightCyan.wrap(promptForDebug)}
       }
     }
 
-    progress?.complete();
+    stdout.writeln();
 
     if (responses.isNotEmpty) {
       final lastResponse = responses.last;
