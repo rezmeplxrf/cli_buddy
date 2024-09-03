@@ -129,6 +129,8 @@ class Usage with _$Usage {
   factory Usage.fromJson(Map<String, Object?> json) => _$UsageFromJson(json);
 }
 
+// TODO: create a command where users can query all available models and with a way to search for a specific model based on fields
+
 @freezed
 class ORModelList with _$ORModelList {
   const factory ORModelList({

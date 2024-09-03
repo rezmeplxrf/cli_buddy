@@ -232,9 +232,9 @@ ${lightCyan.wrap(promptForDebug)}
       }
       return list.toSuccess();
     } catch (e) {
-      _logger?.err('Failed to load models from OpenRouter');
+      _logger?.err('Failed to get models from OpenRouter');
       return CustomException(
-          message: 'Failed to load models from OpenRouter',
+          message: 'Failed to get models from OpenRouter',
           stack: 'OpenRouterService.getCloudAIModelList',
           details: {'error': e.toString()}).toFailure();
     }
@@ -256,9 +256,9 @@ ${lightCyan.wrap(promptForDebug)}
       final credits = ORCredit.fromJson(data);
       return credits.toSuccess();
     } catch (e) {
-      _logger?.err('Failed to load credit data from OpenRouter');
+      _logger?.err('Failed to get credit data from OpenRouter');
       return CustomException(
-          message: 'Failed to load credit data from OpenRouter',
+          message: 'Failed to get credit data from OpenRouter',
           stack: 'OpenRouterService.getCloudAIModelList',
           details: {'error': e.toString()}).toFailure();
     }
