@@ -225,16 +225,14 @@ $ buddy set -r
 ## Markdown format
 
 * As for 'code', 'suggest', 'explain' mode, by default system prompt will discourage using markdown format, will remove it in the final output (for 'code copy/shell run/copy').
-* As for 'chat' mode, markdown is allowed, but to use it, you need to pass '--markdown' flag. However, if markdown flag is used, real time streaming message will be disabled.
+* As for 'chat' mode, markdown is allowed, but to use it, you need to pass '-m --markdown' flag. However, if markdown flag is used, real time streaming message will be disabled. Also implementing markdown in console is hard. Feel free to make a merge request if you did it.
 
 
 ## Roadmap
 
 - Refactoring
 - Support for RAG (Retrieval-Augmented Generation) using Object_Box
-- Installation script for binary executable and setup
 - Support for Google Vertex AI API
-- Markdown support
 
 
 ## Contributions
