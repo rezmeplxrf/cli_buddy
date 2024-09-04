@@ -47,7 +47,7 @@ class OpenCommand extends Command<int> {
 
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
     ProcessSignal.sigint.watch().listen((signal) async {
-      _logger.info('Received SIGINT, stopping server...');
+      _logger.info('Stopping the server...');
       await server.stop();
       exit(0);
     });
