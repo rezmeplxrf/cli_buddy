@@ -22,7 +22,7 @@ enum Role { system, user, assistant, tool }
 
 @freezed
 class Message with _$Message {
-  @JsonSerializable(explicitToJson: true, includeIfNull: false)
+  @JsonSerializable(explicitToJson: true, includeIfNull: true)
   const factory Message({
     required Role role,
     required String content,

@@ -1981,6 +1981,8 @@ mixin _$Usage {
   int? get completionTokens => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_tokens')
   int? get totalTokens => throw _privateConstructorUsedError;
+  @JsonKey(name: 'response_time')
+  double? get responseTime => throw _privateConstructorUsedError;
 
   /// Serializes this Usage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1999,7 +2001,8 @@ abstract class $UsageCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'prompt_tokens') int? promptTokens,
       @JsonKey(name: 'completion_tokens') int? completionTokens,
-      @JsonKey(name: 'total_tokens') int? totalTokens});
+      @JsonKey(name: 'total_tokens') int? totalTokens,
+      @JsonKey(name: 'response_time') double? responseTime});
 }
 
 /// @nodoc
@@ -2020,6 +2023,7 @@ class _$UsageCopyWithImpl<$Res, $Val extends Usage>
     Object? promptTokens = freezed,
     Object? completionTokens = freezed,
     Object? totalTokens = freezed,
+    Object? responseTime = freezed,
   }) {
     return _then(_value.copyWith(
       promptTokens: freezed == promptTokens
@@ -2034,6 +2038,10 @@ class _$UsageCopyWithImpl<$Res, $Val extends Usage>
           ? _value.totalTokens
           : totalTokens // ignore: cast_nullable_to_non_nullable
               as int?,
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
   }
 }
@@ -2048,7 +2056,8 @@ abstract class _$$UsageImplCopyWith<$Res> implements $UsageCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'prompt_tokens') int? promptTokens,
       @JsonKey(name: 'completion_tokens') int? completionTokens,
-      @JsonKey(name: 'total_tokens') int? totalTokens});
+      @JsonKey(name: 'total_tokens') int? totalTokens,
+      @JsonKey(name: 'response_time') double? responseTime});
 }
 
 /// @nodoc
@@ -2067,6 +2076,7 @@ class __$$UsageImplCopyWithImpl<$Res>
     Object? promptTokens = freezed,
     Object? completionTokens = freezed,
     Object? totalTokens = freezed,
+    Object? responseTime = freezed,
   }) {
     return _then(_$UsageImpl(
       promptTokens: freezed == promptTokens
@@ -2081,6 +2091,10 @@ class __$$UsageImplCopyWithImpl<$Res>
           ? _value.totalTokens
           : totalTokens // ignore: cast_nullable_to_non_nullable
               as int?,
+      responseTime: freezed == responseTime
+          ? _value.responseTime
+          : responseTime // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -2091,7 +2105,8 @@ class _$UsageImpl implements _Usage {
   const _$UsageImpl(
       {@JsonKey(name: 'prompt_tokens') this.promptTokens,
       @JsonKey(name: 'completion_tokens') this.completionTokens,
-      @JsonKey(name: 'total_tokens') this.totalTokens});
+      @JsonKey(name: 'total_tokens') this.totalTokens,
+      @JsonKey(name: 'response_time') this.responseTime});
 
   factory _$UsageImpl.fromJson(Map<String, dynamic> json) =>
       _$$UsageImplFromJson(json);
@@ -2105,10 +2120,13 @@ class _$UsageImpl implements _Usage {
   @override
   @JsonKey(name: 'total_tokens')
   final int? totalTokens;
+  @override
+  @JsonKey(name: 'response_time')
+  final double? responseTime;
 
   @override
   String toString() {
-    return 'Usage(promptTokens: $promptTokens, completionTokens: $completionTokens, totalTokens: $totalTokens)';
+    return 'Usage(promptTokens: $promptTokens, completionTokens: $completionTokens, totalTokens: $totalTokens, responseTime: $responseTime)';
   }
 
   @override
@@ -2121,13 +2139,15 @@ class _$UsageImpl implements _Usage {
             (identical(other.completionTokens, completionTokens) ||
                 other.completionTokens == completionTokens) &&
             (identical(other.totalTokens, totalTokens) ||
-                other.totalTokens == totalTokens));
+                other.totalTokens == totalTokens) &&
+            (identical(other.responseTime, responseTime) ||
+                other.responseTime == responseTime));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, promptTokens, completionTokens, totalTokens);
+  int get hashCode => Object.hash(
+      runtimeType, promptTokens, completionTokens, totalTokens, responseTime);
 
   /// Create a copy of Usage
   /// with the given fields replaced by the non-null parameter values.
@@ -2147,9 +2167,11 @@ class _$UsageImpl implements _Usage {
 
 abstract class _Usage implements Usage {
   const factory _Usage(
-      {@JsonKey(name: 'prompt_tokens') final int? promptTokens,
-      @JsonKey(name: 'completion_tokens') final int? completionTokens,
-      @JsonKey(name: 'total_tokens') final int? totalTokens}) = _$UsageImpl;
+          {@JsonKey(name: 'prompt_tokens') final int? promptTokens,
+          @JsonKey(name: 'completion_tokens') final int? completionTokens,
+          @JsonKey(name: 'total_tokens') final int? totalTokens,
+          @JsonKey(name: 'response_time') final double? responseTime}) =
+      _$UsageImpl;
 
   factory _Usage.fromJson(Map<String, dynamic> json) = _$UsageImpl.fromJson;
 
@@ -2162,6 +2184,9 @@ abstract class _Usage implements Usage {
   @override
   @JsonKey(name: 'total_tokens')
   int? get totalTokens;
+  @override
+  @JsonKey(name: 'response_time')
+  double? get responseTime;
 
   /// Create a copy of Usage
   /// with the given fields replaced by the non-null parameter values.

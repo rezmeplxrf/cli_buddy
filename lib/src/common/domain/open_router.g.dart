@@ -195,6 +195,7 @@ _$UsageImpl _$$UsageImplFromJson(Map<String, dynamic> json) => _$UsageImpl(
       promptTokens: (json['prompt_tokens'] as num?)?.toInt(),
       completionTokens: (json['completion_tokens'] as num?)?.toInt(),
       totalTokens: (json['total_tokens'] as num?)?.toInt(),
+      responseTime: (json['response_time'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$$UsageImplToJson(_$UsageImpl instance) =>
@@ -202,6 +203,7 @@ Map<String, dynamic> _$$UsageImplToJson(_$UsageImpl instance) =>
       'prompt_tokens': instance.promptTokens,
       'completion_tokens': instance.completionTokens,
       'total_tokens': instance.totalTokens,
+      'response_time': instance.responseTime,
     };
 
 _$ORModelListImpl _$$ORModelListImplFromJson(Map<String, dynamic> json) =>

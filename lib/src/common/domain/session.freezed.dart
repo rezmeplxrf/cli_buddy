@@ -389,7 +389,7 @@ class __$$MessageImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, includeIfNull: false)
+@JsonSerializable(explicitToJson: true, includeIfNull: true)
 class _$MessageImpl implements _Message {
   const _$MessageImpl(
       {required this.role,

@@ -124,6 +124,7 @@ class Usage with _$Usage {
     @JsonKey(name: 'prompt_tokens') int? promptTokens,
     @JsonKey(name: 'completion_tokens') int? completionTokens,
     @JsonKey(name: 'total_tokens') int? totalTokens,
+    @JsonKey(name: 'response_time') double? responseTime,
   }) = _Usage;
 
   factory Usage.fromJson(Map<String, Object?> json) => _$UsageFromJson(json);

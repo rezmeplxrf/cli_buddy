@@ -45,22 +45,13 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) {
-  final val = <String, dynamic>{
-    'role': _$RoleEnumMap[instance.role]!,
-    'content': instance.content,
-    'timestamp': instance.timestamp,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('usage', instance.usage?.toJson());
-  return val;
-}
+Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
+    <String, dynamic>{
+      'role': _$RoleEnumMap[instance.role]!,
+      'content': instance.content,
+      'timestamp': instance.timestamp,
+      'usage': instance.usage?.toJson(),
+    };
 
 const _$RoleEnumMap = {
   Role.system: 'system',

@@ -26,7 +26,7 @@ class OpenRouterService {
   static Logger? _logger;
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
-    required bool markdown,
+    bool? markdown,
     bool? shouldDebug = false,
     int? overrideMaxMsg,
   }) async {
@@ -110,7 +110,7 @@ ${lightCyan.wrap(promptForDebug)}
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
 
-      if (!firstChunk && !markdown) {
+      if (!firstChunk && markdown != null && !markdown) {
         firstChunk = true;
         progress?.complete('');
       }
@@ -138,7 +138,7 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                if (stdout.hasTerminal && !markdown) {
+                if (stdout.hasTerminal && markdown != null && !markdown) {
                   stdout.write(cyan.wrap(content));
                   index = msg.length;
 
@@ -163,26 +163,27 @@ ${lightCyan.wrap(promptForDebug)}
       }
     }
     var finalMsg = msg.toString();
-    if (markdown) {
+    if (markdown != null && markdown) {
       progress?.complete('');
       _logger?.info(markdownStyle.apply(msg.toString()));
-    } else {
+    } else if (markdown != null && !markdown) {
       finalMsg = markdownPlain.apply(msg.toString());
     }
 
     if (responses.isNotEmpty) {
+      final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
+      final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final aiResponse = Message(
         role: Role.assistant,
         content: finalMsg,
         timestamp: DateTime.now().millisecondsSinceEpoch,
-        usage: usage,
+        usage: usage?.copyWith(responseTime: difference),
       );
       newSession = session.copyWith(
           messages: [...session.messages, aiResponse],
           model: model,
           parameters: parameters);
-      final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
-      final difference = ((finishTime - startTime) * 10).ceil() / 10;
+
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
       _logger?.info(darkGray.wrap(usageLog));
