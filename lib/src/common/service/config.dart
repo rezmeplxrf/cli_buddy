@@ -21,7 +21,7 @@ class ConfigService {
   factory ConfigService() => _instance;
   ConfigService._internal();
   static final ConfigService _instance = ConfigService._internal();
-static void setLogger(Logger? logger) => _logger = logger;
+  static void setLogger(Logger? logger) => _logger = logger;
 
   static Logger? _logger;
   static Future<Result<Configuration, CustomException>> loadConfig() async {
@@ -29,6 +29,9 @@ static void setLogger(Logger? logger) => _logger = logger;
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
     final configFile = File(configFilePath);
+    final clickableLink =
+        '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
+    _logger?.info('\nConfig file: ${blue.wrap(clickableLink)}\n');
 
     try {
       Configuration? config;
@@ -70,9 +73,7 @@ static void setLogger(Logger? logger) => _logger = logger;
       final configJson = jsonEncode(newConfig.toJson());
       await configFile.writeAsString(configJson);
 
-      final clickableLink =
-          '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-      _logger?.info('\nConfig file: ${blue.wrap(clickableLink)}\n');
+      _logger?.info('Config updated');
 
       // Reload the configuration
       await loadConfig();

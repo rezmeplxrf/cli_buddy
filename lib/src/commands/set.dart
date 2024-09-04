@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
+import 'package:cli_buddy/src/common/service/render.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
@@ -167,9 +168,9 @@ class SetCommand extends Command<int> {
   @override
   Future<int> run() async {
     final progress = _logger.progress('Waiting for Response');
-    final path = argResults?['secret-path'] as String?;
-    final key = argResults?['api-key'] as String?;
-    final model = argResults?['model'] as String?;
+    final path = argResults?['secret-path']?.toString().trim();
+    final key = argResults?['api-key']?.toString().trim();
+    final model = argResults?['model']?.toString().trim();
     final saveSession = argResults?['save-session'] == 'true';
     final maxMessages =
         int.tryParse(argResults?['max-messages'] as String? ?? '');
@@ -201,10 +202,10 @@ class SetCommand extends Command<int> {
     final stopArg = argResults?['stop-seq'] as String?;
     final stop =
         (stopArg != null) ? jsonDecode(stopArg) as List<dynamic> : null;
-    final cmdPrompt = argResults?['cmd-prompt'] as String?;
-    final explainPrompt = argResults?['explain-prompt'] as String?;
-    final codePrompt = argResults?['code-prompt'] as String?;
-    final chatPrompt = argResults?['chat-prompt'] as String?;
+    final cmdPrompt = argResults?['cmd-prompt']?.toString().trim();
+    final explainPrompt = argResults?['explain-prompt']?.toString().trim();
+    final codePrompt = argResults?['code-prompt']?.toString().trim();
+    final chatPrompt = argResults?['chat-prompt']?.toString().trim();
 
     if (argResults == null ||
         argResults?.options == null ||
@@ -213,14 +214,15 @@ class SetCommand extends Command<int> {
       return ExitCode.usage.code;
     }
 
-    configuration ??= await ConfigService.loadConfig().getOrThrow();
-    if (argResults?['config'] == true) {
-      _logger.info(jsonEncode(configuration));
-      progress.complete();
+    configuration ??= await ConfigService.loadConfig().getOrNull();
+    if (argResults?['config'] == true && configuration != null) {
+      final table = RenderService.configurationTable(configuration!);
+      _logger.info(table);
+      progress.complete('Done');
       return ExitCode.success.code;
     }
 
-    if (key != null) {
+    if (key != null && key.isNotEmpty) {
       String? secretEnvPath;
       if (path != null) {
         /// if path and key are both provided,
@@ -266,7 +268,7 @@ class SetCommand extends Command<int> {
     );
 
     await ConfigService.saveConfig(newConfig: newConfig);
-    progress.complete();
+    progress.complete('Done');
     return ExitCode.success.code;
   }
 }

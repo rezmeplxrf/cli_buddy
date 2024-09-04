@@ -107,7 +107,7 @@ class InfoCommand extends Command<int> {
       final data = result.getOrNull();
       if (data != null) {
         final table = RenderService.creditInfo(data);
-        _logger.info('\n$table');
+        _logger.info(table);
       } else {
         _logger.err('Failed to get credits');
       }
@@ -138,11 +138,7 @@ class InfoCommand extends Command<int> {
               : filteredData;
 
           final table = RenderService.modelList(modelList);
-          _logger
-            ..info('\n$table')
-            ..info(yellow.wrap(
-                '* all prices (prompt, completion, image) are per million tokens in USD'))
-            ..info(lightGreen.wrap('* Total Models: ${filteredData.length}'));
+          _logger.info(table);
         } else {
           _logger.info('No matching models found');
         }
@@ -158,11 +154,7 @@ class InfoCommand extends Command<int> {
             (order != null) ? _applyOrder(data, order.trim()) : data;
 
         final table = RenderService.modelList(modelList);
-        _logger
-          ..info('\n$table')
-          ..info(yellow.wrap(
-              '* all prices (prompt, completion, image) are per million tokens in USD'))
-          ..info(lightGreen.wrap('* Total Models: ${data.length}'));
+        _logger.info(table);
       } else {
         _logger.err('Failed to retrieve model list');
       }
@@ -178,7 +170,7 @@ class InfoCommand extends Command<int> {
           _logger.err('No sessions found');
         } else {
           final table = RenderService.sessionList(savedSessions);
-          _logger.info('\n$table');
+          _logger.info(table);
         }
       } else {
         final id = int.tryParse(sessions.trim());
@@ -193,7 +185,7 @@ class InfoCommand extends Command<int> {
           _logger.err('Session with id $id not found');
         } else {
           final table = RenderService.messageList(session);
-          _logger.info('\n$table');
+          _logger.info(table);
         }
       }
     }
@@ -202,7 +194,7 @@ class InfoCommand extends Command<int> {
       final data = result.getOrNull();
       if (data != null) {
         final table = RenderService.parameterInfoTable(parameter: data);
-        _logger.info('\n$table');
+        _logger.info(table);
       } else {
         _logger.err('Failed to get parameter info. Check the model id');
       }
