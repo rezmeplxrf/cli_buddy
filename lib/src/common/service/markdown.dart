@@ -180,7 +180,6 @@ class MarkdownPattern {
   bool get symmetrical => start.pattern == end.pattern;
 
   /// Whether the pattern has only a start token.
-  ///
   /// This most likely means the token is basic in nature, or it handles the replacing itself.
   bool get singleToken => end.pattern.isEmpty;
 
