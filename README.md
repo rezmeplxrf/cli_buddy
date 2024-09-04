@@ -44,6 +44,7 @@ TODO: Add installation instructions using the binary executable and script.
 
 ### Get API Key from [OpenRouter](https://openrouter.ai/)
 [OpenRouter](https://openrouter.ai/) provides unified LLM APIs at (almost) the same cost as the original LLM API provider.
+**Note: OpenRouter provides some free AI model with some limitations. You can try out for free using those models without payments**
 **Note: I am not affliated with OpenRouter and I do not receive any benefits from them for promotion or other reasons.**
 
 ### Add API Key or create `secret.env`
@@ -95,7 +96,7 @@ buddy set -s <path/to/secret.env>
 
 ```
 
-## Usage
+## Basic Usage
 
 ```sh
 # Suggest command
@@ -116,6 +117,51 @@ $ buddy --version
 # Show usage help
 $ buddy --help
 ```
+
+## Info Command
+
+The `info` command allows you to search for AI models in OpenRouter. Below are the available options and flags:
+
+- `-q, --query`: Search for AI models by name, provider, or model type (e.g., text, image).
+- `-o, --order`: Specify the order in which the results should be displayed. Allowed values: `name`, `context`, `prompt`, `completion`, `image`.
+- `-f, --config`: Display the current configuration file. If it does not exist, create a new one.
+- `-c, --credits`: Display the credits available in OpenRouter.
+- `-l, --list`: List all AI models available in OpenRouter.
+- `-p, --parameters`: Query the parameters of a specific AI model.
+- `-s, --sessions`: List saved chat histories in the default session folder or view a specific chat history.
+
+### Example Usage
+
+```sh
+# Search for AI models by name
+$ buddy info -q "claude"
+
+# Search for AI models by provider
+$ buddy info -q "openai"
+
+# List all available AI models
+$ buddy info -l
+
+# Display the current configuration
+$ buddy info -f
+
+# Display the credits used for your OpenRouter account
+$ buddy info -c
+
+# Query the parameters of a specific AI model
+$ buddy info -p "model_id"
+
+# List saved chat histories
+$ buddy info -s list
+
+# View a specific chat history by session ID
+$ buddy info -s "session_id"
+```
+
+
+
+
+
 
 ## Roadmap
 
