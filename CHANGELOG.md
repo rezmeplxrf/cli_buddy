@@ -1,3 +1,8 @@
+# 0.0.6
+
+* Added info command which can list all available model or search for a model by property.
+* moved querying sessions to info command from set comment
+
 # 0.0.5
 
 * Fixed some logic and refractored the code.
