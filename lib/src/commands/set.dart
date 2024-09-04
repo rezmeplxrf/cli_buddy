@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/render.dart';
-import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
@@ -33,17 +31,6 @@ class SetCommand extends Command<int> {
             'Load the current config file and display the values if does not exist, create a new one',
         negatable: false,
       )
-      ..addOption('sessions',
-          abbr: 'l',
-          help:
-              'List the saved chat histories in the default session folder in a readable format or view the specific chat history ',
-          valueHelp: 'String or Int',
-          allowedHelp: {
-            'list':
-                'List the saved chat hbuddistories in the default session folder in a table format',
-            'message id':
-                'View the specific chat history in a table. Required value is id of the session',
-          })
       ..addOption(
         'api-key',
         abbr: 'k',
@@ -179,40 +166,7 @@ class SetCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    if (argResults?['sessions'] != null) {
-      final savedSessions = await SessionService.listSessions(
-        _logger,
-      );
-      _logger.info('Total saved sessions: ${savedSessions?.length ?? 0}');
-      if (argResults?['sessions'] == 'list') {
-        if (savedSessions == null) {
-          _logger.err('No sessions found');
-          return ExitCode.unavailable.code;
-        }
-
-        final table = RenderService.sessionsList(savedSessions);
-        _logger.info(table);
-        return ExitCode.success.code;
-      } else {
-        final id = int.tryParse(argResults?['sessions'] as String? ?? '');
-        if (id == null) {
-          _logger.err('Invalid session id');
-          return ExitCode.usage.code;
-        }
-        final session = await SessionService.loadSession(
-          id: id,
-        );
-        if (session == null) {
-          _logger.err('Session with id $id not found');
-          return ExitCode.unavailable.code;
-        } else {
-          final table = RenderService.messages(session);
-          _logger.info(table);
-          return ExitCode.success.code;
-        }
-      }
-    }
-
+    final progress = _logger.progress('Waiting for Response');
     final path = argResults?['secret-path'] as String?;
     final key = argResults?['api-key'] as String?;
     final model = argResults?['model'] as String?;
@@ -255,12 +209,14 @@ class SetCommand extends Command<int> {
     if (argResults == null ||
         argResults?.options == null ||
         argResults!.options.isEmpty) {
+      progress.fail();
       return ExitCode.usage.code;
     }
 
     configuration ??= await ConfigService.loadConfig().getOrThrow();
     if (argResults?['config'] == true) {
       _logger.info(jsonEncode(configuration));
+      progress.complete();
       return ExitCode.success.code;
     }
 
@@ -310,7 +266,7 @@ class SetCommand extends Command<int> {
     );
 
     await ConfigService.saveConfig(newConfig: newConfig);
-
+    progress.complete();
     return ExitCode.success.code;
   }
 }

@@ -45,6 +45,7 @@ class CodeCommand extends Command<int> {
     final args = argResults?.arguments;
     if (args == null || args.isEmpty) {
       _logger.info('Usage: $name <prompt>');
+
       return ExitCode.usage.code;
     }
     final sessionId = argResults?['session'];
@@ -78,6 +79,7 @@ class CodeCommand extends Command<int> {
           await openRouter.invoke(session: session!, shouldDebug: shouldDebug);
       if (initialResult.isError()) {
         _logger.err('An Error occurred');
+
         return ExitCode.tempFail.code;
       }
       session = initialResult.getOrThrow();
@@ -128,8 +130,8 @@ class CodeCommand extends Command<int> {
             );
             await ActionService.saveToFile(fileName, lastMsg);
           case ActionType.explain:
-            final explainResult = await ActionService.explain(session,
-                shouldDebug: shouldDebug);
+            final explainResult =
+                await ActionService.explain(session, shouldDebug: shouldDebug);
             session = explainResult.getOrThrow();
           case ActionType.chat:
             final prompt = _logger.prompt(

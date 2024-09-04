@@ -32,6 +32,14 @@ class OpenRouterService {
       /// In order to use markdown in console, real time logging must be disabled.
       bool? shouldSkipLog,
       bool? markdown}) async {
+    const waitingMsg = 'Waiting for response...';
+    final progress = _logger?.progress(
+      green.wrap(waitingMsg)!,
+      options: const ProgressOptions(
+        animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
+      ),
+    );
+
     final skipLog = shouldSkipLog != null && shouldSkipLog;
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
@@ -75,16 +83,7 @@ ${lightCyan.wrap(promptForDebug)}
 ''';
       _logger?.info(log);
     }
-    Progress? progress;
-    if (!skipLog) {
-      const waitingMsg = 'Waiting for response...';
-      progress = _logger?.progress(
-        green.wrap(waitingMsg)!,
-        options: const ProgressOptions(
-          animation: ProgressAnimation(interval: Duration(milliseconds: 150)),
-        ),
-      );
-    }
+
     Response<ResponseBody>? response;
     try {
       response = await dio.post<ResponseBody>(
@@ -110,12 +109,12 @@ ${lightCyan.wrap(promptForDebug)}
     final consoleWidth =
         (stdout.hasTerminal) ? stdout.terminalColumns - 20 : 80;
     var firstChunk = false;
-
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
+
       if (!firstChunk) {
         firstChunk = true;
-        progress?.complete('');
+        progress?.complete();
       }
 
       final decodedString = utf8.decode(chunk);
@@ -154,12 +153,12 @@ ${lightCyan.wrap(promptForDebug)}
             }
 
             if (response.choices?.first.error != null) {
-              throw CustomException(
+              return CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
                   details: {
                     'api_error_message': response.choices!.first.error?.toJson()
-                  });
+                  }).toFailure();
             }
           }
         }
@@ -190,10 +189,12 @@ ${lightCyan.wrap(promptForDebug)}
       unawaited(SessionService.saveSession(session: session));
       return Success(newSession);
     } else {
-      throw CustomException(
-          message: 'Something went wrong - newSession is null',
-          details: {'api_responses': responses},
-          stack: 'OpenRouterService.invoke');
+      _logger?.err('Something went wrong');
+      return CustomException(
+              message: 'Something went wrong - newSession is null',
+              details: {'api_responses': responses},
+              stack: 'OpenRouterService.invoke')
+          .toFailure();
     }
   }
 
@@ -206,8 +207,7 @@ ${lightCyan.wrap(promptForDebug)}
     return session;
   }
 
-  static Future<Result<List<ORModelList>, CustomException>>
-      getModelList() async {
+  Future<Result<List<ORModelList>, CustomException>> getModelList() async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     const url = 'https://openrouter.ai/api/v1/models';
     final header = {
@@ -231,6 +231,7 @@ ${lightCyan.wrap(promptForDebug)}
         }
         list.add(ORModelList.fromJson(model));
       }
+
       return list.toSuccess();
     } catch (e) {
       _logger?.err('Failed to get models from OpenRouter');
@@ -241,7 +242,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  static Future<Result<ORCredit, CustomException>> checkCredits() async {
+  Future<Result<ORCredit, CustomException>> checkCredits() async {
     const url = 'https://openrouter.ai/api/v1/auth/key';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     final headers = {
@@ -265,7 +266,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  static Future<Result<ParameterInfo, CustomException>> getParameterInfo(
+  Future<Result<ParameterInfo, CustomException>> getParameterInfo(
       {required String model}) async {
     final encodedModel = Uri.encodeComponent(model);
     final url = 'https://openrouter.ai/api/v1/parameters/$encodedModel';
@@ -293,3 +294,25 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 }
+
+// List<ORModelList> _applyOrder(List<ORModelList> data, String order) {
+//   switch (order) {
+//     case 'name':
+//       data.sort((a, b) => a.name.compareTo(b.name));
+//     case 'context':
+//       data.sort(
+//           (a, b) => (a.contextLength ?? 0).compareTo(b.contextLength ?? 0));
+//     case 'prompt':
+//       data.sort(
+//           (a, b) => ((a.pricing?.prompt).toin ?? 0).compareTo(b.pricing?.prompt ?? 0));
+//     case 'completion':
+//       data.sort((a, b) =>
+//           (a.pricing?.completion ?? 0).compareTo(b.pricing?.completion ?? 0));
+//     case 'image':
+//       data.sort(
+//           (a, b) => (a.pricing?.image ?? 0).compareTo(b.pricing?.image ?? 0));
+//     default:
+//       break;
+//   }
+//   return data;
+// }
