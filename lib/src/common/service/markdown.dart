@@ -1,6 +1,6 @@
 import 'package:mason_logger/mason_logger.dart';
 
-final markdownMap = Markdown({
+final markdownStyle = Markdown({
   MarkdownPlaceholder.enclosed(
       '**', (text, match) => styleBold.wrap(text) ?? text),
   MarkdownPlaceholder.enclosed(
@@ -14,44 +14,38 @@ final markdownMap = Markdown({
   MarkdownPlaceholder.enclosed('`', (text, match) => blue.wrap(text) ?? text),
 });
 
+final markdownPlain = Markdown({
+  MarkdownPlaceholder.enclosed('**', (text, match) => text),
+  MarkdownPlaceholder.enclosed('*', (text, match) => text),
+  MarkdownPlaceholder.regexp(
+    r'```(?:\w+)?\s*([^`]+)```',
+    (text, match) => text,
+  ),
+  MarkdownPlaceholder.enclosed('```', (text, match) => text),
+  MarkdownPlaceholder.enclosed('`', (text, match) => text),
+});
+
 class Markdown {
-  Markdown(
-    this.placeholders,
-  );
+  Markdown(this.placeholders);
 
   final Set<MarkdownPlaceholder> placeholders;
 
-  String apply(
-    String input,
-  ) {
-    var modifiedInput = input;
-
-    for (final placeholder in placeholders) {
-      modifiedInput = placeholder.apply(modifiedInput);
-    }
-
+  String apply(String input) {
+    final modifiedInput = placeholders.fold(
+        input, (prev, placeholder) => placeholder.apply(prev));
     return unescape(modifiedInput);
   }
 
   String escape(String input) {
-    var modifiedInput = input;
-
-    modifiedInput = modifiedInput.replaceAll(r'\', r'\\');
-    for (final placeholder in placeholders) {
-      modifiedInput = placeholder.pattern.escape(modifiedInput);
-    }
-    return modifiedInput;
+    final escapedBackslashes = input.replaceAll(r'\', r'\\');
+    return placeholders.fold(escapedBackslashes,
+        (prev, placeholder) => placeholder.pattern.escape(prev));
   }
 
   String unescape(String input) {
-    var modifiedInput = input;
-
-    for (final placeholder in placeholders) {
-      modifiedInput =
-          placeholder.pattern.unescape(modifiedInput).replaceAll(r'\\', r'\');
-    }
-
-    return modifiedInput.replaceAll(r'\\', r'\');
+    final unescapedPlaceholders = placeholders.fold(
+        input, (prev, placeholder) => placeholder.pattern.unescape(prev));
+    return unescapedPlaceholders.replaceAll(r'\\', r'\');
   }
 }
 
@@ -62,22 +56,18 @@ class MarkdownNode {
     required this.start,
     required this.end,
     required this.level,
-    this.strict = false,
   });
+
   final MarkdownPlaceholder placeholder;
   final MarkdownToken start;
   final MarkdownToken end;
   final String input;
   final int level;
-  final bool strict;
-
   String? _cachedApply;
 
-  String get text {
-    return placeholder.pattern.singleToken
-        ? (start.match.groupCount > 0 ? start.match.group(1) ?? '' : '')
-        : input.substring(start.end, end.start);
-  }
+  String get text => placeholder.pattern.singleToken
+      ? (start.match.groupCount > 0 ? start.match.group(1) ?? '' : '')
+      : input.substring(start.end, end.start);
 
   String get startText => start.match.group(0)!;
   String get endText => end.match.group(0)!;
@@ -88,16 +78,19 @@ class MarkdownNode {
   String apply() {
     if (_cachedApply != null) return _cachedApply!;
     _cachedApply = input.replaceRange(
-        start.start,
-        end.end,
-        placeholder.replace(
-            placeholder.apply(text, level: level, strict: strict), this));
+      start.start,
+      end.end,
+      placeholder.replace(
+          placeholder.apply(
+            text,
+            level: level,
+          ),
+          this),
+    );
     return _cachedApply!;
   }
 
-  int translate(int index) {
-    return apply().length - input.length + index;
-  }
+  int translate(int index) => apply().length - input.length + index;
 
   MarkdownNode clone({
     MarkdownPlaceholder? placeholder,
@@ -113,7 +106,6 @@ class MarkdownNode {
         start: start ?? this.start,
         end: end ?? this.end,
         level: level ?? this.level,
-        strict: strict ?? this.strict,
       );
 
   static int endOfAll(List<MarkdownNode> nodes, {bool translated = false}) {
@@ -141,7 +133,6 @@ class MarkdownPattern {
   factory MarkdownPattern.symmetrical(String start,
       {bool nested = true, bool sticky = false}) {
     var end = start;
-
     if (!nested || sticky) {
       start = assistUniqueCharacter(start);
       end = assistUniqueCharacter(end, true);
@@ -149,38 +140,30 @@ class MarkdownPattern {
       start = RegExp.escape(start);
       end = RegExp.escape(end);
     }
-
     if (sticky) {
       start = '$start(?=\\S)';
       end = '(?<=\\S)$end';
     }
-
     return MarkdownPattern.regexp(start, end);
   }
 
   factory MarkdownPattern.tag(String start,
       [String? end, Set<String> properties = const {}]) {
     end ??= RegExp(r'[\w-.:#]+').firstMatch(start)?.group(0) ?? start;
-
     return MarkdownPattern.regexp(
       '<$start${properties.isNotEmpty ? _getPropertiesPattern(properties) : ''}>',
       '<\\/$end>',
     );
   }
+
   final RegExp start;
   final RegExp end;
 
   RegExp get startEscaped => escaped(start);
   RegExp get endEscaped => escaped(end);
 
-  /// Whether the pattern is consists only of a single type of character, for example `**`.
   bool get uniqueCharater => isUniqueCharater(start.pattern);
-
-  /// Whether the pattern is symmetrical, which means the start and end patterns are identical.
   bool get symmetrical => start.pattern == end.pattern;
-
-  /// Whether the pattern has only a start token.
-  /// This most likely means the token is basic in nature, or it handles the replacing itself.
   bool get singleToken => end.pattern.isEmpty;
 
   int? nextLevel(String input, [int level = 0]) {
@@ -204,7 +187,6 @@ class MarkdownPattern {
   MarkdownMatch? findEnd(String input,
       {int level = 1, int offset = 0, bool isIncreasing = true}) {
     final next = nextLevel(input, level);
-
     if (next == null) return null;
     if (next < level || (next == level && !isIncreasing)) {
       final end = endEscaped.firstMatch(input);
@@ -224,8 +206,6 @@ class MarkdownPattern {
     return lastEnd;
   }
 
-  /* -= Escaping =- */
-
   static String escapePattern = r'(?<=(?<!\\)(?:\\\\)*)';
   static String unescapePattern = escapePattern + r'\\';
 
@@ -239,8 +219,6 @@ class MarkdownPattern {
 
   String unescape(String input) => input.replaceAll(
       RegExp('$unescapePattern(?=${start.pattern}|${end.pattern})'), '');
-
-  /* -= Static =- */
 
   static bool isUniqueCharater(String input) =>
       input.split('').toSet().length == 1;
@@ -308,36 +286,21 @@ class MarkdownPlaceholder {
         replace);
   }
 
-  /// Pattern to be matched in the input, when applying.
   final MarkdownPattern pattern;
-
-  /// Method to be called when an instance of the pattern is matched.
-  ///
-  /// The result of this method will be used to replace the match.
   final MarkdownReplace replace;
 
-  /// Apply the placeholder to an input. It will parse the input and apply the replace method to all instances of the pattern.
-  String apply(String input, {int level = 0, bool strict = false}) {
-    final nodes = _parseAll(input, level: level, strict: strict);
+  String apply(String input, {int level = 0}) {
+    final nodes = _parseAll(
+      input,
+      level: level,
+    );
     if (nodes.isEmpty) return input;
-
-    if (strict) {
-      final endIndex = MarkdownNode.endOfAll(nodes);
-      if ((pattern.nextLevel(input.substring(endIndex), level) ?? level) < 0) {
-        final end = pattern.endEscaped.firstMatch(input.substring(endIndex))!;
-
-        throw Exception(
-          'Invalid placeholder: ${input.substring(endIndex, end.end)}',
-        );
-      }
-    }
 
     return _applyAll(nodes);
   }
 
   String _applyAll(List<MarkdownNode> nodes) {
     final buffer = StringBuffer();
-
     for (final node in nodes) {
       final isLast = node == nodes.last;
       final appliedString = node.apply();
@@ -345,34 +308,29 @@ class MarkdownPlaceholder {
           isLast ? appliedString.length : node.translate(node.end.end);
       buffer.write(appliedString.substring(0, substringEnd));
     }
-
     return buffer.toString();
   }
 
-  MarkdownNode? _parse(String input, {int level = 0, bool strict = false}) {
+  MarkdownNode? _parse(String input, {int level = 0}) {
     final start = pattern.startEscaped.firstMatch(input);
     if (start == null) return null;
 
     final end = pattern.findEnd(input.substring(start.end), level: level + 1);
-
     if (end != null) {
-      return MarkdownNode(this,
-          input: input,
-          start: MarkdownToken(start, start.start, start.end),
-          end: MarkdownToken(
-              end.token,
-              start.end + end.offset + end.token.start,
-              start.end + end.offset + end.token.end),
-          level: level,
-          strict: strict);
+      return MarkdownNode(
+        this,
+        input: input,
+        start: MarkdownToken(start, start.start, start.end),
+        end: MarkdownToken(end.token, start.end + end.offset + end.token.start,
+            start.end + end.offset + end.token.end),
+        level: level,
+      );
     }
 
-    if (strict) {
-      throw Exception('Invalid placeholder: ${input.substring(start.end)}');
-    }
-
-    final node =
-        _parse(input.substring(start.end), level: level, strict: strict);
+    final node = _parse(
+      input.substring(start.end),
+      level: level,
+    );
     if (node == null) return null;
 
     return node.clone(
@@ -384,17 +342,18 @@ class MarkdownPlaceholder {
     );
   }
 
-  List<MarkdownNode> _parseAll(String input,
-      {int level = 0, bool strict = false}) {
+  List<MarkdownNode> _parseAll(String input, {int level = 0}) {
     final original = input;
-
     final nested = <MarkdownNode>[];
     var remainingInput = input;
 
     while (true) {
       final MarkdownNode? node;
       try {
-        node = _parse(remainingInput, level: level, strict: strict);
+        node = _parse(
+          remainingInput,
+          level: level,
+        );
       } catch (error) {
         throw Exception('Invalid placeholder: $original - error: $error');
       }

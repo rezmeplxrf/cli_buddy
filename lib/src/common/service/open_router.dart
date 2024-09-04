@@ -161,17 +161,17 @@ ${lightCyan.wrap(promptForDebug)}
         }
       }
     }
-
+    var finalMsg = msg.toString();
     if (markdown) {
-      _logger?.info(markdownMap.apply(msg.toString()));
+      _logger?.info(markdownStyle.apply(msg.toString()));
     } else {
-      // TODO: remove markdown in the final output
+      finalMsg = markdownPlain.apply(msg.toString());
     }
 
     if (responses.isNotEmpty) {
       final aiResponse = Message(
         role: Role.assistant,
-        content: msg.toString(),
+        content: finalMsg,
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage,
       );
