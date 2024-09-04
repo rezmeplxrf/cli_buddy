@@ -93,7 +93,11 @@ class InfoCommand extends Command<int> {
     final sessions = argResults?['sessions'] as String?;
     final order = argResults?['order'] as String?;
 
-    if (query == null && credits == null && all == null && parameter == null) {
+    if (query == null &&
+        credits == null &&
+        all == null &&
+        parameter == null &&
+        sessions == null) {
       _logger.err('No options/flags provided');
       progress.fail();
       return ExitCode.usage.code;

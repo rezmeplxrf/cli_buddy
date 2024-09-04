@@ -4,6 +4,7 @@ import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
+import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 /// {@template suggest_command}
@@ -16,10 +17,17 @@ class SuggestionCommand extends Command<int> {
   SuggestionCommand({
     required Logger logger,
   }) : _logger = logger {
-    argParser.addFlag('raw',
-        abbr: 'r',
-        help: 'get raw outputs of prompt and api requests',
-        negatable: false);
+    argParser
+      ..addFlag(
+        'session',
+        abbr: 's',
+        help: 'pass the existing chat session to AI',
+        negatable: false,
+      )
+      ..addFlag('raw',
+          abbr: 'r',
+          help: 'get raw outputs of prompt and api requests',
+          negatable: false);
   }
 
   @override
@@ -37,25 +45,36 @@ class SuggestionCommand extends Command<int> {
       _logger.info('Usage: $name <prompt>');
       return ExitCode.usage.code;
     }
+
+    final sessionId = argResults?['session'];
+    ChatSession? session;
     final currentTime = DateTime.now().millisecondsSinceEpoch;
-    final sysMsg = Message(
-        role: Role.system,
-        content: PromptService.cmdOnly(),
-        timestamp: currentTime);
-    // concatenate all remaining arguments to form the prompt
-    final prompt = args.join(' ');
-    final initialMsg =
-        Message(role: Role.user, content: prompt, timestamp: currentTime);
-    final session =
-        ChatSession(id: currentTime, messages: [sysMsg, initialMsg]);
+    if (sessionId != null && sessionId is int) {
+      session = await SessionService.loadSession(id: sessionId);
+      final prompt = args.join(' ');
+      final initialMsg =
+          Message(role: Role.user, content: prompt, timestamp: currentTime);
+      session = session?.copyWith(messages: [...session.messages, initialMsg]);
+    } else {
+      final sysMsg = Message(
+          role: Role.system,
+          content: PromptService.cmdOnly(),
+          timestamp: currentTime);
+      // concatenate all remaining arguments to form the prompt
+      final prompt = args.join(' ');
+      final initialMsg =
+          Message(role: Role.user, content: prompt, timestamp: currentTime);
+      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg]);
+    }
+
     var shouldDebug = false;
 
     if (argResults?['raw'] == true) {
       shouldDebug = true;
     }
 
-    final initialResult = await openRouter.invoke(
-        session: session,  shouldDebug: shouldDebug);
+    final initialResult =
+        await openRouter.invoke(session: session!, shouldDebug: shouldDebug);
     if (initialResult.isError()) {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;
@@ -95,8 +114,7 @@ class SuggestionCommand extends Command<int> {
         await ActionService.run(aiCMD);
 
       case ActionType.explain:
-        final explainResult = await ActionService.explain(
-            initialSession,
+        final explainResult = await ActionService.explain(initialSession,
             shouldDebug: shouldDebug);
         if (explainResult.isError()) {
           _logger.err('An Error occured while asking for explanations');
