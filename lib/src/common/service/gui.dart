@@ -63,7 +63,7 @@ class GUIService {
     _sessions?.clear();
     final result = await SessionService.removeSessions();
     if (result) {
-      return Response.ok({'message': 'All sessions are removed'},
+      return Response.ok('All sessions are removed',
           headers: {'content-type': 'application/json'});
     } else {
       return Response.internalServerError(
@@ -212,7 +212,8 @@ const _htmlContent = r'''
         background-color: #444654;
         color: white;
       }
-      .new-chat-btn {
+      .new-chat-btn,
+      .remove-all-sessions-btn {
         background-color: #202123;
         color: white;
         border: 1px solid white;
@@ -257,6 +258,9 @@ const _htmlContent = r'''
   <body>
     <div class="sidebar">
       <button class="new-chat-btn" id="newChatBtn">+ New chat</button>
+      <button class="remove-all-sessions-btn" id="removeAllSessionsBtn">
+        Remove All Sessions
+      </button>
       <div>
         <h3>Chat History</h3>
         <ul class="session-list" id="sessionList"></ul>
@@ -275,14 +279,18 @@ const _htmlContent = r'''
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+   
         const baseUrl = "http://localhost:43210";
         const wsUrl = "ws://localhost:43210/ws";
         const sessionList = document.getElementById("sessionList");
         const chatContainer = document.getElementById("chatContainer");
         const chatInput = document.getElementById("chatInput");
         const newChatBtn = document.getElementById("newChatBtn");
+        const removeAllSessionsBtn = document.getElementById(
+          "removeAllSessionsBtn"
+        );
         let socket;
+        let isFirstResponse = false;
 
         async function fetchSessions() {
           try {
@@ -291,6 +299,7 @@ const _htmlContent = r'''
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             const sessions = await response.json();
+            isFirstResponse = false;
             populateSidebar(sessions);
           } catch (error) {
             console.error("Error fetching sessions:", error);
@@ -311,15 +320,15 @@ const _htmlContent = r'''
               ? firstUserMessage.content.substring(0, 30)
               : "New Chat";
             li.innerHTML = `
-      <div class="session-title">${title}${
+            <div class="session-title">${title}${
               title.length >= 30 ? "..." : ""
             }</div>
-      <div class="session-info">
-        ID: ${session.id}<br>
-        Messages: ${session.messages.length}<br>
-        Model: ${session.model}
-      </div>
-    `;
+            <div class="session-info">
+              ID: ${session.id}<br>
+              Messages: ${session.messages.length}<br>
+              Model: ${session.model}
+            </div>
+          `;
             li.addEventListener("click", () => selectSession(session.id));
             sessionList.appendChild(li);
           });
@@ -379,6 +388,11 @@ const _htmlContent = r'''
                 case "end":
                   // Finalize the message and add usage information
                   finalizeMessage(data.usage);
+                  if (!isFirstResponse) {
+                    isFirstResponse = true;
+                    fetchSessions();
+                  }
+
                   break;
                 default:
                   console.error("Unknown message type:", data.type);
@@ -403,23 +417,19 @@ const _htmlContent = r'''
           div.className = `message ${message.role}-message`;
           const timestamp = new Date(message.timestamp).toLocaleString();
           div.innerHTML = `
-                <div class="message-role">${capitalizeFirstLetter(
-                  message.role
-                )}</div>
-                <div class="message-timestamp">${timestamp}</div>
-                <p>${message.content}</p>
-            `;
+          <div class="message-role">${capitalizeFirstLetter(message.role)}</div>
+          <div class="message-timestamp">${timestamp}</div>
+          <p>${message.content}</p>
+        `;
           if (message.usage) {
             div.innerHTML += `
-                    <div class="message-usage">
-                        Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
-                        Completion Tokens: ${
-                          message.usage.completion_tokens || 0
-                        }, 
-                        Total Tokens: ${message.usage.total_tokens || 0},
-                        Response Time: ${message.usage.response_time || 0}s
-                    </div>
-                `;
+            <div class="message-usage">
+              Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
+              Completion Tokens: ${message.usage.completion_tokens || 0}, 
+              Total Tokens: ${message.usage.total_tokens || 0},
+              Response Time: ${message.usage.response_time || 0}s
+            </div>
+          `;
           }
           chatContainer.appendChild(div);
           chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -431,10 +441,10 @@ const _htmlContent = r'''
           currentMessageElement = document.createElement("div");
           currentMessageElement.className = "message assistant-message";
           currentMessageElement.innerHTML = `
-    <div class="message-role">Assistant</div>
-    <div class="message-timestamp">${new Date().toLocaleString()}</div>
-    <p></p>
-  `;
+          <div class="message-role">Assistant</div>
+          <div class="message-timestamp">${new Date().toLocaleString()}</div>
+          <p></p>
+        `;
           chatContainer.appendChild(currentMessageElement);
         }
 
@@ -451,11 +461,11 @@ const _htmlContent = r'''
             const usageDiv = document.createElement("div");
             usageDiv.className = "message-usage";
             usageDiv.innerHTML = `
-      Prompt Tokens: ${usage.prompt_tokens || 0}, 
-      Completion Tokens: ${usage.completion_tokens || 0}, 
-      Total Tokens: ${usage.total_tokens || 0},
-      Response Time: ${usage.response_time || 0}s
-    `;
+            Prompt Tokens: ${usage.prompt_tokens || 0}, 
+            Completion Tokens: ${usage.completion_tokens || 0}, 
+            Total Tokens: ${usage.total_tokens || 0},
+            Response Time: ${usage.response_time || 0}s
+          `;
             currentMessageElement.appendChild(usageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
           }
@@ -497,17 +507,41 @@ const _htmlContent = r'''
           }
         }
 
+        async function removeAllSessions() {
+          try {
+            const response = await fetch(`${baseUrl}/remove-all-sessions`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Clear the sidebar and chat container
+            sessionList.innerHTML = "";
+            chatContainer.innerHTML = "";
+            // Start a new session
+            await createNewSession();
+          } catch (error) {
+            console.error("Error removing all sessions:", error);
+          }
+        }
+
         newChatBtn.addEventListener("click", createNewSession);
+        removeAllSessionsBtn.addEventListener("click", removeAllSessions);
 
         chatInput.addEventListener("keypress", function (event) {
           if (event.key === "Enter") {
             sendMessage();
           }
         });
-        fetchSessions();
         connectWebSocket();
+        fetchSessions();
         createNewSession();
-      });
+   
     </script>
   </body>
 </html>
