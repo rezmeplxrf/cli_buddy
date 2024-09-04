@@ -7,6 +7,7 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
+import 'package:cli_buddy/src/common/service/markdown.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -162,7 +163,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
 
     if (markdown) {
-      // TODO: if markdown and skipLog is true, print out markdown applied msg here
+      _logger?.info(markdownMap.apply(msg.toString()));
     } else {
       // TODO: remove markdown in the final output
     }

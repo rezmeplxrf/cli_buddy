@@ -1,6 +1,7 @@
 analyzer:
   errors:
     always_use_package_imports: ignore
+    avoid_positional_boolean_parameters: ignore
     avoid_print: ignore
     eol_at_end_of_file: ignore
     flutter_style_todos: ignore
