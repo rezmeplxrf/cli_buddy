@@ -38,7 +38,6 @@ class SysInfoService {
     if (configDir != null) {
       return p.join(configDir, 'buddy');
     } else {
-      // TODO: let users manually set the config directory
       return throw UnsupportedError('Unsupported OS');
     }
   }
