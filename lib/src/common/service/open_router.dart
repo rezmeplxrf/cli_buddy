@@ -25,7 +25,7 @@ class OpenRouterService {
   static Logger? _logger;
   Future<Result<ChatSession, CustomException>> invoke(
       {required ChatSession session,
-      required bool shouldDebug,
+      bool? shouldDebug = false,
       int? overrideMaxMsg,
 
       /// Whether to skip logging. Used when there is no terminal or when markdown is needed.
@@ -72,7 +72,7 @@ class OpenRouterService {
     _logger?.info(
       '\n',
     );
-    if (shouldDebug) {
+    if (shouldDebug != null && shouldDebug) {
       final promptForDebug = json.encode(prompt);
       final log = '''
 
@@ -137,7 +137,7 @@ ${lightCyan.wrap(promptForDebug)}
             final content = response.choices?.first.delta?.content;
             if (content != null && content.isNotEmpty) {
               msg.write(content);
-              if (shouldDebug) {
+              if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
                 if (!skipLog) {
