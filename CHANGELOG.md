@@ -1,3 +1,7 @@
+# 0.0.7
+
+* Added Markdown support for chat mode (unstable).
+
 # 0.0.6
 
 * Added info command which can list all available model or search for a model by property.
