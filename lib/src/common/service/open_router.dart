@@ -30,7 +30,7 @@ class OpenRouterService {
     bool? shouldDebug = false,
     int? overrideMaxMsg,
   }) async {
-    final startTime = DateTime.now().millisecondsSinceEpoch * 1000;
+    final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
       green.wrap(waitingMsg)!,
@@ -181,13 +181,13 @@ ${lightCyan.wrap(promptForDebug)}
           messages: [...session.messages, aiResponse],
           model: model,
           parameters: parameters);
-      final finishTime = DateTime.now().millisecondsSinceEpoch * 1000;
-
+      final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
+      final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final usageLog =
-          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${finishTime - startTime}s\n';
+          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
       _logger?.info(darkGray.wrap(usageLog));
 
-      unawaited(SessionService.saveSession(session: session));
+      await SessionService.saveSession(session: newSession);
       return Success(newSession);
     } else {
       _logger?.err('Something went wrong');

@@ -22,34 +22,31 @@ class SessionService {
   ) async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 
-    try {
-      final sessionsPath = p.join(defaultDir!, 'sessions');
-      final sessionsDirectory = Directory(sessionsPath);
+    final sessionsPath = p.join(defaultDir!, 'sessions');
+    final sessionsDirectory = Directory(sessionsPath);
 
-      if (!sessionsDirectory.existsSync()) {
-        logger.warn('Sessions directory does not exist.');
-        return [];
-      }
+    if (!sessionsDirectory.existsSync()) {
+      logger.warn('Sessions directory does not exist.');
+      return [];
+    }
 
-      final sessionFiles = sessionsDirectory
-          .listSync()
-          .where((file) => file is File && file.path.endsWith('.json'))
-          .cast<File>();
+    final sessionFiles = sessionsDirectory
+        .listSync()
+        .where((file) => file is File && file.path.endsWith('.json'))
+        .cast<File>();
 
-      final sessions = <ChatSession>[];
-      for (final sessionFile in sessionFiles) {
+    final sessions = <ChatSession>[];
+    for (final sessionFile in sessionFiles) {
+      try {
         final sessionContent = await sessionFile.readAsString();
         final sessionJson = jsonDecode(sessionContent) as Map<String, dynamic>;
         final chatSession = ChatSession.fromJson(sessionJson);
         sessions.add(chatSession);
+      } catch (e) {
+        _logger?.err('Error while loading session: ${sessionFile.path} - $e');
       }
-      return sessions;
-    } catch (e) {
-      logger
-        ..err('Error loading sessions from files.')
-        ..detail(e.toString());
-      return null;
     }
+    return sessions;
   }
 
   static Future<void> saveSession({
@@ -64,11 +61,13 @@ class SessionService {
           final sessionsPath = p.join(defaultDir!, 'sessions');
           final sessionFilePath = p.join(sessionsPath, '${session.id}.json');
           final sessionDir = Directory(sessionsPath);
+
           if (!sessionDir.existsSync()) {
             sessionDir.createSync(recursive: true);
           } else {
             final sessionFile = File(sessionFilePath);
-            await sessionFile.writeAsString(jsonEncode(session.toJson()));
+            await sessionFile.writeAsString(jsonEncode(session.toJson()),
+                flush: true);
           }
         }
       }
