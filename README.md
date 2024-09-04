@@ -40,12 +40,21 @@ dart pub global activate cli_buddy
 ```
 
 #### If Dart SDK is Not Installed
-TODO: Add installation instructions using the binary executable and script.
+1. Install Dart SDK following the official [Install Dart SDK](https://dart.dev/get-dart) document.
+2. Check if Dart sdk is installed by running `dart --version`
+3. If it's correctly installed, run `dart pub global activate cli_buddy`
+
+
+#### You can also install it as an Executable binary using the script.
+TODO:
+
 
 ### Get API Key from [OpenRouter](https://openrouter.ai/)
 [OpenRouter](https://openrouter.ai/) provides unified LLM APIs at (almost) the same cost as the original LLM API provider.
 **Note: OpenRouter provides some free AI model with some limitations. You can try out for free using those models without payments**
 **Note: I am not affliated with OpenRouter and I do not receive any benefits from them for promotion or other reasons.**
+
+
 
 ### Add API Key or create `secret.env`
 *Easy way*
@@ -171,9 +180,12 @@ $ buddy info -s "session_id"
 - Support for Google Vertex AI API
 - Markdown support
 
+
 ## Contributions
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+
 
 ---
 
@@ -182,3 +194,5 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
+
+

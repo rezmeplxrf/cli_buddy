@@ -8,9 +8,9 @@ pubspec.lock
 .github/
 .git_backup/
 *.env
-temp/
 test.dart
 memo.md
+
 
 
 # Files generated during tests
