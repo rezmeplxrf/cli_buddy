@@ -3,10 +3,8 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/render.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
-import 'package:result_dart/result_dart.dart';
 
 /// {@template set_command}
 ///
@@ -24,13 +22,6 @@ class SetCommand extends Command<int> {
         abbr: 's',
         help: 'Set path to the secret.env file in the buddy.config',
         valueHelp: 'String',
-      )
-      ..addFlag(
-        'config',
-        abbr: 'c',
-        help:
-            'Load the current config file and display the values if does not exist, create a new one',
-        negatable: false,
       )
       ..addOption(
         'api-key',
@@ -167,7 +158,7 @@ class SetCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress('Waiting for Response');
+    final progress = _logger.progress('Loading');
     final path = argResults?['secret-path']?.toString().trim();
     final key = argResults?['api-key']?.toString().trim();
     final model = argResults?['model']?.toString().trim();
@@ -214,13 +205,7 @@ class SetCommand extends Command<int> {
       return ExitCode.usage.code;
     }
 
-    configuration ??= await ConfigService.loadConfig().getOrNull();
-    if (argResults?['config'] == true && configuration != null) {
-      final table = RenderService.configurationTable(configuration!);
-      _logger.info(table);
-      progress.complete('Done');
-      return ExitCode.success.code;
-    }
+    
 
     if (key != null && key.isNotEmpty) {
       String? secretEnvPath;

@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/open_router.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/open_router.dart';
 import 'package:cli_buddy/src/common/service/render.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:result_dart/result_dart.dart';
 
 /// {@template info_command}
 ///
@@ -44,6 +46,13 @@ class InfoCommand extends Command<int> {
                 'Order by completion pricing  (from highest to lowest)',
             'image': 'Order by image pricing  (from highest to lowest)',
           })
+      ..addFlag(
+        'config',
+        abbr: 'f',
+        help:
+            'show the current config file and display the values if does not exist, create a new one',
+        negatable: false,
+      )
       ..addFlag(
         'credits',
         abbr: 'c',
@@ -85,13 +94,14 @@ class InfoCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress('Waiting for Response');
+    final progress = _logger.progress('Loading');
     final query = argResults?['query'] as String?;
     final credits = argResults?['credits'] as bool?;
     final parameter = argResults?['parameters'] as String?;
     final all = argResults?['list'] as bool?;
     final sessions = argResults?['sessions'] as String?;
     final order = argResults?['order'] as String?;
+    final config = argResults?['config'] as bool?;
 
     if (query == null &&
         credits == null &&
@@ -102,6 +112,17 @@ class InfoCommand extends Command<int> {
       progress.fail();
       return ExitCode.usage.code;
     }
+
+    if (config != null && config) {
+      configuration ??= await ConfigService.loadConfig().getOrNull();
+      if (configuration != null) {
+        final table = RenderService.configurationTable(configuration!);
+        _logger.info(table);
+      } else {
+        _logger.err('Failed to find config file');
+      }
+    }
+
     if (credits != null && credits) {
       final result = await openRouter.checkCredits();
       final data = result.getOrNull();

@@ -31,7 +31,7 @@ class ConfigService {
     final configFile = File(configFilePath);
     final clickableLink =
         '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-    _logger?.info('\nConfig file: ${blue.wrap(clickableLink)}\n');
+    _logger?.info('\nconfig file: ${blue.wrap(clickableLink)}\n');
 
     try {
       Configuration? config;

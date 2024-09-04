@@ -507,6 +507,6 @@ class RenderService {
     final clickableLink =
         '\x1B]8;;file://${config.secretEnvPath}\x1B\\${config.secretEnvPath}\x1B]8;;\x1B\\';
 
-    return 'Secret.env path: ${cyan.wrap(clickableLink)}\n\n$propertyTable\n\n$promptTable\n';
+    return 'secret.env: ${blue.wrap(clickableLink)}\n\n$propertyTable\n\n$promptTable\n';
   }
 }
