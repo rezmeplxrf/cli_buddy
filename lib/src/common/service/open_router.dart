@@ -7,6 +7,7 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
+import 'package:cli_buddy/src/common/service/gui.dart';
 import 'package:cli_buddy/src/common/service/markdown.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:dio/dio.dart';
@@ -138,7 +139,12 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
+                // send chunked message to the websocket here
                 if (stdout.hasTerminal && markdown != null && !markdown) {
+                  GUIService.webSocket?.sink.add(jsonEncode({
+                    'type': 'chunk',
+                    'content': content,
+                  }));
                   stdout.write(cyan.wrap(content));
                   index = msg.length;
 

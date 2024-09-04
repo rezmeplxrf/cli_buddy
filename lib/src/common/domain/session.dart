@@ -278,3 +278,18 @@ class Parameters with _$Parameters {
 //     }
 //   }
 // }
+
+@freezed
+class UserMessage with _$UserMessage {
+  const factory UserMessage({
+    String? role,
+    String? content,
+    int? timestamp,
+  }) = _UserMessage;
+
+  factory UserMessage.fromJson(Map<String, Object?> json) =>
+      _$UserMessageFromJson(json);
+}
+
+
+// {"role":"user","content":"hi","timestamp":1725484042100}

@@ -21,7 +21,7 @@ class GUIService {
 
   static Logger? _logger;
   static HttpServer? _server;
-  static WebSocketChannel? _socket;
+  static WebSocketChannel? webSocket;
   static List<ChatSession>? _sessions = [];
   static ChatSession? _currentSession;
   static String? msg;
@@ -51,7 +51,6 @@ class GUIService {
         content: PromptService.chat(),
         timestamp: currentTime);
     _currentSession = ChatSession(id: currentTime, messages: [sysMsg]);
-    print("New session created: ${_currentSession?.toJson()}");
     _sessions?.add(_currentSession!);
 
     return Response.ok(jsonEncode(_currentSession?.toJson()),
@@ -85,29 +84,46 @@ class GUIService {
   }
 
   void _handleWebSocket(WebSocketChannel socket) {
-    _socket = socket;
+    webSocket = socket;
     socket.stream.listen((message) async {
-      if (_currentSession != null) {
+      //  const message = {
+      //         role: "user",
+      //         content: content,
+      //         timestamp: Date.now(),
+      //       };
+      // parse message
+      final clientMsg = UserMessage.fromJson(
+          jsonDecode(message as String) as Map<String, dynamic>);
+      if (_currentSession != null && clientMsg.content != null) {
         final userMsg = Message(
             role: Role.user,
-            content: message.toString(),
+            content: clientMsg.content!,
             timestamp: DateTime.now().millisecondsSinceEpoch);
         final tempSession = _currentSession!
             .copyWith(messages: [..._currentSession!.messages, userMsg]);
+
+        // Start a new response
+        webSocket?.sink.add(jsonEncode({'type': 'start'}));
+
         _currentSession = await openRouter
             .invoke(session: tempSession, markdown: false)
             .getOrThrow();
+
+        // Send usage information at the end
         final lastResponse = _currentSession?.messages.last;
-        _socket?.sink.add(jsonEncode(lastResponse?.toJson()));
+        webSocket?.sink.add(jsonEncode({
+          'type': 'end',
+          'usage': lastResponse?.usage?.toJson(),
+        }));
       }
     }, onDone: () {
-      _socket = null;
+      webSocket = null;
     });
   }
 
   Future<void> stop() async {
     if (_server != null) {
-      _socket = null;
+      webSocket = null;
       await _server!.close(force: true);
       _logger?.info('Server stopped');
     }
@@ -135,6 +151,7 @@ const _htmlContent = r'''
       }
       .sidebar {
         width: 300px;
+        min-width: 300px;
         background-color: #202123;
         color: white;
         padding: 20px;
@@ -220,6 +237,26 @@ const _htmlContent = r'''
         font-size: 0.8em;
         color: #aaa;
         margin-bottom: 5px;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.5;
+        }
+      }
+
+      .loading-dots {
+        display: inline-block;
+      }
+
+      .loading-dots::after {
+        content: "...";
+        animation: pulse 1.5s infinite;
       }
     </style>
   </head>
@@ -338,8 +375,23 @@ const _htmlContent = r'''
 
           socket.onmessage = function (event) {
             try {
-              const message = JSON.parse(event.data);
-              addMessageToChat(message);
+              const data = JSON.parse(event.data);
+              switch (data.type) {
+                case "start":
+                  // Start a new message
+                  startNewMessage();
+                  break;
+                case "chunk":
+                  // Append chunk to the current message
+                  appendChunk(data.content);
+                  break;
+                case "end":
+                  // Finalize the message and add usage information
+                  finalizeMessage(data.usage);
+                  break;
+                default:
+                  console.error("Unknown message type:", data.type);
+              }
             } catch (error) {
               console.error("Error parsing WebSocket message:", error);
             }
@@ -360,26 +412,67 @@ const _htmlContent = r'''
           div.className = `message ${message.role}-message`;
           const timestamp = new Date(message.timestamp).toLocaleString();
           div.innerHTML = `
-                    <div class="message-role">${capitalizeFirstLetter(
-                      message.role
-                    )}</div>
-                    <div class="message-timestamp">${timestamp}</div>
-                    <p>${message.content}</p>
-                `;
+                <div class="message-role">${capitalizeFirstLetter(
+                  message.role
+                )}</div>
+                <div class="message-timestamp">${timestamp}</div>
+                <p>${message.content}</p>
+            `;
           if (message.usage) {
             div.innerHTML += `
-                        <div class="message-usage">
-                            Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
-                            Completion Tokens: ${
-                              message.usage.completion_tokens || 0
-                            }, 
-                            Total Tokens: ${message.usage.total_tokens || 0},
-                            Response Time: ${message.usage.response_time || 0}s
-                        </div>
-                    `;
+                    <div class="message-usage">
+                        Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
+                        Completion Tokens: ${
+                          message.usage.completion_tokens || 0
+                        }, 
+                        Total Tokens: ${message.usage.total_tokens || 0},
+                        Response Time: ${message.usage.response_time || 0}s
+                    </div>
+                `;
           }
           chatContainer.appendChild(div);
           chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        let currentMessageElement;
+
+        function startNewMessage() {
+          currentMessageElement = document.createElement("div");
+          currentMessageElement.className = "message assistant-message";
+          currentMessageElement.innerHTML = `
+            <div class="message-role">Assistant</div>
+            <div class="message-timestamp">${new Date().toLocaleString()}</div>
+            <p><span class="loading-dots">Thinking</span></p>
+          `;
+          chatContainer.appendChild(currentMessageElement);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function appendChunk(content) {
+          if (currentMessageElement) {
+            const p = currentMessageElement.querySelector("p");
+            if (p.querySelector(".loading-dots")) {
+              p.innerHTML = "";
+            }
+            p.innerHTML += content;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+        }
+
+        function finalizeMessage(usage) {
+          if (currentMessageElement && usage) {
+            const usageDiv = document.createElement("div");
+            usageDiv.className = "message-usage";
+            usageDiv.innerHTML = `
+      Prompt Tokens: ${usage.prompt_tokens || 0}, 
+      Completion Tokens: ${usage.completion_tokens || 0}, 
+      Total Tokens: ${usage.total_tokens || 0},
+      Response Time: ${usage.response_time || 0}s
+    `;
+            currentMessageElement.appendChild(usageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+          currentMessageElement = null;
         }
 
         function sendMessage() {
@@ -396,7 +489,7 @@ const _htmlContent = r'''
           }
         }
 
-        newChatBtn.addEventListener("click", async () => {
+        async function createNewSession() {
           try {
             const response = await fetch(`${baseUrl}/new-session`, {
               method: "POST",
@@ -415,16 +508,18 @@ const _htmlContent = r'''
           } catch (error) {
             console.error("Error creating new session:", error);
           }
-        });
+        }
+
+        newChatBtn.addEventListener("click", createNewSession);
 
         chatInput.addEventListener("keypress", function (event) {
           if (event.key === "Enter") {
             sendMessage();
           }
         });
-
         fetchSessions();
         connectWebSocket();
+        createNewSession();
       });
     </script>
   </body>

@@ -14,6 +14,7 @@
       }
       .sidebar {
         width: 300px;
+        min-width: 300px;
         background-color: #202123;
         color: white;
         padding: 20px;
@@ -217,8 +218,23 @@
 
           socket.onmessage = function (event) {
             try {
-              const message = JSON.parse(event.data);
-              addMessageToChat(message);
+              const data = JSON.parse(event.data);
+              switch (data.type) {
+                case "start":
+                  // Start a new message
+                  startNewMessage();
+                  break;
+                case "chunk":
+                  // Append chunk to the current message
+                  appendChunk(data.content);
+                  break;
+                case "end":
+                  // Finalize the message and add usage information
+                  finalizeMessage(data.usage);
+                  break;
+                default:
+                  console.error("Unknown message type:", data.type);
+              }
             } catch (error) {
               console.error("Error parsing WebSocket message:", error);
             }
@@ -239,26 +255,63 @@
           div.className = `message ${message.role}-message`;
           const timestamp = new Date(message.timestamp).toLocaleString();
           div.innerHTML = `
-                    <div class="message-role">${capitalizeFirstLetter(
-                      message.role
-                    )}</div>
-                    <div class="message-timestamp">${timestamp}</div>
-                    <p>${message.content}</p>
-                `;
+                <div class="message-role">${capitalizeFirstLetter(
+                  message.role
+                )}</div>
+                <div class="message-timestamp">${timestamp}</div>
+                <p>${message.content}</p>
+            `;
           if (message.usage) {
             div.innerHTML += `
-                        <div class="message-usage">
-                            Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
-                            Completion Tokens: ${
-                              message.usage.completion_tokens || 0
-                            }, 
-                            Total Tokens: ${message.usage.total_tokens || 0},
-                            Response Time: ${message.usage.response_time || 0}s
-                        </div>
-                    `;
+                    <div class="message-usage">
+                        Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
+                        Completion Tokens: ${
+                          message.usage.completion_tokens || 0
+                        }, 
+                        Total Tokens: ${message.usage.total_tokens || 0},
+                        Response Time: ${message.usage.response_time || 0}s
+                    </div>
+                `;
           }
           chatContainer.appendChild(div);
           chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        let currentMessageElement;
+
+        function startNewMessage() {
+          currentMessageElement = document.createElement("div");
+          currentMessageElement.className = "message assistant-message";
+          currentMessageElement.innerHTML = `
+    <div class="message-role">Assistant</div>
+    <div class="message-timestamp">${new Date().toLocaleString()}</div>
+    <p></p>
+  `;
+          chatContainer.appendChild(currentMessageElement);
+        }
+
+        function appendChunk(content) {
+          if (currentMessageElement) {
+            const p = currentMessageElement.querySelector("p");
+            p.innerHTML += content;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+        }
+
+        function finalizeMessage(usage) {
+          if (currentMessageElement && usage) {
+            const usageDiv = document.createElement("div");
+            usageDiv.className = "message-usage";
+            usageDiv.innerHTML = `
+      Prompt Tokens: ${usage.prompt_tokens || 0}, 
+      Completion Tokens: ${usage.completion_tokens || 0}, 
+      Total Tokens: ${usage.total_tokens || 0},
+      Response Time: ${usage.response_time || 0}s
+    `;
+            currentMessageElement.appendChild(usageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+          currentMessageElement = null;
         }
 
         function sendMessage() {
@@ -275,7 +328,7 @@
           }
         }
 
-        newChatBtn.addEventListener("click", async () => {
+        async function createNewSession() {
           try {
             const response = await fetch(`${baseUrl}/new-session`, {
               method: "POST",
@@ -294,16 +347,18 @@
           } catch (error) {
             console.error("Error creating new session:", error);
           }
-        });
+        }
+
+        newChatBtn.addEventListener("click", createNewSession);
 
         chatInput.addEventListener("keypress", function (event) {
           if (event.key === "Enter") {
             sendMessage();
           }
         });
-
         fetchSessions();
         connectWebSocket();
+        createNewSession();
       });
     </script>
   </body>

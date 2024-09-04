@@ -111,3 +111,17 @@ Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
   writeNotNull('stop', instance.stop);
   return val;
 }
+
+_$UserMessageImpl _$$UserMessageImplFromJson(Map<String, dynamic> json) =>
+    _$UserMessageImpl(
+      role: json['role'] as String?,
+      content: json['content'] as String?,
+      timestamp: (json['timestamp'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$$UserMessageImplToJson(_$UserMessageImpl instance) =>
+    <String, dynamic>{
+      'role': instance.role,
+      'content': instance.content,
+      'timestamp': instance.timestamp,
+    };
