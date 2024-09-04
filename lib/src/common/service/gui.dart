@@ -38,6 +38,7 @@ class GUIService {
     final router = Router()
       ..get('/', _htmlHandler)
       ..get('/sessions', _sessionsHandler)
+      ..put('/remove-all-sessions', _removeAllSessionsHandler)
       ..post('/select-session', _selectSessionHandler)
       ..post('/new-session', _newSessionHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket));
@@ -55,6 +56,19 @@ class GUIService {
 
     return Response.ok(jsonEncode(_currentSession?.toJson()),
         headers: {'content-type': 'application/json'});
+  }
+
+  Future<Response> _removeAllSessionsHandler(Request request) async {
+    _currentSession = null;
+    _sessions?.clear();
+    final result = await SessionService.removeSessions();
+    if (result) {
+      return Response.ok({'message': 'All sessions are removed'},
+          headers: {'content-type': 'application/json'});
+    } else {
+      return Response.internalServerError(
+          body: 'Failed to remove all sessions');
+    }
   }
 
   Future<Response> _sessionsHandler(Request request) async {
@@ -238,26 +252,6 @@ const _htmlContent = r'''
         color: #aaa;
         margin-bottom: 5px;
       }
-      @keyframes pulse {
-        0% {
-          opacity: 0.5;
-        }
-        50% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0.5;
-        }
-      }
-
-      .loading-dots {
-        display: inline-block;
-      }
-
-      .loading-dots::after {
-        content: "...";
-        animation: pulse 1.5s infinite;
-      }
     </style>
   </head>
   <body>
@@ -265,15 +259,11 @@ const _htmlContent = r'''
       <button class="new-chat-btn" id="newChatBtn">+ New chat</button>
       <div>
         <h3>Chat History</h3>
-        <ul class="session-list" id="sessionList">
-          <!-- Sessions will be populated here -->
-        </ul>
+        <ul class="session-list" id="sessionList"></ul>
       </div>
     </div>
     <div class="main-content">
-      <div class="chat-container" id="chatContainer">
-        <!-- Chat messages will be populated here -->
-      </div>
+      <div class="chat-container" id="chatContainer"></div>
       <div class="input-container">
         <input
           type="text"
@@ -309,6 +299,8 @@ const _htmlContent = r'''
 
         function populateSidebar(sessions) {
           sessionList.innerHTML = "";
+          // Sort sessions by id in descending order
+          sessions.sort((a, b) => b.id - a.id);
           sessions.forEach((session) => {
             const li = document.createElement("li");
             li.className = "session-item";
@@ -319,15 +311,15 @@ const _htmlContent = r'''
               ? firstUserMessage.content.substring(0, 30)
               : "New Chat";
             li.innerHTML = `
-                        <div class="session-title">${title}${
+      <div class="session-title">${title}${
               title.length >= 30 ? "..." : ""
             }</div>
-                        <div class="session-info">
-                            ID: ${session.id}<br>
-                            Messages: ${session.messages.length}<br>
-                            Model: ${session.model}
-                        </div>
-                    `;
+      <div class="session-info">
+        ID: ${session.id}<br>
+        Messages: ${session.messages.length}<br>
+        Model: ${session.model}
+      </div>
+    `;
             li.addEventListener("click", () => selectSession(session.id));
             sessionList.appendChild(li);
           });
@@ -349,7 +341,6 @@ const _htmlContent = r'''
 
             const session = await response.json();
             displayChat(session);
-            await fetchSessions();
           } catch (error) {
             console.error("Error selecting session:", error);
           }
@@ -440,20 +431,16 @@ const _htmlContent = r'''
           currentMessageElement = document.createElement("div");
           currentMessageElement.className = "message assistant-message";
           currentMessageElement.innerHTML = `
-            <div class="message-role">Assistant</div>
-            <div class="message-timestamp">${new Date().toLocaleString()}</div>
-            <p><span class="loading-dots">Thinking</span></p>
-          `;
+    <div class="message-role">Assistant</div>
+    <div class="message-timestamp">${new Date().toLocaleString()}</div>
+    <p></p>
+  `;
           chatContainer.appendChild(currentMessageElement);
-          chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function appendChunk(content) {
           if (currentMessageElement) {
             const p = currentMessageElement.querySelector("p");
-            if (p.querySelector(".loading-dots")) {
-              p.innerHTML = "";
-            }
             p.innerHTML += content;
             chatContainer.scrollTop = chatContainer.scrollHeight;
           }

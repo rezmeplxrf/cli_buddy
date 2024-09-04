@@ -108,15 +108,11 @@
       <button class="new-chat-btn" id="newChatBtn">+ New chat</button>
       <div>
         <h3>Chat History</h3>
-        <ul class="session-list" id="sessionList">
-          <!-- Sessions will be populated here -->
-        </ul>
+        <ul class="session-list" id="sessionList"></ul>
       </div>
     </div>
     <div class="main-content">
-      <div class="chat-container" id="chatContainer">
-        <!-- Chat messages will be populated here -->
-      </div>
+      <div class="chat-container" id="chatContainer"></div>
       <div class="input-container">
         <input
           type="text"
@@ -152,6 +148,8 @@
 
         function populateSidebar(sessions) {
           sessionList.innerHTML = "";
+          // Sort sessions by id in descending order
+          sessions.sort((a, b) => b.id - a.id);
           sessions.forEach((session) => {
             const li = document.createElement("li");
             li.className = "session-item";
@@ -162,15 +160,15 @@
               ? firstUserMessage.content.substring(0, 30)
               : "New Chat";
             li.innerHTML = `
-                        <div class="session-title">${title}${
+      <div class="session-title">${title}${
               title.length >= 30 ? "..." : ""
             }</div>
-                        <div class="session-info">
-                            ID: ${session.id}<br>
-                            Messages: ${session.messages.length}<br>
-                            Model: ${session.model}
-                        </div>
-                    `;
+      <div class="session-info">
+        ID: ${session.id}<br>
+        Messages: ${session.messages.length}<br>
+        Model: ${session.model}
+      </div>
+    `;
             li.addEventListener("click", () => selectSession(session.id));
             sessionList.appendChild(li);
           });
@@ -192,7 +190,6 @@
 
             const session = await response.json();
             displayChat(session);
-            await fetchSessions();
           } catch (error) {
             console.error("Error selecting session:", error);
           }
