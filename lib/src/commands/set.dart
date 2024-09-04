@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
+import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
+import 'package:result_dart/result_dart.dart';
 
 /// {@template set_command}
 ///
@@ -20,136 +22,146 @@ class SetCommand extends Command<int> {
       ..addOption(
         'secret-path',
         abbr: 's',
-        help: 'Set path to the secret.env file in the buddy.config',
+        help: 'Specify the path to the secret.env file in the buddy.config.',
         valueHelp: 'String',
       )
       ..addOption(
         'api-key',
         abbr: 'k',
         help:
-            "Set API key in the secret.env file. If secret.env doesn't exist, create a new secret.env",
+            "Set the API key in the secret.env file. If the file doesn't exist, it will be created.",
         valueHelp: 'String',
+      )
+      ..addFlag(
+        'remove-sessions',
+        abbr: 'r',
+        help: 'Remove all saved sessions.',
       )
       ..addOption(
         'model',
         abbr: 'm',
-        help: 'Set the default AI model',
+        help: 'Set the default AI model to be used.',
         valueHelp: 'String',
       )
       ..addOption(
         'save-session',
         abbr: 'e',
-        help: 'Set save session flag',
+        help: 'Enable or disable session saving.',
         valueHelp: 'bool',
+        allowed: ['true', 'false'],
       )
       ..addOption(
         'max-messages',
         abbr: 'a',
-        help: 'Set max messages',
+        help: 'Set the maximum number of messages to retain.',
         valueHelp: 'int',
       )
       ..addOption(
         'temperature',
         abbr: 't',
-        help: 'Set temperature',
+        help: 'Set the temperature for AI responses (controls randomness).',
         valueHelp: 'double',
       )
       ..addOption(
         'max-tokens',
         abbr: 'x',
-        help: 'Set max tokens',
+        help: 'Set the maximum number of tokens per response.',
         valueHelp: 'int',
       )
       ..addOption(
         'top-p',
-        help: 'Set top_p',
+        help: 'Set the top-p sampling parameter.',
         valueHelp: 'int',
       )
       ..addOption(
         'top-k',
-        help: 'Set top_k',
+        help: 'Set the top-k sampling parameter.',
         valueHelp: 'int',
       )
       ..addOption(
         'freq-penalty',
-        help: 'Set frequency penalty',
+        help: 'Set the frequency penalty for repetitive responses.',
         valueHelp: 'double',
       )
       ..addOption(
         'presence-penalty',
-        help: 'Set presence penalty',
+        help: 'Set the presence penalty for repetitive responses.',
         valueHelp: 'double',
       )
       ..addOption(
         'repetition-penalty',
-        help: 'Set repetition penalty',
+        help: 'Set the penalty for repeating the same phrases.',
         valueHelp: 'double',
       )
       ..addOption(
         'min-p',
-        help: 'Set min_p',
+        help: 'Set the minimum probability parameter.',
         valueHelp: 'double',
       )
       ..addOption(
         'top-a',
-        help: 'Set top_a',
+        help: 'Set the top-a sampling parameter.',
         valueHelp: 'double',
       )
       ..addOption(
         'seed',
-        help: 'Set seed',
+        help: 'Set the seed for random number generation.',
         valueHelp: 'int',
       )
       ..addOption(
         'logit-bias',
-        help: 'Set logit bias',
+        help: 'Set the logit bias for specific tokens.',
         valueHelp: 'Map',
       )
       ..addOption(
         'logprobs',
-        help: 'Set logprobs',
+        help: 'Set the number of log probabilities to return.',
         valueHelp: 'int',
       )
       ..addOption(
         'top-logprobs',
-        help: 'Set top logprobs',
+        help: 'Set the number of top log probabilities to return.',
         valueHelp: 'int',
       )
       ..addOption(
         'response-format',
-        help: 'Set response format',
+        help: 'Set the format for AI responses.',
         valueHelp: 'Map',
       )
       ..addOption(
         'stop-seq',
-        help: 'Set stop sequences',
+        help:
+            'Set the sequences where the AI should stop generating responses.',
         valueHelp: 'List<int>',
       )
       ..addOption(
         'cmd-prompt',
-        help: 'Set command prompt',
+        help:
+            'Set the command prompt template which is used as a system message.',
         valueHelp: 'String',
       )
       ..addOption(
         'explain-prompt',
-        help: 'Set explain prompt',
+        help:
+            'Set the explanation prompt template which is used as a system message.',
         valueHelp: 'String',
       )
       ..addOption(
         'code-prompt',
-        help: 'Set code prompt',
+        help:
+            'Set the code generation prompt template which is used as a system message.',
         valueHelp: 'String',
       )
       ..addOption(
         'chat-prompt',
-        help: 'Set chat prompt',
+        help: 'Set the chat prompt template which is used as a system message.',
         valueHelp: 'String',
       );
   }
 
   @override
   String get description =>
-      'Sets the configuration values or create new one if it does not exist.';
+      'Set or update configuration values. Creates new configurations if they do not exist.';
 
   @override
   String get name => 'set';
@@ -158,11 +170,12 @@ class SetCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress('Loading');
+    final progress = _logger.progress('');
     final path = argResults?['secret-path']?.toString().trim();
     final key = argResults?['api-key']?.toString().trim();
     final model = argResults?['model']?.toString().trim();
-    final saveSession = argResults?['save-session'] == 'true';
+    final saveSession =
+        bool.tryParse(argResults?['save-session'] as String? ?? '');
     final maxMessages =
         int.tryParse(argResults?['max-messages'] as String? ?? '');
     final temperature =
@@ -197,6 +210,7 @@ class SetCommand extends Command<int> {
     final explainPrompt = argResults?['explain-prompt']?.toString().trim();
     final codePrompt = argResults?['code-prompt']?.toString().trim();
     final chatPrompt = argResults?['chat-prompt']?.toString().trim();
+    final removeSessions = argResults?['remove-sessions'] as bool?;
 
     if (argResults == null ||
         argResults?.options == null ||
@@ -205,9 +219,30 @@ class SetCommand extends Command<int> {
       return ExitCode.usage.code;
     }
 
-    
+    if (removeSessions != null && removeSessions) {
+      final confirm =
+          _logger.confirm('Are you sure you want to remove all sessions?');
+      if (confirm) {
+        final result = await SessionService.removeSessions();
+        if (result) {
+          progress.complete('Done');
+          return ExitCode.success.code;
+        } else {
+          progress.fail('Failed');
+          return ExitCode.tempFail.code;
+        }
+      } else {
+        progress.cancel();
+        return ExitCode.success.code;
+      }
+    }
 
     if (key != null && key.isNotEmpty) {
+      configuration ??= await ConfigService.loadConfig().getOrThrow();
+      if (configuration == null) {
+        _logger.err('Configuration not found');
+        return ExitCode.unavailable.code;
+      }
       String? secretEnvPath;
       if (path != null) {
         /// if path and key are both provided,
@@ -226,34 +261,69 @@ class SetCommand extends Command<int> {
       await ConfigService.saveConfig(
           newConfig: configuration!.copyWith(secretEnvPath: path));
     }
+    if (_isAnyConfigOptionProvided([
+      model,
+      saveSession,
+      maxMessages,
+      temperature,
+      maxTokens,
+      topP,
+      topK,
+      frequencyPenalty,
+      presencePenalty,
+      repetitionPenalty,
+      minP,
+      topA,
+      seed,
+      logitBias,
+      logprobs,
+      topLogprobs,
+      responseFormat,
+      stop,
+      cmdPrompt,
+      explainPrompt,
+      codePrompt,
+      chatPrompt,
+    ])) {
+      configuration ??= await ConfigService.loadConfig().getOrThrow();
+      final newConfig = configuration!.copyWith(
+        defaultModel: model ?? configuration!.defaultModel,
+        saveSession: saveSession ?? configuration!.saveSession,
+        maxMessages: maxMessages ?? configuration!.maxMessages,
+        temperature: temperature ?? configuration!.temperature,
+        maxTokens: maxTokens ?? configuration!.maxTokens,
+        topP: topP ?? configuration!.topP,
+        topK: topK ?? configuration!.topK,
+        frequencyPenalty: frequencyPenalty ?? configuration!.frequencyPenalty,
+        presencePenalty: presencePenalty ?? configuration!.presencePenalty,
+        repetitionPenalty:
+            repetitionPenalty ?? configuration!.repetitionPenalty,
+        minP: minP ?? configuration!.minP,
+        topA: topA ?? configuration!.topA,
+        seed: seed ?? configuration!.seed,
+        logitBias: logitBias ?? configuration!.logitBias,
+        logprobs: logprobs ?? configuration!.logprobs,
+        topLogprobs: topLogprobs ?? configuration!.topLogprobs,
+        responseFormat: responseFormat ?? configuration!.responseFormat,
+        stop: stop ?? configuration!.stop,
+        cmdPrompt: cmdPrompt ?? configuration!.cmdPrompt,
+        explainPrompt: explainPrompt ?? configuration!.explainPrompt,
+        codePrompt: codePrompt ?? configuration!.codePrompt,
+        chatPrompt: chatPrompt ?? configuration!.chatPrompt,
+      );
 
-    final newConfig = configuration!.copyWith(
-      defaultModel: model ?? configuration!.defaultModel,
-      saveSession: saveSession,
-      maxMessages: maxMessages ?? configuration!.maxMessages,
-      temperature: temperature ?? configuration!.temperature,
-      maxTokens: maxTokens ?? configuration!.maxTokens,
-      topP: topP ?? configuration!.topP,
-      topK: topK ?? configuration!.topK,
-      frequencyPenalty: frequencyPenalty ?? configuration!.frequencyPenalty,
-      presencePenalty: presencePenalty ?? configuration!.presencePenalty,
-      repetitionPenalty: repetitionPenalty ?? configuration!.repetitionPenalty,
-      minP: minP ?? configuration!.minP,
-      topA: topA ?? configuration!.topA,
-      seed: seed ?? configuration!.seed,
-      logitBias: logitBias ?? configuration!.logitBias,
-      logprobs: logprobs ?? configuration!.logprobs,
-      topLogprobs: topLogprobs ?? configuration!.topLogprobs,
-      responseFormat: responseFormat ?? configuration!.responseFormat,
-      stop: stop ?? configuration!.stop,
-      cmdPrompt: cmdPrompt ?? configuration!.cmdPrompt,
-      explainPrompt: explainPrompt ?? configuration!.explainPrompt,
-      codePrompt: codePrompt ?? configuration!.codePrompt,
-      chatPrompt: chatPrompt ?? configuration!.chatPrompt,
-    );
-
-    await ConfigService.saveConfig(newConfig: newConfig);
+      await ConfigService.saveConfig(newConfig: newConfig);
+    }
     progress.complete('Done');
     return ExitCode.success.code;
   }
+}
+
+bool _isAnyConfigOptionProvided(List<dynamic> options) {
+  for (final option in options) {
+    if (option != null) {
+      return true;
+    }
+  }
+  return false;
 }

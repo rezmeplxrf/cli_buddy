@@ -29,9 +29,6 @@ class ConfigService {
 
     final configFilePath = p.join(defaultDir!, 'buddy.config');
     final configFile = File(configFilePath);
-    final clickableLink =
-        '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
-    _logger?.info('\nconfig file: ${blue.wrap(clickableLink)}\n');
 
     try {
       Configuration? config;
@@ -72,8 +69,10 @@ class ConfigService {
     try {
       final configJson = jsonEncode(newConfig.toJson());
       await configFile.writeAsString(configJson);
-
-      _logger?.info('Config updated');
+      final clickableLink =
+          '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
+      _logger?.info(
+          '\nconfig updated: ${blue.wrap(clickableLink)}\nYou can check the config by running ${cyan.wrap('buddy info -f')}\n');
 
       // Reload the configuration
       await loadConfig();

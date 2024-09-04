@@ -23,12 +23,12 @@ class CodeCommand extends Command<int> {
       ..addFlag(
         'session',
         abbr: 's',
-        help: 'pass the existing chat session to AI',
+        help: 'Pass the existing chat session to AI',
         negatable: false,
       )
       ..addFlag('raw',
           abbr: 'r',
-          help: 'get raw outputs of prompt and api requests',
+          help: 'Display raw outputs of prompt and api requests',
           negatable: false);
   }
 

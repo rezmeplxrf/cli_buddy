@@ -24,64 +24,59 @@ class InfoCommand extends Command<int> {
         'query',
         abbr: 'q',
         help:
-            'search for AI models by name, provider, model type (text, image, etc)',
+            'Search for AI models by name, provider, or model type (e.g., text, image).',
         valueHelp: 'String',
       )
-      ..addOption('order',
-          abbr: 'o',
-          help: 'order by the given value',
-          valueHelp: 'String',
-          allowed: [
-            'name',
-            'context',
-            'prompt',
-            'completion',
-            'image'
-          ],
-          allowedHelp: {
-            'name': 'Order by name',
-            'context': 'Order by context length (from highest to lowest)',
-            'prompt': 'Order by prompt pricing  (from highest to lowest)',
-            'completion':
-                'Order by completion pricing  (from highest to lowest)',
-            'image': 'Order by image pricing  (from highest to lowest)',
-          })
+      ..addOption(
+        'order',
+        abbr: 'o',
+        help: 'Specify the order in which the results should be displayed.',
+        valueHelp: 'String',
+        allowed: ['name', 'context', 'prompt', 'completion', 'image'],
+        allowedHelp: {
+          'name': 'Order by model name.',
+          'context': 'Order by context length (from highest to lowest).',
+          'prompt': 'Order by prompt pricing (from highest to lowest).',
+          'completion': 'Order by completion pricing (from highest to lowest).',
+          'image': 'Order by image pricing (from highest to lowest).',
+        },
+      )
       ..addFlag(
         'config',
         abbr: 'f',
         help:
-            'show the current config file and display the values if does not exist, create a new one',
+            'Display the current configuration file. If it does not exist, create a new one.',
         negatable: false,
       )
       ..addFlag(
         'credits',
         abbr: 'c',
-        help: 'show the credits of OpenRouter',
+        help: 'Display the credits available in OpenRouter.',
         negatable: false,
       )
       ..addFlag(
         'list',
         abbr: 'l',
-        help: 'list the all AI models in OpenRouter',
+        help: 'List all AI models available in OpenRouter.',
         negatable: false,
       )
       ..addOption(
         'parameters',
         abbr: 'p',
-        help: "query the AI model's parameters",
+        help: 'Query the parameters of a specific AI model.',
         valueHelp: 'model id',
       )
-      ..addOption('sessions',
-          abbr: 's',
-          help:
-              'List the saved chat histories in the default session folder in a readable format or view the specific chat history ',
-          valueHelp: 'String or Int',
-          allowedHelp: {
-            'list':
-                'List the saved chat hbuddistories in the default session folder in a table format',
-            'message id':
-                'View the specific chat history in a table. Required value is id of the session',
-          });
+      ..addOption(
+        'sessions',
+        abbr: 's',
+        help:
+            'List saved chat histories in the default session folder or view a specific chat history.',
+        valueHelp: 'String or Int',
+        allowedHelp: {
+          'list': 'List saved chat histories in a table format.',
+          'message id': 'View a specific chat history by session ID.',
+        },
+      );
   }
 
   @override
@@ -94,13 +89,17 @@ class InfoCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final progress = _logger.progress('Loading');
-    final query = argResults?['query'] as String?;
+    final progress = _logger.progress('');
+    final queryArg = argResults?['query'] as String?;
+    final query = queryArg?.trim();
     final credits = argResults?['credits'] as bool?;
-    final parameter = argResults?['parameters'] as String?;
+    final parameterArg = argResults?['parameters'] as String?;
+    final parameter = parameterArg?.trim();
     final all = argResults?['list'] as bool?;
-    final sessions = argResults?['sessions'] as String?;
-    final order = argResults?['order'] as String?;
+    final sessionsArg = argResults?['sessions'] as String?;
+    final sessions = sessionsArg?.trim();
+    final orderArg = argResults?['order'] as String?;
+    final order = orderArg?.trim();
     final config = argResults?['config'] as bool?;
 
     if (query == null &&

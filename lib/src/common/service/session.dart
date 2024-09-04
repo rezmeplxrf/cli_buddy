@@ -14,7 +14,7 @@ class SessionService {
   static final SessionService _instance = SessionService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
-  
+
   static Logger? _logger;
 
   static Future<List<ChatSession>?> listSessions(
@@ -105,6 +105,36 @@ class SessionService {
         )
         ..detail(e.toString());
       return null;
+    }
+  }
+
+  static Future<bool> removeSessions() async {
+    defaultDir ??= SysInfoService.getConfigDirectory();
+
+    try {
+      final sessionsPath = p.join(defaultDir!, 'sessions');
+      final sessionsDirectory = Directory(sessionsPath);
+
+      if (!sessionsDirectory.existsSync()) {
+        _logger?.err('Sessions directory does not exist.');
+        return false;
+      }
+
+      final sessionFiles = sessionsDirectory
+          .listSync()
+          .where((file) => file is File && file.path.endsWith('.json'))
+          .cast<File>();
+
+      for (final sessionFile in sessionFiles) {
+        await sessionFile.delete();
+      }
+      _logger?.info('All session files have been removed.');
+      return true;
+    } catch (e) {
+      _logger
+        ?..err('Error removing session files.')
+        ..detail(e.toString());
+      return false;
     }
   }
 }
