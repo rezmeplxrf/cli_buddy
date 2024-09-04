@@ -72,6 +72,7 @@ class ChatCommand extends Command<int> {
 
     final shouldDebug = argResults?['raw'] as bool? ?? false;
     final markdown = argResults?['markdown'] as bool? ?? false;
+   
     final initialResult = await openRouter.invoke(
         session: session!, shouldDebug: shouldDebug, markdown: markdown);
     if (initialResult.isError()) {

@@ -1,3 +1,4 @@
+import 'package:barbecue/barbecue.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 final markdownStyle = Markdown({
@@ -6,23 +7,50 @@ final markdownStyle = Markdown({
   MarkdownPlaceholder.enclosed(
       '*', (text, match) => styleItalic.wrap(text) ?? text),
   MarkdownPlaceholder.regexp(
-    r'```(?:\w+)?\s*([^`]+)```',
-    (text, match) => green.wrap(text) ?? text,
+    r'```(?:\w+)?\s*([\s\S]*?)```',
+    (text, match) => codeblock(text),
   ),
   MarkdownPlaceholder.enclosed(
-      '```', (text, match) => green.wrap(text) ?? text),
+    '```',
+    (text, match) => codeblock(text),
+  ),
   MarkdownPlaceholder.enclosed('`', (text, match) => blue.wrap(text) ?? text),
+  MarkdownPlaceholder.string(
+      '###', (text, match) => lightGreen.wrap(text) ?? text),
+  MarkdownPlaceholder.string(
+      '##', (text, match) => lightGreen.wrap(text) ?? text),
+  MarkdownPlaceholder.string(
+      '#', (text, match) => lightMagenta.wrap(text) ?? text)
 });
+
+String codeblock(String text) {
+  final table = Table(
+    tableStyle: const TableStyle(
+      border: true,
+    ),
+    body: TableSection(
+      cellStyle: const CellStyle(
+          paddingRight: 1, paddingLeft: 1, alignment: TextAlignment.MiddleLeft),
+      rows: [
+        Row(cells: [Cell(text)]),
+      ],
+    ),
+  ).render();
+  return '${lightBlue.wrap(table)}';
+}
 
 final markdownPlain = Markdown({
   MarkdownPlaceholder.enclosed('**', (text, match) => text),
   MarkdownPlaceholder.enclosed('*', (text, match) => text),
   MarkdownPlaceholder.regexp(
-    r'```(?:\w+)?\s*([^`]+)```',
+    r'```(?:\w+)?\s*([\s\S]*?)```',
     (text, match) => text,
   ),
   MarkdownPlaceholder.enclosed('```', (text, match) => text),
   MarkdownPlaceholder.enclosed('`', (text, match) => text),
+  MarkdownPlaceholder.string('###', (text, match) => text),
+  MarkdownPlaceholder.string('##', (text, match) => text),
+  MarkdownPlaceholder.string('#', (text, match) => text)
 });
 
 class Markdown {

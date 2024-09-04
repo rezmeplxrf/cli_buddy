@@ -30,6 +30,7 @@ class OpenRouterService {
     bool? shouldDebug = false,
     int? overrideMaxMsg,
   }) async {
+    final startTime = DateTime.now().millisecondsSinceEpoch * 1000;
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
       green.wrap(waitingMsg)!,
@@ -109,9 +110,9 @@ ${lightCyan.wrap(promptForDebug)}
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
 
-      if (!firstChunk) {
+      if (!firstChunk && !markdown) {
         firstChunk = true;
-        progress?.complete();
+        progress?.complete('');
       }
 
       final decodedString = utf8.decode(chunk);
@@ -163,6 +164,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
     var finalMsg = msg.toString();
     if (markdown) {
+      progress?.complete('');
       _logger?.info(markdownStyle.apply(msg.toString()));
     } else {
       finalMsg = markdownPlain.apply(msg.toString());
@@ -179,9 +181,10 @@ ${lightCyan.wrap(promptForDebug)}
           messages: [...session.messages, aiResponse],
           model: model,
           parameters: parameters);
+      final finishTime = DateTime.now().millisecondsSinceEpoch * 1000;
 
       final usageLog =
-          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens}\n';
+          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${finishTime - startTime}s\n';
       _logger?.info(darkGray.wrap(usageLog));
 
       unawaited(SessionService.saveSession(session: session));
