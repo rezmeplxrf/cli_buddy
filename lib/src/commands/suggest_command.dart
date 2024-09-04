@@ -74,7 +74,7 @@ class SuggestionCommand extends Command<int> {
     }
 
     final initialResult =
-        await openRouter.invoke(session: session!, shouldDebug: shouldDebug);
+        await openRouter.invoke(session: session!, shouldDebug: shouldDebug, markdown: false);
     if (initialResult.isError()) {
       _logger.err('An Error occured while asking for suggested commands');
       return ExitCode.tempFail.code;

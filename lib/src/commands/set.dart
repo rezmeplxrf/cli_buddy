@@ -287,35 +287,56 @@ class SetCommand extends Command<int> {
     ])) {
       configuration ??= await ConfigService.loadConfig().getOrThrow();
       final newConfig = configuration!.copyWith(
-        defaultModel: model ?? configuration!.defaultModel,
-        saveSession: saveSession ?? configuration!.saveSession,
-        maxMessages: maxMessages ?? configuration!.maxMessages,
-        temperature: temperature ?? configuration!.temperature,
-        maxTokens: maxTokens ?? configuration!.maxTokens,
-        topP: topP ?? configuration!.topP,
-        topK: topK ?? configuration!.topK,
-        frequencyPenalty: frequencyPenalty ?? configuration!.frequencyPenalty,
-        presencePenalty: presencePenalty ?? configuration!.presencePenalty,
-        repetitionPenalty:
-            repetitionPenalty ?? configuration!.repetitionPenalty,
-        minP: minP ?? configuration!.minP,
-        topA: topA ?? configuration!.topA,
-        seed: seed ?? configuration!.seed,
-        logitBias: logitBias ?? configuration!.logitBias,
-        logprobs: logprobs ?? configuration!.logprobs,
-        topLogprobs: topLogprobs ?? configuration!.topLogprobs,
-        responseFormat: responseFormat ?? configuration!.responseFormat,
-        stop: stop ?? configuration!.stop,
-        cmdPrompt: cmdPrompt ?? configuration!.cmdPrompt,
-        explainPrompt: explainPrompt ?? configuration!.explainPrompt,
-        codePrompt: codePrompt ?? configuration!.codePrompt,
-        chatPrompt: chatPrompt ?? configuration!.chatPrompt,
+        defaultModel: _logUpdate('model', model, configuration!.defaultModel),
+        saveSession:
+            _logUpdate('save-session', saveSession, configuration!.saveSession),
+        maxMessages:
+            _logUpdate('max-messages', maxMessages, configuration!.maxMessages),
+        temperature:
+            _logUpdate('temperature', temperature, configuration!.temperature),
+        maxTokens:
+            _logUpdate('max-tokens', maxTokens, configuration!.maxTokens),
+        topP: _logUpdate('top-p', topP, configuration!.topP),
+        topK: _logUpdate('top-k', topK, configuration!.topK),
+        frequencyPenalty: _logUpdate(
+            'freq-penalty', frequencyPenalty, configuration!.frequencyPenalty),
+        presencePenalty: _logUpdate('presence-penalty', presencePenalty,
+            configuration!.presencePenalty),
+        repetitionPenalty: _logUpdate('repetition-penalty', repetitionPenalty,
+            configuration!.repetitionPenalty),
+        minP: _logUpdate('min-p', minP, configuration!.minP),
+        topA: _logUpdate('top-a', topA, configuration!.topA),
+        seed: _logUpdate('seed', seed, configuration!.seed),
+        logitBias:
+            _logUpdate('logit-bias', logitBias, configuration!.logitBias),
+        logprobs: _logUpdate('logprobs', logprobs, configuration!.logprobs),
+        topLogprobs:
+            _logUpdate('top-logprobs', topLogprobs, configuration!.topLogprobs),
+        responseFormat: _logUpdate(
+            'response-format', responseFormat, configuration!.responseFormat),
+        stop: _logUpdate('stop-seq', stop, configuration!.stop),
+        cmdPrompt:
+            _logUpdate('cmd-prompt', cmdPrompt, configuration!.cmdPrompt),
+        explainPrompt: _logUpdate(
+            'explain-prompt', explainPrompt, configuration!.explainPrompt),
+        codePrompt:
+            _logUpdate('code-prompt', codePrompt, configuration!.codePrompt),
+        chatPrompt:
+            _logUpdate('chat-prompt', chatPrompt, configuration!.chatPrompt),
       );
 
       await ConfigService.saveConfig(newConfig: newConfig);
     }
     progress.complete('Done');
     return ExitCode.success.code;
+  }
+
+  T _logUpdate<T>(String fieldName, T? newValue, T currentValue) {
+    if (newValue != null && newValue != currentValue) {
+      _logger.info('\n${yellow.wrap('Updating $fieldName to $newValue')}');
+      return newValue;
+    }
+    return currentValue;
   }
 }
 

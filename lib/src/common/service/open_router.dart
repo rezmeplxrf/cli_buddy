@@ -23,15 +23,12 @@ class OpenRouterService {
   static void setLogger(Logger? logger) => _logger = logger;
 
   static Logger? _logger;
-  Future<Result<ChatSession, CustomException>> invoke(
-      {required ChatSession session,
-      bool? shouldDebug = false,
-      int? overrideMaxMsg,
-
-      /// Whether to skip logging. Used when there is no terminal or when markdown is needed.
-      /// In order to use markdown in console, real time logging must be disabled.
-      bool? shouldSkipLog,
-      bool? markdown}) async {
+  Future<Result<ChatSession, CustomException>> invoke({
+    required ChatSession session,
+    required bool markdown,
+    bool? shouldDebug = false,
+    int? overrideMaxMsg,
+  }) async {
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
       green.wrap(waitingMsg)!,
@@ -40,7 +37,6 @@ class OpenRouterService {
       ),
     );
 
-    final skipLog = shouldSkipLog != null && shouldSkipLog;
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
 
@@ -140,7 +136,7 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                if (!skipLog) {
+                if (stdout.hasTerminal && !markdown) {
                   stdout.write(cyan.wrap(content));
                   index = msg.length;
 
@@ -164,10 +160,12 @@ ${lightCyan.wrap(promptForDebug)}
         }
       }
     }
-    if (!skipLog) {
-      stdout.writeln();
+
+    if (markdown) {
+      // TODO: if markdown and skipLog is true, print out markdown applied msg here
+    } else {
+      // TODO: remove markdown in the final output
     }
-    // TODO: if markdown and skipLog is true, print out markdown applied msg here
 
     if (responses.isNotEmpty) {
       final aiResponse = Message(
@@ -182,10 +180,9 @@ ${lightCyan.wrap(promptForDebug)}
           parameters: parameters);
 
       final usageLog =
-          'Token usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens}\n';
+          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens}\n';
       _logger?.info(darkGray.wrap(usageLog));
-    }
-    if (newSession != null) {
+
       unawaited(SessionService.saveSession(session: session));
       return Success(newSession);
     } else {

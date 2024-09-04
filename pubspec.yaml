@@ -21,6 +21,7 @@ dependencies:
   flat_buffers: ^23.5.26
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
+  marked: ^0.2.5
   mason_logger: ^0.3.0
   path: ^1.9.0
   process_run: ^1.2.0

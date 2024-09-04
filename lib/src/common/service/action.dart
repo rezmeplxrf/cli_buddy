@@ -92,7 +92,7 @@ class ActionService {
     final newSession =
         session.copyWith(messages: [...session.messages, newMsg]);
     final newResult =
-        await openRouter.invoke(session: newSession, shouldDebug: shouldDebug);
+        await openRouter.invoke(session: newSession, shouldDebug: shouldDebug, markdown: false);
     return newResult;
   }
 }

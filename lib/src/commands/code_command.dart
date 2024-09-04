@@ -75,8 +75,8 @@ class CodeCommand extends Command<int> {
       shouldDebug = true;
     }
     try {
-      final initialResult =
-          await openRouter.invoke(session: session!, shouldDebug: shouldDebug);
+      final initialResult = await openRouter.invoke(
+          session: session!, shouldDebug: shouldDebug, markdown: false);
       if (initialResult.isError()) {
         _logger.err('An Error occurred');
 
@@ -144,7 +144,7 @@ class CodeCommand extends Command<int> {
             session = session.copyWith(messages: [...session.messages, newMsg]);
 
             final chatResult = await openRouter.invoke(
-                session: session, shouldDebug: shouldDebug);
+                session: session, shouldDebug: shouldDebug, markdown: false);
             session = chatResult.getOrThrow();
           case ActionType.exit:
             return ExitCode.success.code;

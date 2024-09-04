@@ -72,7 +72,7 @@ class ConfigService {
       final clickableLink =
           '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
       _logger?.info(
-          '\nconfig updated: ${blue.wrap(clickableLink)}\nYou can check the config by running ${cyan.wrap('buddy info -f')}\n');
+          'config updated: ${blue.wrap(clickableLink)}\nYou can check the config by running ${cyan.wrap('buddy info -f')}\n');
 
       // Reload the configuration
       await loadConfig();

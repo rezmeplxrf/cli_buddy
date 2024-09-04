@@ -27,6 +27,10 @@ class ChatCommand extends Command<int> {
       ..addFlag('raw',
           abbr: 'r',
           help: 'Display raw outputs of prompt and api requests',
+          negatable: false)
+      ..addFlag('markdown',
+          abbr: 'm',
+          help: 'Enable markdown formatting in the output',
           negatable: false);
   }
 
@@ -66,13 +70,10 @@ class ChatCommand extends Command<int> {
       session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg]);
     }
 
-    var shouldDebug = false;
-
-    if (argResults?['raw'] == true) {
-      shouldDebug = true;
-    }
+    final shouldDebug = argResults?['raw'] as bool? ?? false;
+    final markdown = argResults?['markdown'] as bool? ?? false;
     final initialResult = await openRouter.invoke(
-        session: session!, shouldDebug: shouldDebug);
+        session: session!, shouldDebug: shouldDebug, markdown: markdown);
     if (initialResult.isError()) {
       _logger.err('An Error occurred');
       return ExitCode.tempFail.code;
@@ -97,7 +98,7 @@ class ChatCommand extends Command<int> {
           timestamp: DateTime.now().millisecondsSinceEpoch);
       session = session!.copyWith(messages: [...session.messages, newMsg]);
       final newResult = await openRouter.invoke(
-          session: session, shouldDebug: shouldDebug);
+          session: session, shouldDebug: shouldDebug, markdown: markdown);
       if (newResult.isError()) {
         _logger.err('An Error occurred');
         return ExitCode.tempFail.code;
