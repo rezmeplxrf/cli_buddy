@@ -14,12 +14,11 @@ class SessionService {
   static final SessionService _instance = SessionService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
-
+  static List<ChatSession>? _sessionsCache;
   static Logger? _logger;
+  static DateTime? _lastCacheUpdate;
 
-  static Future<List<ChatSession>?> listSessions(
-    Logger logger,
-  ) async {
+  static Future<List<ChatSession>> listSessions(Logger logger) async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     final sessionsPath = p.join(defaultDir!, 'sessions');
@@ -35,18 +34,40 @@ class SessionService {
         .where((file) => file is File && file.path.endsWith('.json'))
         .cast<File>();
 
+    // Check if cache is still valid (e.g., not older than 5 minutes)
+    final now = DateTime.now();
+    if (_sessionsCache != null &&
+        _lastCacheUpdate != null &&
+        now.difference(_lastCacheUpdate!).inMinutes < 5) {
+      return _sessionsCache!;
+    }
+
     final sessions = <ChatSession>[];
+    var hasNewSessions = false;
+
     for (final sessionFile in sessionFiles) {
       try {
         final sessionContent = await sessionFile.readAsString();
         final sessionJson = jsonDecode(sessionContent) as Map<String, dynamic>;
         final chatSession = ChatSession.fromJson(sessionJson);
         sessions.add(chatSession);
+
+        // Check if this session is new or updated
+        if (_sessionsCache == null ||
+            !_sessionsCache!.any((s) => s.id == chatSession.id)) {
+          hasNewSessions = true;
+        }
       } catch (e) {
         _logger?.err('Error while loading session: ${sessionFile.path} - $e');
       }
     }
-    return sessions;
+
+    if (hasNewSessions || _sessionsCache == null) {
+      _sessionsCache = sessions;
+      _lastCacheUpdate = now;
+    }
+
+    return _sessionsCache!;
   }
 
   static Future<void> saveSession({
@@ -71,6 +92,10 @@ class SessionService {
           }
         }
       }
+      _sessionsCache ??= [];
+      _sessionsCache!.removeWhere((s) => s.id == session.id);
+      _sessionsCache!.add(session);
+      _lastCacheUpdate = DateTime.now();
     } catch (e) {
       _logger
         ?..err(
@@ -128,6 +153,8 @@ class SessionService {
         await sessionFile.delete();
       }
       _logger?.info('All session files have been removed.');
+      _sessionsCache = null;
+      _lastCacheUpdate = null;
       return true;
     } catch (e) {
       _logger

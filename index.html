@@ -29,11 +29,12 @@
       }
 
       .session-item {
-        transition: background-color 0.2s ease;
+        transition: all 0.3s ease;
       }
 
       .session-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
       }
 
       #sessionList::-webkit-scrollbar {
@@ -81,13 +82,55 @@
           transform: rotate(360deg);
         }
       }
+
+      /* New animations */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .btn-animate {
+        transition: all 0.3s ease;
+      }
+
+      .btn-animate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .btn-animate:active {
+        transform: translateY(1px);
+      }
+
+  
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
     </style>
   </head>
   <body class="bg-gray-100 text-gray-900 flex h-screen">
     <div class="sidebar bg-gray-900 text-white w-64 p-4 flex flex-col">
       <button
         id="newChatBtn"
-        class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded mb-4 flex items-center"
+        class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded mb-4 flex items-center btn-animate"
       >
         <svg
           class="w-5 h-5 mr-2"
@@ -111,7 +154,7 @@
       <ul id="sessionList" class="overflow-y-auto flex-grow space-y-2"></ul>
       <button
         id="removeAllSessionsBtn"
-        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded mt-4"
+        class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded mt-4 btn-animate"
       >
         Remove All Sessions
       </button>
@@ -128,7 +171,7 @@
         ></textarea>
         <button
           id="sendButton"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r btn-animate"
         >
           Send
         </button>
@@ -173,10 +216,11 @@
       function populateSidebar(sessions) {
         sessionList.innerHTML = "";
         sessions.sort((a, b) => b.id - a.id);
-        sessions.forEach((session) => {
+        sessions.forEach((session, index) => {
           const li = document.createElement("li");
           li.className =
-            "session-item bg-gray-800 hover:bg-gray-700 rounded p-2 cursor-pointer transition-colors duration-200";
+            "session-item bg-gray-800 hover:bg-gray-700 rounded p-2 cursor-pointer transition-colors duration-200 fade-in";
+          li.style.animationDelay = `${index * 0.05}s`;
           const firstUserMessage = session.messages.find(
             (msg) => msg.role === "user"
           );
@@ -184,15 +228,15 @@
             ? firstUserMessage.content.substring(0, 30)
             : "New Chat";
           li.innerHTML = `
-                    <div class="session-title font-semibold mb-1">${title}${
+            <div class="session-title font-semibold mb-1">${title}${
             title.length >= 30 ? "..." : ""
           }</div>
-                    <div class="session-info text-xs text-gray-400">
-                        <div>ID: ${session.id}</div>
-                        <div>Messages: ${session.messages.length}</div>
-                        <div>Model: ${session.model}</div>
-                    </div>
-                `;
+            <div class="session-info text-xs text-gray-400">
+              <div>ID: ${session.id}</div>
+              <div>Messages: ${session.messages.length}</div>
+              <div>Model: ${session.model}</div>
+            </div>
+          `;
           li.addEventListener("click", () => selectSession(session.id));
           sessionList.appendChild(li);
         });
@@ -286,26 +330,24 @@
 
       function addMessageToChat(message) {
         const div = document.createElement("div");
-        div.className = `message ${message.role}-message bg-white rounded-lg shadow-md p-4 mb-4`;
+        div.className = `message ${message.role}-message bg-white rounded-lg shadow-md p-4 mb-4 fade-in`;
         const timestamp = new Date(message.timestamp).toLocaleString();
         div.innerHTML = `
-                <div class="font-bold text-blue-600 mb-1">${capitalizeFirstLetter(
-                  message.role
-                )}</div>
-                <div class="text-sm text-gray-500 mb-2">${timestamp}</div>
-                <div class="prose">${marked.parse(message.content)}</div>
-            `;
+          <div class="font-bold text-blue-600 mb-1">${capitalizeFirstLetter(
+            message.role
+          )}</div>
+          <div class="text-sm text-gray-500 mb-2">${timestamp}</div>
+          <div class="prose">${marked.parse(message.content)}</div>
+        `;
         if (message.usage) {
           div.innerHTML += `
-                    <div class="text-sm text-gray-500 mt-2 pt-2 border-t">
-                        Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
-                        Completion Tokens: ${
-                          message.usage.completion_tokens || 0
-                        }, 
-                        Total Tokens: ${message.usage.total_tokens || 0},
-                        Response Time: ${message.usage.response_time || 0}s
-                    </div>
-                `;
+            <div class="text-sm text-gray-500 mt-2 pt-2 border-t">
+              Prompt Tokens: ${message.usage.prompt_tokens || 0}, 
+              Completion Tokens: ${message.usage.completion_tokens || 0}, 
+              Total Tokens: ${message.usage.total_tokens || 0},
+              Response Time: ${message.usage.response_time || 0}s
+            </div>
+          `;
         }
         chatContainer.appendChild(div);
         chatContainer.scrollTop = chatContainer.scrollHeight;

@@ -252,3 +252,13 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 [very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
 
 
+
+
+## To-Dos
+1. If new empty session is alive and page is refreshed, prevent another new session being creating in the sidebar
+2. add method to remove single session in the side bar
+3. add configuration button and popup to change config
+4. add a button which will populate the chat area to display all available models and when selected it will show a confirmation prompt and set it as default model
+5. add a button that will show a popup to configure parameters
+6. allow chaging the system prompt as well as user + assistant prompts per session
+7. add a button that will show a popup to set default system prompts
