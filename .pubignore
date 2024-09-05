@@ -12,8 +12,7 @@ test.dart
 memo.md
 dart_test.yaml
 .vscode
-webdev/
-index.html
+web/
 
 
 .test_coverage.dart

@@ -18,14 +18,14 @@ class SessionService {
   static Logger? _logger;
   static DateTime? _lastCacheUpdate;
 
-  static Future<List<ChatSession>> listSessions(Logger logger) async {
+  static Future<List<ChatSession>> listSessions() async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 
     final sessionsPath = p.join(defaultDir!, 'sessions');
     final sessionsDirectory = Directory(sessionsPath);
 
     if (!sessionsDirectory.existsSync()) {
-      logger.warn('Sessions directory does not exist.');
+      _logger?.warn('Sessions directory does not exist.');
       return [];
     }
 

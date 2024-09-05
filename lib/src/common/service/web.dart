@@ -9,14 +9,15 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
+import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class GUIService {
-  factory GUIService() => _instance;
-  GUIService._internal();
-  static final GUIService _instance = GUIService._internal();
+class WebService {
+  factory WebService() => _instance;
+  WebService._internal();
+  static final WebService _instance = WebService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
 
@@ -27,10 +28,12 @@ class GUIService {
   static ChatSession? _currentSession;
   static String? msg;
   Future<void> start() async {
-    final handler =
-        const Pipeline().addMiddleware(logRequests()).addHandler(_router);
+    final handler = const Pipeline()
+        .addMiddleware(logRequests())
+        .addMiddleware(corsHeaders())
+        .addHandler(_router);
 
-    _server = await io.serve(handler, 'localhost', 43210);
+    _server = await io.serve(handler, '127.0.0.1', 43210);
     _logger
         ?.info('Serving at http://${_server?.address.host}:${_server?.port}');
   }
@@ -74,7 +77,7 @@ class GUIService {
   }
 
   Future<Response> _sessionsHandler(Request request) async {
-    _sessions = await SessionService.listSessions(_logger!);
+    _sessions = await SessionService.listSessions();
     if (_sessions == null || _sessions!.isEmpty) {
       return Response.internalServerError(
           body: 'Session is empty or failed to load sessions');
@@ -108,13 +111,9 @@ class GUIService {
       //         timestamp: Date.now(),
       //       };
       // parse message
-      final clientMsg = UserMessage.fromJson(
+      final userMsg = Message.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
-      if (_currentSession != null && clientMsg.content != null) {
-        final userMsg = Message(
-            role: Role.user,
-            content: clientMsg.content!,
-            timestamp: DateTime.now().millisecondsSinceEpoch);
+      if (_currentSession != null && userMsg.content.trim().isNotEmpty) {
         final tempSession = _currentSession!
             .copyWith(messages: [..._currentSession!.messages, userMsg]);
 

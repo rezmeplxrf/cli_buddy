@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:cli_buddy/src/common/service/gui.dart';
+import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 /// {@template open_command}
@@ -42,7 +42,7 @@ class OpenCommand extends Command<int> {
     if (sessionId != null && sessionId is int) {
       _logger.info('Session ID: $sessionId');
     }
-    final server = GUIService();
+    final server = WebService();
     await server.start();
 
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources

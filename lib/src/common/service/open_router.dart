@@ -7,9 +7,9 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
-import 'package:cli_buddy/src/common/service/gui.dart';
 import 'package:cli_buddy/src/common/service/markdown.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
+import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
@@ -139,7 +139,7 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                GUIService.webSocket?.sink.add(jsonEncode({
+                WebService.webSocket?.sink.add(jsonEncode({
                   'type': 'chunk',
                   'content': content,
                 }));

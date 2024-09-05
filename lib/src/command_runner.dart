@@ -4,8 +4,8 @@ import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/commands/commands.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/gui.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
+import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:cli_buddy/src/version.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -56,7 +56,7 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
     OpenRouterService.setLogger(_logger);
     ConfigService.setLogger(_logger);
     ActionService.setLogger(_logger);
-    GUIService.setLogger(_logger);
+    WebService.setLogger(_logger);
     
   }
 
