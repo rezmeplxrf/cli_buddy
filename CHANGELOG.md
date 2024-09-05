@@ -1,3 +1,7 @@
+# 0.0.9
+
+* Updated html content
+
 # 0.0.8
 
 * Added open command.
