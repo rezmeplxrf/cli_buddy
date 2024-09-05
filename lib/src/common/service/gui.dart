@@ -455,14 +455,14 @@ const _htmlContent = r'''
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
 
-  function appendChunk(content) {
+      function appendChunk(content) {
         if (currentMessageElement) {
           chunkBuffer += content;
           if (!throttleTimeout) {
             throttleTimeout = setTimeout(() => {
               const proseDiv = currentMessageElement.querySelector(".prose");
               proseDiv.innerHTML = marked.parse(chunkBuffer);
-              
+
               chatContainer.scrollTop = chatContainer.scrollHeight;
               throttleTimeout = null;
             }, 50);
