@@ -134,17 +134,17 @@ ${lightCyan.wrap(promptForDebug)}
             }
             responses.add(response);
             final content = response.choices?.first.delta?.content;
-            if (content != null && content.isNotEmpty) {
+            if (content != null) {
               msg.write(content);
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
+                GUIService.webSocket?.sink.add(jsonEncode({
+                  'type': 'chunk',
+                  'content': content,
+                }));
                 // send chunked message to the websocket here
                 if (stdout.hasTerminal && markdown != null && !markdown) {
-                  GUIService.webSocket?.sink.add(jsonEncode({
-                    'type': 'chunk',
-                    'content': content,
-                  }));
                   stdout.write(cyan.wrap(content));
                   index = msg.length;
 
