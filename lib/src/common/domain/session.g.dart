@@ -111,3 +111,34 @@ Map<String, dynamic> _$$ParametersImplToJson(_$ParametersImpl instance) {
   writeNotNull('stop', instance.stop);
   return val;
 }
+
+_$MessageChunkImpl _$$MessageChunkImplFromJson(Map<String, dynamic> json) =>
+    _$MessageChunkImpl(
+      type: $enumDecode(_$ChunkTypeEnumMap, json['type']),
+      content: json['content'] as String?,
+      usage: json['usage'] == null
+          ? null
+          : Usage.fromJson(json['usage'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$MessageChunkImplToJson(_$MessageChunkImpl instance) {
+  final val = <String, dynamic>{
+    'type': _$ChunkTypeEnumMap[instance.type]!,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('content', instance.content);
+  writeNotNull('usage', instance.usage);
+  return val;
+}
+
+const _$ChunkTypeEnumMap = {
+  ChunkType.start: 'start',
+  ChunkType.chunk: 'chunk',
+  ChunkType.end: 'end',
+};

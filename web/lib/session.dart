@@ -279,7 +279,17 @@ class Parameters with _$Parameters {
 //   }
 // }
 
+enum ChunkType { start, chunk, end }
 
+@freezed
+class MessageChunk with _$MessageChunk {
+  @JsonSerializable(includeIfNull: false)
+  const factory MessageChunk({
+    required ChunkType type,
+    String? content,
+    Usage? usage,
+  }) = _MessageChunk;
 
-
-// {"role":"user","content":"hi","timestamp":1725484042100}
+  factory MessageChunk.fromJson(Map<String, Object?> json) =>
+      _$MessageChunkFromJson(json);
+}

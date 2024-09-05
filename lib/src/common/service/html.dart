@@ -1,3 +1,4 @@
+const htmlContent = r'''
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -39188,3 +39189,4 @@
     //# sourceMappingURL=main.dart.js.map
   </script>
 </html>
+''';

@@ -1299,3 +1299,207 @@ abstract class _Parameters implements Parameters {
   _$$ParametersImplCopyWith<_$ParametersImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+MessageChunk _$MessageChunkFromJson(Map<String, dynamic> json) {
+  return _MessageChunk.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MessageChunk {
+  ChunkType get type => throw _privateConstructorUsedError;
+  String? get content => throw _privateConstructorUsedError;
+  Usage? get usage => throw _privateConstructorUsedError;
+
+  /// Serializes this MessageChunk to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $MessageChunkCopyWith<MessageChunk> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MessageChunkCopyWith<$Res> {
+  factory $MessageChunkCopyWith(
+          MessageChunk value, $Res Function(MessageChunk) then) =
+      _$MessageChunkCopyWithImpl<$Res, MessageChunk>;
+  @useResult
+  $Res call({ChunkType type, String? content, Usage? usage});
+
+  $UsageCopyWith<$Res>? get usage;
+}
+
+/// @nodoc
+class _$MessageChunkCopyWithImpl<$Res, $Val extends MessageChunk>
+    implements $MessageChunkCopyWith<$Res> {
+  _$MessageChunkCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? content = freezed,
+    Object? usage = freezed,
+  }) {
+    return _then(_value.copyWith(
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChunkType,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
+      usage: freezed == usage
+          ? _value.usage
+          : usage // ignore: cast_nullable_to_non_nullable
+              as Usage?,
+    ) as $Val);
+  }
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UsageCopyWith<$Res>? get usage {
+    if (_value.usage == null) {
+      return null;
+    }
+
+    return $UsageCopyWith<$Res>(_value.usage!, (value) {
+      return _then(_value.copyWith(usage: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$MessageChunkImplCopyWith<$Res>
+    implements $MessageChunkCopyWith<$Res> {
+  factory _$$MessageChunkImplCopyWith(
+          _$MessageChunkImpl value, $Res Function(_$MessageChunkImpl) then) =
+      __$$MessageChunkImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({ChunkType type, String? content, Usage? usage});
+
+  @override
+  $UsageCopyWith<$Res>? get usage;
+}
+
+/// @nodoc
+class __$$MessageChunkImplCopyWithImpl<$Res>
+    extends _$MessageChunkCopyWithImpl<$Res, _$MessageChunkImpl>
+    implements _$$MessageChunkImplCopyWith<$Res> {
+  __$$MessageChunkImplCopyWithImpl(
+      _$MessageChunkImpl _value, $Res Function(_$MessageChunkImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? content = freezed,
+    Object? usage = freezed,
+  }) {
+    return _then(_$MessageChunkImpl(
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as ChunkType,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
+      usage: freezed == usage
+          ? _value.usage
+          : usage // ignore: cast_nullable_to_non_nullable
+              as Usage?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(includeIfNull: false)
+class _$MessageChunkImpl implements _MessageChunk {
+  const _$MessageChunkImpl({required this.type, this.content, this.usage});
+
+  factory _$MessageChunkImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MessageChunkImplFromJson(json);
+
+  @override
+  final ChunkType type;
+  @override
+  final String? content;
+  @override
+  final Usage? usage;
+
+  @override
+  String toString() {
+    return 'MessageChunk(type: $type, content: $content, usage: $usage)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MessageChunkImpl &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.usage, usage) || other.usage == usage));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, type, content, usage);
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MessageChunkImplCopyWith<_$MessageChunkImpl> get copyWith =>
+      __$$MessageChunkImplCopyWithImpl<_$MessageChunkImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MessageChunkImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _MessageChunk implements MessageChunk {
+  const factory _MessageChunk(
+      {required final ChunkType type,
+      final String? content,
+      final Usage? usage}) = _$MessageChunkImpl;
+
+  factory _MessageChunk.fromJson(Map<String, dynamic> json) =
+      _$MessageChunkImpl.fromJson;
+
+  @override
+  ChunkType get type;
+  @override
+  String? get content;
+  @override
+  Usage? get usage;
+
+  /// Create a copy of MessageChunk
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MessageChunkImplCopyWith<_$MessageChunkImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

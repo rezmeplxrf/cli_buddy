@@ -139,10 +139,9 @@ ${lightCyan.wrap(promptForDebug)}
               if (shouldDebug != null && shouldDebug) {
                 _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
               } else {
-                WebService.webSocket?.sink.add(jsonEncode({
-                  'type': 'chunk',
-                  'content': content,
-                }));
+                final msgChunk =
+                    MessageChunk(type: ChunkType.chunk, content: content);
+                WebService.webSocket?.sink.add(jsonEncode(msgChunk));
                 // send chunked message to the websocket here
                 if (stdout.hasTerminal && markdown != null && !markdown) {
                   stdout.write(cyan.wrap(content));
