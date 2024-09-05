@@ -206,36 +206,33 @@ const _htmlContent = r'''
       #sessionList::-webkit-scrollbar-thumb:hover {
         background-color: rgba(255, 255, 255, 0.3);
       }
+
+      pre code {
+        background-color: #f5f5f5;
+        padding: 0.5em;
+        border-radius: 0.25em;
+        display: block;
+        overflow-x: auto;
+      }
+
+  
+      pre {
+        background-color: #f5f5f5; 
+        padding: 1em;
+        border-radius: 0.25em;
+        overflow-x: auto;
+      }
+
+      code {
+        background-color: #f5f5f5;
+        padding: 0.2em 0.4em;
+        border-radius: 0.25em;
+        font-family: monospace;
+      }
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
-      }
-
-      /* Code block buttons */
-      .code-block {
-        position: relative;
-      }
-
-      .code-block-buttons {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        display: flex;
-        gap: 4px;
-      }
-
-      .code-block-button {
-        background: #4299e1;
-        color: white;
-        border: none;
-        padding: 4px 8px;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      .code-block-button:hover {
-        background: #3182ce;
       }
     </style>
   </head>
@@ -622,17 +619,17 @@ const _htmlContent = r'''
         const codeBlocks = div.querySelectorAll("pre code");
         codeBlocks.forEach((block) => {
           const buttonsDiv = document.createElement("div");
-          buttonsDiv.className = "code-block-buttons";
+          buttonsDiv.className = "absolute top-2 right-2 flex gap-1";
 
           const copyButton = document.createElement("button");
-          copyButton.className = "code-block-button";
+          copyButton.className = "bg-blue-500 text-white py-1 px-2 rounded";
           copyButton.textContent = "Copy";
           copyButton.addEventListener("click", () => {
             navigator.clipboard.writeText(block.textContent);
           });
 
           const postButton = document.createElement("button");
-          postButton.className = "code-block-button";
+          postButton.className = "bg-blue-500 text-white py-1 px-2 rounded";
           postButton.textContent = "POST";
           postButton.addEventListener("click", async () => {
             try {
