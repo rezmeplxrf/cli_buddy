@@ -159,6 +159,10 @@ const _htmlContent = r'''
     <title>Buddy Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moo/moo.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/json-loose/dist/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/attributes-parser/dist/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked-code-preview/dist/index.umd.min.js"></script>
     <style>
       /* Custom styles */
       .chat-input {
@@ -422,7 +426,10 @@ const _htmlContent = r'''
             message.role
           )}</div>
           <div class="text-sm text-gray-500 mb-2">${timestamp}</div>
-          <div class="prose">${marked.parse(message.content)}</div>
+          <div class="prose">${new marked
+            .Marked()
+            .use(markedCodePreview())
+            .parse(message.content)}</div>
         `;
         if (message.usage) {
           div.innerHTML += `
@@ -461,7 +468,10 @@ const _htmlContent = r'''
           if (!throttleTimeout) {
             throttleTimeout = setTimeout(() => {
               const proseDiv = currentMessageElement.querySelector(".prose");
-              proseDiv.innerHTML = marked.parse(chunkBuffer);
+              proseDiv.innerHTML = new marked
+                .Marked()
+                .use(markedCodePreview())
+                .parse(chunkBuffer);
 
               chatContainer.scrollTop = chatContainer.scrollHeight;
               throttleTimeout = null;

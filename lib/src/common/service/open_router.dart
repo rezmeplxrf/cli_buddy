@@ -168,12 +168,10 @@ ${lightCyan.wrap(promptForDebug)}
         }
       }
     }
-    var finalMsg = msg.toString();
+
     if (markdown != null && markdown) {
       progress?.complete('');
       _logger?.info(markdownStyle.apply(msg.toString()));
-    } else if (markdown != null && !markdown) {
-      finalMsg = markdownPlain.apply(msg.toString());
     }
 
     if (responses.isNotEmpty) {
@@ -181,7 +179,7 @@ ${lightCyan.wrap(promptForDebug)}
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final aiResponse = Message(
         role: Role.assistant,
-        content: finalMsg,
+        content: msg.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
