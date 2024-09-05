@@ -57,6 +57,7 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
     ConfigService.setLogger(_logger);
     ActionService.setLogger(_logger);
     GUIService.setLogger(_logger);
+    
   }
 
   @override

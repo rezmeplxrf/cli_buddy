@@ -21,8 +21,8 @@ You are not allowed to ask for more details.
 For example if the prompt is "Hello world Python", you should return "print('Hello world')".""";
 
 const defaultChatPrompt = '''
-Provide concise response unless asked for more details.
-Avoid using any markdown formatting such as ```, *, #.''';
+You are a helpful assistant.
+Provide concise response unless asked for more details.''';
 
 String cmdPromptCache = defaultCommandPrompt;
 String explainPromptCache = defaultExplainPrompt;

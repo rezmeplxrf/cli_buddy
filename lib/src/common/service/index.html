@@ -129,6 +129,8 @@
       let currentMessageElement;
       let isWebSocketConnected = false;
       let messageQueue = [];
+      let chunkBuffer = "";
+      let throttleTimeout;
 
       async function fetchSessions() {
         try {
@@ -302,9 +304,16 @@
 
       function appendChunk(content) {
         if (currentMessageElement) {
-          const proseDiv = currentMessageElement.querySelector(".prose");
-          proseDiv.innerHTML = marked.parse(proseDiv.innerHTML + content);
-          chatContainer.scrollTop = chatContainer.scrollHeight;
+          chunkBuffer += content;
+          if (!throttleTimeout) {
+            throttleTimeout = setTimeout(() => {
+              const proseDiv = currentMessageElement.querySelector(".prose");
+              proseDiv.innerHTML = marked.parse(chunkBuffer);
+
+              chatContainer.scrollTop = chatContainer.scrollHeight;
+              throttleTimeout = null;
+            }, 50);
+          }
         }
       }
 
@@ -329,6 +338,7 @@
           }
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+        chunkBuffer = "";
         currentMessageElement = null;
       }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cli_buddy/cli_buddy.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -46,6 +47,7 @@ class GUIService {
   }
 
   Future<Response> _newSessionHandler(Request request) async {
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final sysMsg = Message(
         role: Role.system,
@@ -280,6 +282,8 @@ const _htmlContent = r'''
       let currentMessageElement;
       let isWebSocketConnected = false;
       let messageQueue = [];
+      let chunkBuffer = "";
+      let throttleTimeout;
 
       async function fetchSessions() {
         try {
@@ -451,11 +455,18 @@ const _htmlContent = r'''
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
 
-      function appendChunk(content) {
+  function appendChunk(content) {
         if (currentMessageElement) {
-          const proseDiv = currentMessageElement.querySelector(".prose");
-          proseDiv.innerHTML = marked.parse(proseDiv.innerHTML + content);
-          chatContainer.scrollTop = chatContainer.scrollHeight;
+          chunkBuffer += content;
+          if (!throttleTimeout) {
+            throttleTimeout = setTimeout(() => {
+              const proseDiv = currentMessageElement.querySelector(".prose");
+              proseDiv.innerHTML = marked.parse(chunkBuffer);
+              
+              chatContainer.scrollTop = chatContainer.scrollHeight;
+              throttleTimeout = null;
+            }, 50);
+          }
         }
       }
 
@@ -480,6 +491,7 @@ const _htmlContent = r'''
           }
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+        chunkBuffer = "";
         currentMessageElement = null;
       }
 
