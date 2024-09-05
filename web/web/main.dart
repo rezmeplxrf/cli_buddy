@@ -14,22 +14,22 @@ const String baseUrl = 'http://127.0.0.1:43210';
 const String wsUrl = 'ws://127.0.0.1:43210/ws';
 
 class WebSocketManager {
-  WebSocket? socket;
-  bool isWebSocketConnected = false;
-  List<Message> messageQueue = [];
+  static WebSocket? socket;
+  static bool isWebSocketConnected = false;
+  static List<Message> messageQueue = [];
 
   void connectWebSocket(
       Function onOpen, Function onClose, Function onError, Function onMessage) {
     socket = WebSocket(wsUrl);
 
-    socket!.onOpen.listen((event) {
+    socket?.onOpen.listen((event) {
       print('WebSocket connection established');
       isWebSocketConnected = true;
       onOpen();
       processMessageQueue();
     });
 
-    socket!.onClose.listen((event) {
+    socket?.onClose.listen((event) {
       print('WebSocket connection closed');
       isWebSocketConnected = false;
       onClose();
@@ -37,12 +37,12 @@ class WebSocketManager {
           () => connectWebSocket(onOpen, onClose, onError, onMessage));
     });
 
-    socket!.onError.listen((error) {
+    socket?.onError.listen((error) {
       print('WebSocket error: $error');
       onError(error);
     });
 
-    socket!.onMessage.listen((MessageEvent event) {
+    socket?.onMessage.listen((MessageEvent event) {
       try {
         final data = jsonDecode(event.data as String);
         onMessage(data);
@@ -55,13 +55,13 @@ class WebSocketManager {
   void processMessageQueue() {
     while (messageQueue.isNotEmpty && isWebSocketConnected) {
       final message = messageQueue.removeAt(0);
-      socket!.send(jsonEncode(message).toJS);
+      socket?.send(jsonEncode(message).toJS);
     }
   }
 
   void sendMessage(Message message) {
     if (isWebSocketConnected) {
-      socket!.send(jsonEncode(message).toJS);
+      socket?.send(jsonEncode(message).toJS);
     } else {
       messageQueue.add(message);
     }
@@ -70,25 +70,19 @@ class WebSocketManager {
 
 class ChatApp {
   final dio = Dio();
-  final UListElement sessionList =
-      document.querySelector('#sessionList') as UListElement;
-  final DivElement chatContainer =
-      document.querySelector('#chatContainer') as DivElement;
-  final TextAreaElement chatInput =
-      document.querySelector('#chatInput') as TextAreaElement;
-  final ButtonElement newChatBtn =
-      document.querySelector('#newChatBtn') as ButtonElement;
-  final ButtonElement removeAllSessionsBtn =
+  final sessionList = document.querySelector('#sessionList') as UListElement;
+  final chatContainer = document.querySelector('#chatContainer') as DivElement;
+  final chatInput = document.querySelector('#chatInput') as TextAreaElement;
+  final newChatBtn = document.querySelector('#newChatBtn') as ButtonElement;
+  final removeAllSessionsBtn =
       document.querySelector('#removeAllSessionsBtn') as ButtonElement;
-  final ButtonElement sendButton =
-      document.querySelector('#sendButton') as ButtonElement;
-  final DivElement connectionStatus =
+  final sendButton = document.querySelector('#sendButton') as ButtonElement;
+  final connectionStatus =
       document.querySelector('#connectionStatus') as DivElement;
 
   var isFirstResponse = false;
   DivElement? currentMessageElement;
   var chunkBuffer = StringBuffer();
-  Timer? throttleTimeout;
   var isFirstChunk = true;
 
   final WebSocketManager webSocketManager = WebSocketManager();
@@ -149,13 +143,9 @@ class ChatApp {
           : 'New Chat';
 
       li.innerHtml = '''
-  <div class="session-title font-semibold mb-1">$title${firstUserMessage != null && firstUserMessage.content.length > 30 ? '...' : ''}</div>
-  <div class="session-info text-xs text-gray-400">
-    <div>ID: ${session.id}</div>
-    <div>Messages: ${session.messages.length}</div>
-    <div>Model: ${session.model}</div>
-  </div>
-''';
+      <div class="session-title font-semibold mb-1">$title${firstUserMessage != null && firstUserMessage.content.length > 30 ? '...' : ''}</div>
+      <div class="session-info text-xs text-gray-400"><div>ID: ${session.id}</div>
+      <div>Messages: ${session.messages.length}</div><div>Model: ${session.model}</div></div>''';
 
       li.onClick.listen((_) => selectSession(session.id));
       sessionList.children.add(li);
@@ -196,20 +186,18 @@ class ChatApp {
         .toString();
 
     div.innerHtml = '''
-      <div class="font-bold text-blue-600 mb-1">${capitalizeFirstLetter(message.role.name)}</div>
-      <div class="text-sm text-gray-500 mb-2">$timestamp</div>
-      <div class="prose">${md.markdownToHtml(message.content)}</div>
-    ''';
+    <div class="font-bold text-blue-600 mb-1">${capitalizeFirstLetter(message.role.name)}</div>
+    <div class="text-sm text-gray-500 mb-2">$timestamp</div>
+    <div class="prose">${md.markdownToHtml(message.content)}</div>''';
 
     if (message.usage != null) {
-      div.innerHtml =
-          '''${div.innerHtml}  <div class="text-sm text-gray-500 mt-2 pt-2 border-t">
+      div.innerHtml = '''
+    ${div.innerHtml}  
+    <div class="text-sm text-gray-500 mt-2 pt-2 border-t">
     Prompt Tokens: ${message.usage?.promptTokens ?? 0}, 
     Completion Tokens: ${message.usage?.completionTokens ?? 0}, 
     Total Tokens: ${message.usage?.totalTokens ?? 0},
-    Response Time: ${message.usage?.responseTime ?? 0}s
-  </div>
-''';
+    Response Time: ${message.usage?.responseTime ?? 0}s</div>''';
     }
 
     chatContainer.children.add(div);
@@ -230,22 +218,21 @@ class ChatApp {
         </div>
         <div class="prose"></div>
       ''';
-
-    chatContainer.children.add(currentMessageElement!);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (currentMessageElement != null) {
+      chatContainer.children.add(currentMessageElement!);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
   }
 
   void appendChunk(String content) {
     if (currentMessageElement != null) {
       chunkBuffer.write(content);
-      throttleTimeout ??= Timer(Duration(milliseconds: 50), () {
-        final proseDiv =
-            currentMessageElement!.querySelector('.prose') as DivElement;
-        proseDiv.setInnerHtml(md.markdownToHtml(chunkBuffer.toString()),
-            validator: NodeValidatorBuilder.common()..allowHtml5());
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-        throttleTimeout = null;
-      });
+
+      final proseDiv =
+          currentMessageElement?.querySelector('.prose') as DivElement?;
+      proseDiv?.setInnerHtml(md.markdownToHtml(chunkBuffer.toString()),
+          validator: NodeValidatorBuilder?.common()..allowHtml5());
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   }
 
@@ -253,9 +240,9 @@ class ChatApp {
     if (currentMessageElement != null) {
       // Update the content with the final message
       final proseDiv =
-          currentMessageElement!.querySelector('.prose') as DivElement;
-      proseDiv.setInnerHtml(md.markdownToHtml(chunkBuffer.toString()),
-          validator: NodeValidatorBuilder.common()..allowHtml5());
+          currentMessageElement?.querySelector('.prose') as DivElement?;
+      proseDiv?.setInnerHtml(md.markdownToHtml(chunkBuffer.toString()),
+          validator: NodeValidatorBuilder?.common()..allowHtml5());
 
       if (usage != null) {
         final usageDiv = DivElement()
@@ -266,18 +253,20 @@ class ChatApp {
           Total Tokens: ${usage.totalTokens ?? 0},
           Response Time: ${usage.responseTime ?? 0}s
         ''';
-        currentMessageElement!.children.add(usageDiv);
+        currentMessageElement?.children.add(usageDiv);
       }
       chatContainer.scrollTop = chatContainer.scrollHeight;
-      addCodeBlockButtons(currentMessageElement!);
+      if (currentMessageElement != null) {
+        addCodeBlockButtons(currentMessageElement!);
+      }
     }
     chunkBuffer = StringBuffer();
     currentMessageElement = null;
   }
 
   void sendMessage() {
-    final content = chatInput.value!.trim();
-    if (content.isNotEmpty) {
+    final content = chatInput.value?.trim();
+    if (content != null && content.trim().isNotEmpty) {
       final message = Message(
         content: content,
         timestamp: DateTime.now().millisecondsSinceEpoch,
@@ -320,7 +309,7 @@ class ChatApp {
   }
 
   void updateConnectionStatus() {
-    if (webSocketManager.isWebSocketConnected) {
+    if (WebSocketManager.isWebSocketConnected) {
       connectionStatus.text = 'Connected';
       connectionStatus.classes.add('bg-green-500');
       connectionStatus.classes.remove('bg-red-500');
@@ -346,7 +335,7 @@ class ChatApp {
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded'
         ..text = 'Copy'
         ..onClick.listen((_) {
-          window.navigator.clipboard.writeText(block.text!);
+          window.navigator.clipboard.writeText(block.text ?? '');
         });
 
       final postButton = ButtonElement()
@@ -380,18 +369,17 @@ class ChatApp {
         isFirstChunk = true;
         break;
       case ChunkType.chunk:
-        if (msgChunk.content != null) {
-          appendChunk(msgChunk.content!);
-          if (isFirstChunk) {
-            isFirstChunk = false;
-            // Remove the loading indicator
-            final loadingDiv =
-                currentMessageElement!.querySelector('.flex.items-center');
-            if (loadingDiv != null) {
-              loadingDiv.remove();
-            }
+        appendChunk(msgChunk.content ?? '');
+        if (isFirstChunk) {
+          isFirstChunk = false;
+          // Remove the loading indicator
+          final loadingDiv =
+              currentMessageElement?.querySelector('.flex.items-center');
+          if (loadingDiv != null) {
+            loadingDiv.remove();
           }
         }
+
         break;
       case ChunkType.end:
         finalizeMessage(msgChunk.usage);
