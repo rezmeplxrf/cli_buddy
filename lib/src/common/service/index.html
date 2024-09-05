@@ -58,6 +58,32 @@
           transform: rotate(360deg);
         }
       }
+
+      /* Code block buttons */
+      .code-block {
+        position: relative;
+      }
+
+      .code-block-buttons {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 4px;
+      }
+
+      .code-block-button {
+        background: #4299e1;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .code-block-button:hover {
+        background: #3182ce;
+      }
     </style>
   </head>
   <body class="bg-gray-100 text-gray-900 flex h-screen">
@@ -284,6 +310,7 @@
         }
         chatContainer.appendChild(div);
         chatContainer.scrollTop = chatContainer.scrollHeight;
+        addCodeBlockButtons(div);
       }
 
       function startNewMessage() {
@@ -436,6 +463,48 @@
       function adjustTextareaHeight() {
         chatInput.style.height = "auto";
         chatInput.style.height = `${Math.min(chatInput.scrollHeight, 200)}px`;
+      }
+
+      function addCodeBlockButtons(div) {
+        const codeBlocks = div.querySelectorAll("pre code");
+        codeBlocks.forEach((block) => {
+          const buttonsDiv = document.createElement("div");
+          buttonsDiv.className = "code-block-buttons";
+
+          const copyButton = document.createElement("button");
+          copyButton.className = "code-block-button";
+          copyButton.textContent = "Copy";
+          copyButton.addEventListener("click", () => {
+            navigator.clipboard.writeText(block.textContent);
+          });
+
+          const postButton = document.createElement("button");
+          postButton.className = "code-block-button";
+          postButton.textContent = "POST";
+          postButton.addEventListener("click", async () => {
+            try {
+              const response = await fetch(`${baseUrl}/post-code`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ code: block.textContent }),
+              });
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const result = await response.json();
+              console.log("POST response:", result);
+            } catch (error) {
+              console.error("Error making POST request:", error);
+            }
+          });
+
+          buttonsDiv.appendChild(copyButton);
+          buttonsDiv.appendChild(postButton);
+          block.parentElement.style.position = "relative";
+          block.parentElement.appendChild(buttonsDiv);
+        });
       }
 
       connectWebSocket();

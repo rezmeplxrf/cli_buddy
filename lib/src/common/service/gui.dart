@@ -159,10 +159,6 @@ const _htmlContent = r'''
     <title>Buddy Chat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moo/moo.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/json-loose/dist/index.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/attributes-parser/dist/index.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked-code-preview/dist/index.umd.min.js"></script>
     <style>
       /* Custom styles */
       .chat-input {
@@ -181,6 +177,7 @@ const _htmlContent = r'''
       }
       .sidebar {
         display: flex;
+        min-width: 300px;
         flex-direction: column;
       }
 
@@ -213,6 +210,32 @@ const _htmlContent = r'''
         to {
           transform: rotate(360deg);
         }
+      }
+
+      /* Code block buttons */
+      .code-block {
+        position: relative;
+      }
+
+      .code-block-buttons {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 4px;
+      }
+
+      .code-block-button {
+        background: #4299e1;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .code-block-button:hover {
+        background: #3182ce;
       }
     </style>
   </head>
@@ -426,10 +449,7 @@ const _htmlContent = r'''
             message.role
           )}</div>
           <div class="text-sm text-gray-500 mb-2">${timestamp}</div>
-          <div class="prose">${new marked
-            .Marked()
-            .use(markedCodePreview())
-            .parse(message.content)}</div>
+          <div class="prose">${marked.parse(message.content)}</div>
         `;
         if (message.usage) {
           div.innerHTML += `
@@ -443,6 +463,7 @@ const _htmlContent = r'''
         }
         chatContainer.appendChild(div);
         chatContainer.scrollTop = chatContainer.scrollHeight;
+        addCodeBlockButtons(div);
       }
 
       function startNewMessage() {
@@ -468,10 +489,7 @@ const _htmlContent = r'''
           if (!throttleTimeout) {
             throttleTimeout = setTimeout(() => {
               const proseDiv = currentMessageElement.querySelector(".prose");
-              proseDiv.innerHTML = new marked
-                .Marked()
-                .use(markedCodePreview())
-                .parse(chunkBuffer);
+              proseDiv.innerHTML = marked.parse(chunkBuffer);
 
               chatContainer.scrollTop = chatContainer.scrollHeight;
               throttleTimeout = null;
@@ -598,6 +616,48 @@ const _htmlContent = r'''
       function adjustTextareaHeight() {
         chatInput.style.height = "auto";
         chatInput.style.height = `${Math.min(chatInput.scrollHeight, 200)}px`;
+      }
+
+      function addCodeBlockButtons(div) {
+        const codeBlocks = div.querySelectorAll("pre code");
+        codeBlocks.forEach((block) => {
+          const buttonsDiv = document.createElement("div");
+          buttonsDiv.className = "code-block-buttons";
+
+          const copyButton = document.createElement("button");
+          copyButton.className = "code-block-button";
+          copyButton.textContent = "Copy";
+          copyButton.addEventListener("click", () => {
+            navigator.clipboard.writeText(block.textContent);
+          });
+
+          const postButton = document.createElement("button");
+          postButton.className = "code-block-button";
+          postButton.textContent = "POST";
+          postButton.addEventListener("click", async () => {
+            try {
+              const response = await fetch(`${baseUrl}/post-code`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ code: block.textContent }),
+              });
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const result = await response.json();
+              console.log("POST response:", result);
+            } catch (error) {
+              console.error("Error making POST request:", error);
+            }
+          });
+
+          buttonsDiv.appendChild(copyButton);
+          buttonsDiv.appendChild(postButton);
+          block.parentElement.style.position = "relative";
+          block.parentElement.appendChild(buttonsDiv);
+        });
       }
 
       connectWebSocket();
