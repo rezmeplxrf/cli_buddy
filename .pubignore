@@ -13,7 +13,7 @@ memo.md
 dart_test.yaml
 .vscode
 web/
-
+release/
 
 .test_coverage.dart
 coverage/
