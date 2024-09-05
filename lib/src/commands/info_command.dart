@@ -184,14 +184,10 @@ class InfoCommand extends Command<int> {
       final savedSessions = await SessionService.listSessions(
         _logger,
       );
-      _logger.info('Total saved sessions: ${savedSessions?.length ?? 0}');
+      _logger.info('Total saved sessions: ${savedSessions.length}');
       if (argResults?['sessions'] == 'list') {
-        if (savedSessions == null) {
-          _logger.err('No sessions found');
-        } else {
-          final table = RenderService.sessionList(savedSessions);
-          _logger.info(table);
-        }
+        final table = RenderService.sessionList(savedSessions);
+        _logger.info(table);
       } else {
         final id = int.tryParse(sessions.trim());
         if (id == null) {

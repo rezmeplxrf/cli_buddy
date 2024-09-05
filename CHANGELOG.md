@@ -1,3 +1,8 @@
+# 0.0.8
+
+* Added open command.
+  - will run a local web server to show GUI
+
 # 0.0.7
 
 * Added Markdown support for chat mode (unstable).

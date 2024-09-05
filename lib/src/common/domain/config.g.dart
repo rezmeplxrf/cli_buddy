@@ -34,7 +34,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       codePrompt: json['code_prompt'] as String? ??
           'Provide only code as output without any description.\nProvide only code in plain text format without Markdown formatting.\nDo not include symbols such as ``` or ```python.\nIf there is a lack of details, provide most logical solution.\nYou are not allowed to ask for more details.\nFor example if the prompt is "Hello world Python", you should return "print(\'Hello world\')".',
       chatPrompt: json['chat_prompt'] as String? ??
-          'Provide concise response unless asked for more details.\nAvoid using any markdown formatting such as ```, *, #.',
+          'You are a helpful assistant.\nProvide concise response unless asked for more details.',
     );
 
 Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
