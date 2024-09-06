@@ -279,7 +279,7 @@ class Parameters with _$Parameters {
 //   }
 // }
 
-enum ChunkType { start, chunk, end }
+enum ChunkType { start, chunk, end , error}
 
 @freezed
 class MessageChunk with _$MessageChunk {

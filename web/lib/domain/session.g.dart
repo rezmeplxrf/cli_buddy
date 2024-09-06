@@ -141,4 +141,5 @@ const _$ChunkTypeEnumMap = {
   ChunkType.start: 'start',
   ChunkType.chunk: 'chunk',
   ChunkType.end: 'end',
+  ChunkType.error: 'error',
 };

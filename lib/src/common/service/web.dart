@@ -172,10 +172,17 @@ class WebService {
       if (_currentSession != null && message.trim().isNotEmpty) {
         webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
-
-        _currentSession = await openRouter
-            .invoke(session: userSentSession, markdown: false)
-            .getOrThrow();
+        try {
+          _currentSession = await openRouter
+              .invoke(session: userSentSession, markdown: false)
+              .getOrThrow();
+        } catch (e) {
+          const msgChunk = MessageChunk(
+              type: ChunkType.error,
+              content: 'Error while making API request.');
+          WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+          return;
+        }
 
         final lastResponse = _currentSession?.messages.last;
         webSocket?.sink.add(jsonEncode(

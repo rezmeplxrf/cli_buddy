@@ -82,15 +82,29 @@ ${lightCyan.wrap(promptForDebug)}
 ''';
       _logger?.info(log);
     }
-
+    final cancelToken = CancelToken();
     Response<ResponseBody>? response;
     try {
       response = await dio.post<ResponseBody>(
         _baseUrl,
+        cancelToken: cancelToken,
         options: Options(headers: headers, responseType: ResponseType.stream),
         data: prompt,
+        onReceiveProgress: (count, total) {
+          // if we haven't received anything for 10 seconds, cancel the request and throw an error
+          if (DateTime.now().millisecondsSinceEpoch / 1000 - startTime > 10) {
+            progress?.fail();
+            const error = 'The server is taking too long to respond.';
+            cancelToken.cancel(error);
+            _logger?.err(error);
+          
+            return;
+          }
+        },
       );
     } catch (e) {
+      progress?.fail();
+    
       return CustomException(
         message: 'Error while making API request.',
         stack: 'OpenRouterService.invoke',
@@ -156,6 +170,9 @@ ${lightCyan.wrap(promptForDebug)}
             }
 
             if (response.choices?.first.error != null) {
+           
+              msg.clear();
+              progress?.fail();
               return CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
@@ -192,8 +209,12 @@ ${lightCyan.wrap(promptForDebug)}
       _logger?.info(darkGray.wrap(usageLog));
 
       await SessionService.saveSession(session: newSession);
+
       return Success(newSession);
     } else {
+   
+      msg.clear();
+      progress?.fail();
       _logger?.err('Something went wrong');
       return CustomException(
               message: 'Something went wrong - newSession is null',

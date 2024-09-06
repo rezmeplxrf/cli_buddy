@@ -45,6 +45,7 @@ class WebSocketService {
         event.stopPropagation();
         isWebSocketConnected = false;
         print('WebSocket error: $event');
+        window.alert('WebSocket error. Please reload the page.');
       }),
       socket?.onMessage.listen((MessageEvent event) {
         try {
@@ -70,9 +71,24 @@ class WebSocketService {
       sharedStates.currentSession = sharedStates.currentSession?.copyWith(
         messages: [...sharedStates.currentSession!.messages, message],
       );
+
       socket?.send(jsonEncode(sharedStates.currentSession));
     } else {
       messageQueue.add(message);
+    }
+  }
+
+  void sendEditedSession(ChatSession editedSession) {
+    print("edited session: $editedSession");
+    if (isWebSocketConnected) {
+      // check if editedSession has id, model,
+      if (editedSession.model == null) {
+        print('Error: editedSession must have model and id.');
+        return;
+      }
+      socket?.send(jsonEncode(editedSession));
+    } else {
+      print('Error: WebSocket is not connected.');
     }
   }
 

@@ -11,9 +11,12 @@ class ChatService {
   static final _instance = ChatService._internal();
   factory ChatService() => _instance;
   ChatService._internal();
+  final List<StreamSubscription?> subscriptons = [];
 
   void displayChat(ChatSession session) {
+    subscriptons.clear();
     sharedStates.chatContainer.children.clear();
+
     for (final message in session.messages) {
       addMessageToChat(message);
     }
@@ -34,7 +37,7 @@ class ChatService {
   void addMessageToChat(Message message) {
     final div = DivElement()
       ..className =
-          'message ${message.role.name}-message bg-white rounded-lg shadow-md p-4 mb-4 fade-in';
+          'message ${message.role.name}-message bg-white rounded-lg shadow-md p-4 mb-4 fade-in, relative';
 
     final timestamp = DateTime.fromMillisecondsSinceEpoch(message.timestamp)
         .toLocal()
@@ -42,6 +45,7 @@ class ChatService {
 
     div.setInnerHtml('''
     <div class="font-bold text-blue-600 mb-1">${Helper.capitalizeFirstLetter(message.role.name)}</div>
+    <button class="edit-button absolute top-2 right-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded">Edit</button>
     <div class="text-sm text-gray-500 mb-2">$timestamp</div>
     <div class="prose">${md.markdownToHtml(message.content)}</div>''',
         treeSanitizer: NodeTreeSanitizer.trusted);
@@ -49,6 +53,9 @@ class ChatService {
       ..children.add(div)
       ..scrollTop = sharedStates.chatContainer.scrollHeight;
     addCodeBlockButtons(div);
+    subscriptons.add(div.querySelector('.edit-button')?.onClick.listen((_) {
+      enableEditMode(div, message);
+    }));
   }
 
   void startNewMessage() {
@@ -121,12 +128,16 @@ class ChatService {
       sharedStates.lastMessage!,
     ]);
 
+    _clearUp();
+    sessionService.updateLocalSessions(sharedStates.currentSession!.id);
+  }
+
+  void _clearUp() {
     sharedStates.chunkBuffer = StringBuffer();
     sharedStates.currentMessageElement = null;
     sharedStates.lastMessage = null;
     sharedStates.isDone = true;
     updateSendButtonState();
-    sessionService.updateLocalSessions(sharedStates.currentSession!.id);
   }
 
   void sendMessage() {
@@ -161,53 +172,56 @@ class ChatService {
 
       final copyButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.copyIcon))
-        ..onClick.listen((_) {
-          window.navigator.clipboard?.writeText(block.text ?? '');
-          showSnackBar('Copied to clipboard');
-        });
+        ..append(Helper.createSvgIcon(Svc.copyIcon));
+
+      subscriptons.add(copyButton.onClick.listen((_) {
+        window.navigator.clipboard?.writeText(block.text ?? '');
+        showSnackBar('Copied to clipboard');
+      }));
 
       final fileButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.fileIcon))
-        ..onClick.listen((_) async {
-          try {
-            final response = await HttpRequest.postFormData(
-              '$baseUrl/make-file',
-              {'code': block.text ?? ''},
-            );
-            if (response.status == 200) {
-              final result = jsonDecode(response.responseText ?? '');
-              print('make-file: $result');
+        ..append(Helper.createSvgIcon(Svc.fileIcon));
 
-              showSnackBar('$result');
-            }
-          } catch (e) {
-            print('Error: $e');
-            window.alert('Error making request: $e');
+      subscriptons.add(fileButton.onClick.listen((_) async {
+        try {
+          final response = await HttpRequest.postFormData(
+            '$baseUrl/make-file',
+            {'code': block.text ?? ''},
+          );
+          if (response.status == 200) {
+            final result = jsonDecode(response.responseText ?? '');
+            print('make-file: $result');
+
+            showSnackBar('$result');
           }
-        });
+        } catch (e) {
+          print('Error: $e');
+          window.alert('Error making request: $e');
+        }
+      }));
 
       final runButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.runIcon))
-        ..onClick.listen((_) async {
-          try {
-            final response = await HttpRequest.postFormData(
-              '$baseUrl/run-code',
-              {'code': block.text ?? ''},
-            );
-            if (response.status == 200) {
-              final result = jsonDecode(response.responseText ?? '');
-              print('run: $result');
+        ..append(Helper.createSvgIcon(Svc.runIcon));
 
-              showSnackBar('$result');
-            }
-          } catch (e) {
-            print('Error: $e');
-            window.alert('Error: $e');
+      subscriptons.add(runButton.onClick.listen((_) async {
+        try {
+          final response = await HttpRequest.postFormData(
+            '$baseUrl/run-code',
+            {'code': block.text ?? ''},
+          );
+          if (response.status == 200) {
+            final result = jsonDecode(response.responseText ?? '');
+            print('run: $result');
+
+            showSnackBar('$result');
           }
-        });
+        } catch (e) {
+          print('Error: $e');
+          window.alert('Error: $e');
+        }
+      }));
 
       buttonsDiv.children.addAll([copyButton, fileButton, runButton]);
       (block.parent as Element).children.add(buttonsDiv);
@@ -221,13 +235,11 @@ class ChatService {
 
     document.body?.append(snackbar);
 
-    // Add the "show" class to display the snackbar
     Future.delayed(Duration(milliseconds: 100), () {
       snackbar.className = 'snackbar show';
     });
 
-    // Remove the snackbar after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 4), () {
       snackbar.remove();
     });
   }
@@ -256,6 +268,7 @@ class ChatService {
         }
 
         break;
+
       case ChunkType.end:
         finalizeMessage(msgChunk.usage);
         if (!sharedStates.isFirstResponse) {
@@ -263,8 +276,93 @@ class ChatService {
           sessionService.fetchSessions();
         }
         break;
-      default:
-        print('Unknown message type: ${data['type']}');
+      case ChunkType.error:
+        showSnackBar('${msgChunk.content}');
+        _clearUp();
+        break;
     }
+  }
+
+  void enableEditMode(DivElement messageElement, Message message) {
+    sharedStates.currentMessageElement = messageElement;
+    final messageContent = messageElement.querySelector('.prose') as DivElement;
+    messageContent.contentEditable = 'true';
+    messageContent.focus();
+
+    final saveButton = ButtonElement()
+      ..className =
+          'save-button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded'
+      ..text = 'Save';
+      
+      
+   subscriptons.add(saveButton.onClick.listen((_) => saveEditedMessage(message)));
+
+    final cancelButton = ButtonElement()
+      ..className =
+          'cancel-button bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
+      ..text = 'Cancel';
+      
+    subscriptons.add(cancelButton.onClick.listen((_) => cancelEditMode()));
+
+    final buttonContainer = DivElement()
+      ..className = 'edit-buttons flex justify-center mt-2'
+      ..append(saveButton)
+      ..append(cancelButton);
+
+    messageElement.append(buttonContainer);
+  }
+
+  void saveEditedMessage(Message originalMessage) {
+    final messageElement = sharedStates.currentMessageElement;
+    if (messageElement == null) return;
+
+    final messageContent = messageElement.querySelector('.prose') as DivElement;
+    final newContent = messageContent.text;
+    if (newContent == null ||
+        newContent.isEmpty ||
+        newContent == originalMessage.content) return;
+    // Create a new message with the updated content
+
+    final updatedMessage = originalMessage.copyWith(content: newContent);
+
+    // Find the index of the original message
+    final messageIndex =
+        sharedStates.currentSession?.messages.indexOf(originalMessage) ?? -1;
+    if (messageIndex == -1) return;
+
+    // Update the session with the edited message and remove more recent messages
+    final updatedMessages = sharedStates.currentSession!.messages
+        .sublist(0, messageIndex + 1)
+      ..[messageIndex] = updatedMessage;
+
+    final updatedSession =
+        sharedStates.currentSession?.copyWith(messages: updatedMessages);
+    if (updatedSession != null) {
+      sharedStates.currentSession = updatedSession;
+      sharedStates.sessions = sharedStates.sessions.map((session) {
+        return session.id == updatedSession.id ? updatedSession : session;
+      }).toList();
+
+      print(sharedStates.currentSession);
+      // Re-render message
+      displayChat(sharedStates.currentSession!);
+      cancelEditMode();
+      websocketService.sendEditedSession(sharedStates.currentSession!);
+    } else {
+      showSnackBar('Something went wrong. Please try again.');
+    }
+  }
+
+  void cancelEditMode() {
+    final messageElement = sharedStates.currentMessageElement;
+    if (messageElement == null) return;
+
+    final messageContent = messageElement.querySelector('.prose') as DivElement;
+    messageContent.contentEditable = 'false';
+
+    final buttonContainer = messageElement.querySelector('.edit-buttons');
+    buttonContainer?.remove();
+
+    sharedStates.currentMessageElement = null;
   }
 }

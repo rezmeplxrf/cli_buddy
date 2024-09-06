@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:buddy_gui/domain/session.dart';
 import 'package:buddy_gui/service/chat.dart';
 import 'package:buddy_gui/service/config.dart';
@@ -47,34 +49,38 @@ class SharedStates {
 }
 
 void init() {
-  sharedStates.newChatBtn.onClick.listen((event) {
-    event.stopPropagation();
-    sessionService.createNewSession();
-  });
-  sharedStates.removeAllSessionsBtn.onClick.listen((event) {
-    event.stopPropagation();
-    sessionService.removeAllSessions();
-  });
-  sharedStates.chatInput.onInput.listen((event) {
-    event.stopPropagation();
-    chatService.adjustTextareaHeight();
-  });
-  sharedStates.sendButton.onClick.listen((event) {
-    event.stopPropagation();
-    chatService.sendMessage();
-  });
-  sharedStates.configBtn.onClick.listen((event) {
-    event.stopPropagation();
-    configService.showConfigPopup();
-  });
-  sharedStates.chatInput.onKeyDown.listen((event) {
-    if (event.keyCode == KeyCode.ENTER && !event.shiftKey) {
-      event.preventDefault();
-      if (sharedStates.isDone) {
-        chatService.sendMessage();
+  final List<StreamSubscription> subscriptions = [];
+
+  subscriptions.addAll([
+    sharedStates.newChatBtn.onClick.listen((event) {
+      event.stopPropagation();
+      sessionService.createNewSession();
+    }),
+    sharedStates.removeAllSessionsBtn.onClick.listen((event) {
+      event.stopPropagation();
+      sessionService.removeAllSessions();
+    }),
+    sharedStates.chatInput.onInput.listen((event) {
+      event.stopPropagation();
+      chatService.adjustTextareaHeight();
+    }),
+    sharedStates.sendButton.onClick.listen((event) {
+      event.stopPropagation();
+      chatService.sendMessage();
+    }),
+    sharedStates.configBtn.onClick.listen((event) {
+      event.stopPropagation();
+      configService.showConfigPopup();
+    }),
+    sharedStates.chatInput.onKeyDown.listen((event) {
+      if (event.keyCode == KeyCode.ENTER && !event.shiftKey) {
+        event.preventDefault();
+        if (sharedStates.isDone) {
+          chatService.sendMessage();
+        }
       }
-    }
-  });
+    })
+  ]);
   window.onBeforeUnload.listen((event) {
     sessionService.sessionsSubscriptions.clear();
     sessionService.dropDownSubscriptions.clear();
@@ -82,6 +88,8 @@ void init() {
     websocketService.socket?.close();
     websocketService.socket = null;
     configService.subscriptions.clear();
+    chatService.subscriptons.clear();
+    subscriptions.clear();
   });
 
   websocketService.connectWebSocket();
