@@ -6,6 +6,7 @@ import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
+import 'package:collection/collection.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:shelf/shelf.dart';
@@ -14,7 +15,6 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:collection/collection.dart';
 
 class WebService {
   factory WebService() => _instance;

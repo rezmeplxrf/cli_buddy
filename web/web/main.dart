@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:convert';
 import 'dart:math';
-import 'package:buddy_gui/config.dart';
-import 'package:buddy_gui/open_router.dart';
-import 'package:buddy_gui/session.dart';
+import 'package:buddy_gui/assets.dart';
+import 'package:buddy_gui/domain.dart';
 import 'package:collection/collection.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:dio/dio.dart';
@@ -12,6 +11,15 @@ import 'package:dio/dio.dart';
 void main() {
   init();
 }
+
+const String baseUrl = 'http://127.0.0.1:43210';
+const String wsUrl = 'ws://127.0.0.1:43210/ws';
+final dio = Dio();
+final sharedStates = SharedStates();
+final sessionService = SessionService();
+final configService = ConfigService();
+final websocketService = WebSocketService();
+final chatService = ChatService();
 
 void init() {
   sharedStates.newChatBtn.onClick
@@ -33,15 +41,6 @@ void init() {
   sessionService.fetchSessions();
   sessionService.createNewSession();
 }
-
-const String baseUrl = 'http://127.0.0.1:43210';
-const String wsUrl = 'ws://127.0.0.1:43210/ws';
-final dio = Dio();
-final sharedStates = SharedStates();
-final sessionService = SessionService();
-final configService = ConfigService();
-final websocketService = WebSocketService();
-final chatService = ChatService();
 
 class WebSocketService {
   static final _instance = WebSocketService._internal();
@@ -354,6 +353,12 @@ class Helper {
   static String capitalizeFirstLetter(String string) {
     return string[0].toUpperCase() + string.substring(1);
   }
+
+  static Element createSvgIcon(String svgString) {
+    final svgElement =
+        Element.html(svgString, treeSanitizer: NodeTreeSanitizer.trusted);
+    return svgElement;
+  }
 }
 
 class SharedStates {
@@ -512,33 +517,68 @@ class ChatService {
         ..className = 'absolute top-2 right-2 flex gap-1';
 
       final copyButton = ButtonElement()
-        ..className = 'bg-blue-500 text-white py-1 px-2 rounded'
-        ..text = 'Copy'
-        ..onClick.listen((_) {
-          window.navigator.clipboard?.writeText(block.text ?? '');
-        });
+        ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
+        ..append(Helper.createSvgIcon(Svc.copyIcon));
+      copyButton.onClick.listen((_) {
+        window.navigator.clipboard?.writeText(block.text ?? '');
+        showCheckmark(copyButton);
+      });
 
-      final postButton = ButtonElement()
-        ..className = 'bg-blue-500 text-white py-1 px-2 rounded'
-        ..text = 'POST'
-        ..onClick.listen((_) async {
-          try {
-            final response = await dio.post(
-              '$baseUrl/post-code',
-              data: jsonEncode({'code': block.text}),
-            );
-            if (response.statusCode == 200) {
-              final result = jsonDecode(response.data);
-              print('POST response: $result');
-            }
-          } catch (error) {
-            print('Error making POST request: $error');
+      final fileButton = ButtonElement()
+        ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
+        ..append(Helper.createSvgIcon(Svc.fileIcon));
+      fileButton.onClick.listen((_) async {
+        try {
+          final response = await HttpRequest.postFormData(
+            '$baseUrl/make-file',
+            {'code': block.text ?? ''},
+          );
+          if (response.status == 200) {
+            final result = jsonDecode(response.responseText ?? '');
+            print('make-file: $result');
+            window.alert(result.toString());
+            showCheckmark(fileButton);
           }
-        });
+        } catch (e) {
+          print('Error: $e');
+          window.alert('Error making request: $e');
+        }
+      });
 
-      buttonsDiv.children.addAll([copyButton, postButton]);
+      final runButton = ButtonElement()
+        ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
+        ..append(Helper.createSvgIcon(Svc.runIcon));
+      runButton.onClick.listen((_) async {
+        try {
+          final response = await HttpRequest.postFormData(
+            '$baseUrl/run-code',
+            {'code': block.text ?? ''},
+          );
+          if (response.status == 200) {
+            final result = jsonDecode(response.responseText ?? '');
+            print('run: $result');
+            window.alert(result.toString());
+            showCheckmark(runButton);
+          }
+        } catch (e) {
+          print('Error: $e');
+          window.alert('Error: $e');
+        }
+      });
+
+      buttonsDiv.children.addAll([copyButton, fileButton, runButton]);
       (block.parent as Element).children.add(buttonsDiv);
     }
+  }
+
+  void showCheckmark(ButtonElement button) {
+    final checkmark = SpanElement()
+      ..className = 'checkmark'
+      ..text = '✓';
+    button.append(checkmark);
+    Future.delayed(Duration(seconds: 5), () {
+      checkmark.remove();
+    });
   }
 
   void handleWebSocketMessage(Map<String, dynamic> data) {
