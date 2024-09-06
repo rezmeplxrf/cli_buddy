@@ -1,0 +1,1 @@
+dart compile exe ./bin/buddy.dart -o ./release/buddy_macos

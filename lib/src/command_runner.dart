@@ -46,7 +46,7 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
 
     // Add sub commands
     addCommand(InfoCommand(logger: _logger));
-    addCommand(SuggestionCommand(logger: _logger));
+    addCommand(ShellCommand(logger: _logger));
     addCommand(ChatCommand(logger: _logger));
     addCommand(CodeCommand(logger: _logger));
     addCommand(SetCommand(logger: _logger));

@@ -109,11 +109,11 @@ buddy set -s <path/to/secret.env>
 ## Basic Usage
 
 ```sh
-# Suggest command
-$ buddy suggest how can I update homebrew
+# Shell command
+$ buddy shell how can I update homebrew
 
 # If you want to use special characters, use quotes
-$ buddy suggest "how can I update homebrew?"
+$ buddy shell "how can I update homebrew?"
 
 # Coding
 $ buddy code "Generate a random number between 1 and 10 in Dart"
