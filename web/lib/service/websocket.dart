@@ -82,10 +82,10 @@ class WebSocketService {
     print("edited session: $editedSession");
     if (isWebSocketConnected) {
       // check if editedSession has id, model,
-      if (editedSession.model == null) {
-        print('Error: editedSession must have model and id.');
-        return;
-      }
+      // if (editedSession.model == null) {
+
+      //   return;
+      // }
       socket?.send(jsonEncode(editedSession));
     } else {
       print('Error: WebSocket is not connected.');

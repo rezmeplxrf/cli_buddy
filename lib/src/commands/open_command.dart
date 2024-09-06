@@ -26,7 +26,13 @@ class OpenCommand extends Command<int> {
       ..addFlag('raw',
           abbr: 'r',
           help: 'Display raw outputs of prompt and api requests',
-          negatable: false);
+          negatable: false)
+      ..addFlag(
+        'auto',
+        abbr: 'a',
+        help: 'Open the page with default browser automatically',
+        defaultsTo: true,
+      );
   }
 
   @override
@@ -52,11 +58,13 @@ class OpenCommand extends Command<int> {
       await server.stop();
       exit(0);
     });
-    // open the webpage with default browser
-    final shell = Shell();
-    await shell.run('open http://127.0.0.1:43210');
 
-    await _open();
+    final autoFlag = argResults?['auto'] as bool? ?? true;
+   
+    if (autoFlag) {
+      await _open();
+    }
+
     final completer = Completer<int>();
     return completer.future;
   }

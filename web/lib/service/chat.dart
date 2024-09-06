@@ -371,7 +371,6 @@ class ChatService {
     if (newContent == null ||
         newContent.isEmpty ||
         newContent == originalMessage.content) return;
-    // Create a new message with the updated content
 
     final updatedMessage = originalMessage.copyWith(content: newContent);
 
