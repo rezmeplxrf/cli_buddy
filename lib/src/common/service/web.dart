@@ -14,6 +14,7 @@ import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:collection/collection.dart';
 
 class WebService {
   factory WebService() => _instance;
@@ -29,6 +30,7 @@ class WebService {
   static ChatSession? _currentSession;
   static String? msg;
   Future<void> start() async {
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
     final handler = const Pipeline()
         .addMiddleware(logRequests())
         .addMiddleware(corsHeaders())
@@ -43,15 +45,39 @@ class WebService {
     final router = Router()
       ..get('/', _htmlHandler)
       ..get('/sessions', _sessionsHandler)
-      ..put('/remove-all-sessions', _removeAllSessionsHandler)
+      ..post('/remove-all', _removeAllHandler)
       ..post('/select-session', _selectSessionHandler)
       ..post('/new-session', _newSessionHandler)
-      ..get('/ws', webSocketHandler(_handleWebSocket));
+      ..get('/ws', webSocketHandler(_handleWebSocket))
+      ..get('/config', _confignHandler);
     return router.call;
   }
 
+  Future<Response> _confignHandler(Request request) async {
+    configuration = await ConfigService.loadConfig().getOrNull();
+    if (configuration == null) {
+      return Response.notFound('Config is empty or failed to load config');
+    } else {
+      return Response.ok(jsonEncode(configuration?.toJson()),
+          headers: {'content-type': 'application/json'});
+    }
+  }
+
   Future<Response> _newSessionHandler(Request request) async {
-    configuration ??= await ConfigService.loadConfig().getOrThrow();
+    // Check for an existing session without user messages
+    final existingSession = _sessions?.firstWhereOrNull(
+      (session) =>
+          session.messages.length == 1 &&
+          session.messages.first.role == Role.system,
+    );
+
+    if (existingSession != null) {
+      _currentSession = existingSession;
+      return Response.ok(jsonEncode(_currentSession?.toJson()),
+          headers: {'content-type': 'application/json'});
+    }
+
+    // Create a new session if no such session exists
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final sysMsg = Message(
         role: Role.system,
@@ -64,13 +90,14 @@ class WebService {
         headers: {'content-type': 'application/json'});
   }
 
-  Future<Response> _removeAllSessionsHandler(Request request) async {
-    _currentSession = null;
-    _sessions?.clear();
+  Future<Response> _removeAllHandler(Request request) async {
     final result = await SessionService.removeSessions();
     if (result) {
-      return Response.ok('All sessions are removed',
-          headers: {'content-type': 'application/json'});
+      _currentSession = null;
+      _sessions?.clear();
+      return Response.ok(
+        'All sessions are removed',
+      );
     } else {
       return Response.internalServerError(
           body: 'Failed to remove all sessions');
@@ -80,8 +107,7 @@ class WebService {
   Future<Response> _sessionsHandler(Request request) async {
     _sessions = await SessionService.listSessions();
     if (_sessions == null || _sessions!.isEmpty) {
-      return Response.internalServerError(
-          body: 'Session is empty or failed to load sessions');
+      return Response.notFound('Session is empty or failed to load sessions');
     }
     final sessionsJson = jsonEncode(_sessions?.map((s) => s.toJson()).toList());
     return Response.ok(sessionsJson,
@@ -112,7 +138,6 @@ class WebService {
         final tempSession = _currentSession!
             .copyWith(messages: [..._currentSession!.messages, userMsg]);
 
-        // Start a new response
         webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
 
@@ -120,7 +145,6 @@ class WebService {
             .invoke(session: tempSession, markdown: false)
             .getOrThrow();
 
-        // Send usage information at the end
         final lastResponse = _currentSession?.messages.last;
         webSocket?.sink.add(jsonEncode(
             MessageChunk(type: ChunkType.end, usage: lastResponse?.usage)));
