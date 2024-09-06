@@ -29,6 +29,7 @@
 4. **Session Management**: Save chat history in JSON format locally and load it when starting a new session using `-s <session_id>`.
    - By default, saving chat history is disabled.
 5. **OpenRouter APIs**: Even though it's made as a CLI tool, this package can also be used for any Dart/Flutter project to use OpenRouter APIs. This package exposes OpenRouter APIs and Models. Simply declare `final openRouter = OpenRouterService();` and use it in your project. such as `final result = await openRouter.invoke(session: ChatSession());`
+6. **GUI**: Want to see GUI? Just run `buddy open` to open the GUI.
 
 ## Getting Started 🚀
 
@@ -258,15 +259,3 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT
 [very_good_cli_link]: https://github.com/VeryGoodOpenSource/very_good_cli
-
-
-
-
-## To-Dos
-1. If new empty session is alive and page is refreshed, prevent another new session being creating in the sidebar
-2. add method to remove single session in the side bar
-3. add configuration button and popup to change config
-4. add a button which will populate the chat area to display all available models and when selected it will show a confirmation prompt and set it as default model
-5. add a button that will show a popup to configure parameters
-6. allow chaging the system prompt as well as user + assistant prompts per session
-7. add a button that will show a popup to set default system prompts
