@@ -39,29 +39,37 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
           'You are a helpful assistant.\nProvide concise response unless asked for more details.',
     );
 
-Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
-    <String, dynamic>{
-      'secret_env_path': instance.secretEnvPath,
-      'save_session': instance.saveSession,
-      'max_messages': instance.maxMessages,
-      'default_model': instance.defaultModel,
-      'temperature': instance.temperature,
-      'max_tokens': instance.maxTokens,
-      'top_p': instance.topP,
-      'top_k': instance.topK,
-      'frequency_penalty': instance.frequencyPenalty,
-      'presence_penalty': instance.presencePenalty,
-      'repetition_penalty': instance.repetitionPenalty,
-      'min_p': instance.minP,
-      'top_a': instance.topA,
-      'seed': instance.seed,
-      'logit_bias': instance.logitBias,
-      'logprobs': instance.logprobs,
-      'top_logprobs': instance.topLogprobs,
-      'response_format': instance.responseFormat,
-      'stop': instance.stop,
-      'cmd_prompt': instance.cmdPrompt,
-      'explain_prompt': instance.explainPrompt,
-      'code_prompt': instance.codePrompt,
-      'chat_prompt': instance.chatPrompt,
-    };
+Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('secret_env_path', instance.secretEnvPath);
+  val['save_session'] = instance.saveSession;
+  val['max_messages'] = instance.maxMessages;
+  val['default_model'] = instance.defaultModel;
+  val['temperature'] = instance.temperature;
+  writeNotNull('max_tokens', instance.maxTokens);
+  writeNotNull('top_p', instance.topP);
+  writeNotNull('top_k', instance.topK);
+  writeNotNull('frequency_penalty', instance.frequencyPenalty);
+  writeNotNull('presence_penalty', instance.presencePenalty);
+  writeNotNull('repetition_penalty', instance.repetitionPenalty);
+  writeNotNull('min_p', instance.minP);
+  writeNotNull('top_a', instance.topA);
+  writeNotNull('seed', instance.seed);
+  writeNotNull('logit_bias', instance.logitBias);
+  writeNotNull('logprobs', instance.logprobs);
+  writeNotNull('top_logprobs', instance.topLogprobs);
+  writeNotNull('response_format', instance.responseFormat);
+  writeNotNull('stop', instance.stop);
+  writeNotNull('cmd_prompt', instance.cmdPrompt);
+  writeNotNull('explain_prompt', instance.explainPrompt);
+  writeNotNull('code_prompt', instance.codePrompt);
+  writeNotNull('chat_prompt', instance.chatPrompt);
+  return val;
+}

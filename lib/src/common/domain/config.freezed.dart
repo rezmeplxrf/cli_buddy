@@ -437,7 +437,8 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(includeIfNull: false)
 class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
       {@JsonKey(name: 'secret_env_path', defaultValue: null)

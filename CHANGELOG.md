@@ -1,3 +1,7 @@
+# 0.1.0
+
+* Updated web.
+
 # 0.0.9
 
 * Updated html content
