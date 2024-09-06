@@ -8,7 +8,7 @@
 ---
 
 ## Call Any LLM from Your Terminal
- - Lightweight (2MB) and Fast
+ - Lightweight and Fast
  - Supports over 100+ LLMs (GPT, Claude, Cohere, LLama 3, Gemini, Mistral, DeekSeek, and many other LLMs including all Open Source LLMs)
  - Use your own API key ([OpenRouter](https://openrouter.ai/))
  - Complete privacy - not a single analytic data is collected
