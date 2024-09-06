@@ -342,13 +342,23 @@ class ConfigService {
 
     // Parse special fields
     final stop = formData['stop'] as String?;
-    final logitBias = formData['logit_bias']?.toString().trim();
+
     formData['stop'] = stop?.isNotEmpty == true
         ? stop?.split(',').map((e) => e.trim()).toList()
         : null;
-    formData['logit_bias'] = (logitBias?.isNotEmpty == true)
-        ? jsonDecode(logitBias!)
-        : null;
+    final logitBiasString = formData['logit_bias']?.toString().trim();
+    if (logitBiasString?.isNotEmpty == true) {
+      try {
+        final Map<String, dynamic> parsedMap = jsonDecode(logitBiasString!);
+        formData['logit_bias'] =
+            parsedMap.map((key, value) => MapEntry(key, int.parse(value)));
+      } catch (e) {
+        print('Error parsing logit_bias: $e');
+        formData['logit_bias'] = null;
+      }
+    } else {
+      formData['logit_bias'] = null;
+    }
 
     // Handle nullable int fields
     for (var field in [

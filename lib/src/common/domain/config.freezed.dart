@@ -49,7 +49,7 @@ mixin _$Configuration {
   @JsonKey(defaultValue: null, name: 'seed')
   int? get seed => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'logit_bias')
-  Map<int, int>? get logitBias => throw _privateConstructorUsedError;
+  Map<String, int>? get logitBias => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'logprobs')
   int? get logprobs => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'top_logprobs')
@@ -104,7 +104,8 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(defaultValue: null, name: 'min_p') double? minP,
       @JsonKey(defaultValue: null, name: 'top_a') double? topA,
       @JsonKey(defaultValue: null, name: 'seed') int? seed,
-      @JsonKey(defaultValue: null, name: 'logit_bias') Map<int, int>? logitBias,
+      @JsonKey(defaultValue: null, name: 'logit_bias')
+      Map<String, int>? logitBias,
       @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
@@ -219,7 +220,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       logitBias: freezed == logitBias
           ? _value.logitBias
           : logitBias // ignore: cast_nullable_to_non_nullable
-              as Map<int, int>?,
+              as Map<String, int>?,
       logprobs: freezed == logprobs
           ? _value.logprobs
           : logprobs // ignore: cast_nullable_to_non_nullable
@@ -284,7 +285,8 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(defaultValue: null, name: 'min_p') double? minP,
       @JsonKey(defaultValue: null, name: 'top_a') double? topA,
       @JsonKey(defaultValue: null, name: 'seed') int? seed,
-      @JsonKey(defaultValue: null, name: 'logit_bias') Map<int, int>? logitBias,
+      @JsonKey(defaultValue: null, name: 'logit_bias')
+      Map<String, int>? logitBias,
       @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
@@ -397,7 +399,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       logitBias: freezed == logitBias
           ? _value._logitBias
           : logitBias // ignore: cast_nullable_to_non_nullable
-              as Map<int, int>?,
+              as Map<String, int>?,
       logprobs: freezed == logprobs
           ? _value.logprobs
           : logprobs // ignore: cast_nullable_to_non_nullable
@@ -461,7 +463,7 @@ class _$ConfigurationImpl implements _Configuration {
       @JsonKey(defaultValue: null, name: 'top_a') this.topA,
       @JsonKey(defaultValue: null, name: 'seed') this.seed,
       @JsonKey(defaultValue: null, name: 'logit_bias')
-      final Map<int, int>? logitBias,
+      final Map<String, int>? logitBias,
       @JsonKey(defaultValue: null, name: 'logprobs') this.logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') this.topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
@@ -524,10 +526,10 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(defaultValue: null, name: 'seed')
   final int? seed;
-  final Map<int, int>? _logitBias;
+  final Map<String, int>? _logitBias;
   @override
   @JsonKey(defaultValue: null, name: 'logit_bias')
-  Map<int, int>? get logitBias {
+  Map<String, int>? get logitBias {
     final value = _logitBias;
     if (value == null) return null;
     if (_logitBias is EqualUnmodifiableMapView) return _logitBias;
@@ -698,7 +700,7 @@ abstract class _Configuration implements Configuration {
       @JsonKey(defaultValue: null, name: 'top_a') final double? topA,
       @JsonKey(defaultValue: null, name: 'seed') final int? seed,
       @JsonKey(defaultValue: null, name: 'logit_bias')
-      final Map<int, int>? logitBias,
+      final Map<String, int>? logitBias,
       @JsonKey(defaultValue: null, name: 'logprobs') final int? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') final int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
@@ -760,7 +762,7 @@ abstract class _Configuration implements Configuration {
   int? get seed;
   @override
   @JsonKey(defaultValue: null, name: 'logit_bias')
-  Map<int, int>? get logitBias;
+  Map<String, int>? get logitBias;
   @override
   @JsonKey(defaultValue: null, name: 'logprobs')
   int? get logprobs;
