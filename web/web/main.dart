@@ -140,25 +140,26 @@ class ConfigService {
 
     final content = DivElement()
       ..className =
-          'bg-white rounded-lg shadow-lg w-full max-w-3xl max-h-[70vh] flex flex-col';
+          'bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col';
 
     content.innerHtml = '''
-    <div class="p-6 flex-shrink-0">
-      <h2 class="text-2xl font-bold mb-4">Edit Configuration</h2>
+    <div class="p-6 border-b">
+      <h2 class="text-2xl font-bold text-gray-800">Edit Configuration</h2>
     </div>
     <div class="p-6 overflow-y-auto flex-grow">
       <form id="configForm">
         ${_createConfigInputs()}
       </form>
     </div>
-    <div class="p-6 flex justify-end flex-shrink-0">
-      <button id="cancelBtn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded mr-2">Cancel</button>
-      <button id="saveBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Save</button>
+    <div class="p-6 border-t flex justify-end space-x-4">
+      <button id="cancelBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200">Cancel</button>
+      <button id="saveBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">Save</button>
     </div>
   ''';
 
     popup.append(content);
     document.body?.append(popup);
+
     content
         .querySelectorAll('input[type="checkbox"]')
         .forEach((Element checkbox) {
@@ -188,7 +189,7 @@ class ConfigService {
 
   String _createConfigInputs() {
     final inputs = StringBuffer();
-    inputs.writeln('<div class="grid grid-cols-2 gap-4">');
+    inputs.writeln('<div class="grid grid-cols-1 md:grid-cols-2 gap-6">');
 
     currentConfig?.toJson().forEach((key, value) {
       final label = Helper.capitalizeFirstLetter(key.replaceAll('_', ' '));
@@ -197,105 +198,73 @@ class ConfigService {
       if (isPromptField) {
         inputs.writeln('</div>'); // Close the grid for prompt fields
         inputs.writeln('''
-        <div class="mb-4 col-span-2">
+        <div class="col-span-full mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
             $label
           </label>
-          <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="$key" rows="4">${value ?? ''}</textarea>
+          <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                    id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
         </div>
       ''');
-        inputs
-            .writeln('<div class="grid grid-cols-2 gap-4">'); // Reopen the grid
+        inputs.writeln(
+            '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">'); // Reopen the grid
       } else {
         if (value is bool) {
           inputs.writeln('''
-          <div class="mb-4">
-            <label class="flex items-center cursor-pointer">
+          <div class="col-span-1">
+            <label class="flex items-center space-x-3 cursor-pointer">
               <div class="relative">
                 <input type="checkbox" id="$key" class="sr-only" ${value ? 'checked' : ''}>
                 <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
               </div>
-              <div class="ml-3 text-gray-700 font-medium">
-                $label
-              </div>
+              <span class="text-gray-700 font-medium">$label</span>
             </label>
           </div>
         ''');
-        } else if (key == 'response_format') {
-          inputs.writeln('''
-    <div class="mb-4">
-      <label class="flex items-center cursor-pointer">
-        <div class="relative">
-          <input type="checkbox" id="$key" class="sr-only" ${value != null ? 'checked' : ''}>
-          <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-          <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-        </div>
-        <div class="ml-3 text-gray-700 font-medium">
-          Json Output
-        </div>
+          if (key == 'temperature') {
+            inputs.writeln('''
+    <div class="col-span-1">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+        $label
       </label>
+      <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+             id="$key" type="number" min="0" step="0.1" value="${value.toString()}" placeholder="${_getExampleValue(key)}">
     </div>
   ''');
-        } else if (value is int) {
+          } else if (key == 'max_messages') {
+            inputs.writeln('''
+    <div class="col-span-1">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+        $label
+      </label>
+      <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+             id="$key" type="number" min="0" step="1" value="${value.toString()}" placeholder="${_getExampleValue(key)}">
+    </div>
+  ''');
+          }
+        } else if (key == 'response_format') {
           inputs.writeln('''
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
+          <div class="col-span-1">
+            <label class="flex items-center space-x-3 cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" id="$key" class="sr-only" ${value != null ? 'checked' : ''}>
+                <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
+              </div>
+              <span class="text-gray-700 font-medium">Json Output</span>
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="number" value="$value">
-          </div>
-        ''');
-        } else if (value is double) {
-          inputs.writeln('''
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="number" value="$value" step="0.1">
-          </div>
-        ''');
-        } else if (value is String) {
-          inputs.writeln('''
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="text" value="$value">
-          </div>
-        ''');
-        } else if (value is List) {
-          inputs.writeln('''
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="text" value="${value.join(', ')}">
-          </div>
-        ''');
-        } else if (value is Map) {
-          inputs.writeln('''
-          <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="text" value='${json.encode(value)}'>
           </div>
         ''');
         } else {
+          final inputType = value is int || value is double ? 'number' : 'text';
           inputs.writeln('''
-          <div class="mb-4">
+          <div class="col-span-1">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
               $label
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="$key" type="text" value="${value?.toString() ?? ''}">
+            <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                   id="$key" type="$inputType" value="${value?.toString() ?? ''}" placeholder="${_getExampleValue(key)}">
           </div>
         ''');
         }
@@ -304,6 +273,59 @@ class ConfigService {
 
     inputs.writeln('</div>'); // Close the final grid
     return inputs.toString();
+  }
+
+  String _getExampleValue(String key) {
+    switch (key) {
+      case 'secret_env_path':
+        return '/path/to/secret.env';
+      case 'save_session':
+        return 'true';
+      case 'max_messages':
+        return '20';
+      case 'default_model':
+        return 'openai/gpt-4o';
+      case 'temperature':
+        return '0.3';
+      case 'max_tokens':
+        return '2000';
+      case 'top_p':
+        return '0.9';
+      case 'top_k':
+        return '40';
+      case 'frequency_penalty':
+        return '0.5';
+      case 'presence_penalty':
+        return '0.5';
+      case 'repetition_penalty':
+        return '1.0';
+      case 'min_p':
+        return '0.1';
+      case 'top_a':
+        return '0.5';
+      case 'seed':
+        return '42';
+      case 'logit_bias':
+        return 'json encoded map: tokenId - integer';
+      case 'logprobs':
+        return '5';
+      case 'top_logprobs':
+        return '5';
+      case 'response_format':
+        return 'true';
+      case 'stop':
+        return '213, 235, 52, 2134';
+      case 'cmd_prompt':
+        return 'How should AI output shell command';
+      case 'explain_prompt':
+        return 'How should AI explain to the previous code/cmd';
+      case 'code_prompt':
+        return 'How should AI output code';
+      case 'chat_prompt':
+        return 'How should AI respond to';
+      default:
+        return 'Enter value';
+    }
   }
 
   void saveConfig(DivElement content) async {
@@ -341,6 +363,14 @@ class ConfigService {
     );
 
     // Parse special fields
+    if (formData['temperature'] != null && formData['temperature'] < 0) {
+      formData['temperature'] = 0;
+    }
+    final maxMessages = formData['max_messages'] as int?;
+    if (formData['max_messages'] != null) {
+      formData['max_messages'] = max<int>(0, maxMessages ?? 0);
+    }
+
     final stop = formData['stop'] as String?;
 
     formData['stop'] = stop?.isNotEmpty == true
