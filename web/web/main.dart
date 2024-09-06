@@ -488,18 +488,12 @@ class SessionService {
 
   void populateSidebar(List<ChatSession> sessions) {
     sessions.sort((a, b) => b.id - a.id);
-
-    // Create a set of current session IDs for quick lookup
     final currentSessionIds = sessions.map((s) => s.id).toSet();
-
-    // Remove sessions that no longer exist
     sharedStates.sessionList.children.removeWhere((element) {
       final sessionId =
           int.tryParse(element.getAttribute('data-session-id') ?? '');
       return sessionId != null && !currentSessionIds.contains(sessionId);
     });
-
-    // Update existing sessions and add new ones
     for (var i = 0; i < sessions.length; i++) {
       final session = sessions[i];
       final existingElement = sharedStates.sessionList.children
@@ -507,10 +501,8 @@ class SessionService {
               element.getAttribute('data-session-id') == session.id.toString());
 
       if (existingElement != null) {
-        // Update existing session
         updateSessionElement(existingElement as LIElement, session, i);
       } else {
-        // Add new session
         final newElement = createSessionElement(session, i);
         if (i == 0) {
           sharedStates.sessionList.children.insert(0, newElement);
@@ -546,14 +538,83 @@ class SessionService {
     <div class="session-title font-semibold mb-1">$title${firstUserMessage != null && firstUserMessage.content.length > 30 ? '...' : ''}</div>
     <div class="session-info text-xs text-gray-400"><div>ID: ${session.id}</div>
     <div>Messages: ${session.messages.length}</div><div>Model: ${session.model}</div></div>
+    <span class="dot-icon hidden absolute top-2 right-2 cursor-pointer pr-2">•••</span>
   ''', treeSanitizer: NodeTreeSanitizer.trusted)
       ..style.animationDelay = '${index * 0.05}s';
+
+    final dotIcon = element.querySelector('.dot-icon');
+
+    element.onMouseEnter.listen((_) {
+      dotIcon?.classes.remove('hidden');
+    });
+
+    element.onMouseLeave.listen((_) {
+      dotIcon?.classes.add('hidden');
+    });
+
+    dotIcon?.onClick.listen((event) {
+      event.stopPropagation();
+      toggleDropdownMenu(dotIcon);
+    });
+  }
+
+  void toggleDropdownMenu(Element dotIcon) {
+    // Close all other open dropdowns
+    closeAllDropdowns();
+
+    final dropdownId =
+        'dropdown-${dotIcon.parent?.getAttribute('data-session-id')}';
+    var dropdown = document.getElementById(dropdownId);
+
+    if (dropdown == null) {
+      dropdown = DivElement()
+        ..id = dropdownId
+        ..className = 'fixed bg-white rounded-md shadow-lg z-50'
+        ..setInnerHtml('''
+        <ul>
+          <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 1</li>
+          <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 2</li>
+          <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 3</li>
+        </ul>
+      ''', treeSanitizer: NodeTreeSanitizer.trusted);
+      document.body?.append(dropdown);
+
+      // Add click event listeners to dropdown options
+      dropdown.querySelectorAll('li').forEach((option) {
+        option.onClick.listen((event) {
+          event.stopPropagation();
+          // Handle option click here
+          print('Option clicked: ${option.text}');
+          closeAllDropdowns();
+        });
+      });
+    }
+
+    final rect = dotIcon.getBoundingClientRect();
+    dropdown.style
+      ..left = '${rect.right}px'
+      ..top = '${rect.bottom}px'
+      ..display = dropdown.style.display == 'none' ? 'block' : 'none';
+
+    // Close dropdown when clicking outside
+    window.onClick.listen((event) {
+      if (!dotIcon.contains(event.target as Node) &&
+          !dropdown!.contains(event.target as Node)) {
+        closeAllDropdowns();
+      }
+    });
+  }
+
+  void closeAllDropdowns() {
+    document.querySelectorAll('[id^="dropdown-"]').forEach((dropdown) {
+      (dropdown).style.display = 'none';
+    });
   }
 
   LIElement createSessionElement(ChatSession session, int index) {
     final li = LIElement()
       ..className =
-          'session-item bg-gray-800 hover:bg-gray-700 rounded p-2 cursor-pointer transition-colors duration-200 fade-in'
+          'session-item bg-gray-800 hover:bg-gray-700 rounded p-2 cursor-pointer transition-colors duration-200 fade-in relative'
       ..setAttribute('data-session-id', session.id.toString());
 
     updateSessionElement(li, session, index);
@@ -570,6 +631,7 @@ class SessionService {
       );
       final session = ChatSession.fromJson(response.data);
       chatService.displayChat(session);
+      closeAllDropdowns();
     } catch (error) {
       print('Error selecting session: $error');
     }
