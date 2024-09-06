@@ -1,0 +1,79 @@
+import 'package:buddy_gui/domain/session.dart';
+import 'package:buddy_gui/service/global.dart';
+import 'dart:async';
+import 'dart:html';
+import 'dart:convert';
+
+class WebSocketService {
+  static final _instance = WebSocketService._internal();
+  factory WebSocketService() => _instance;
+  WebSocketService._internal();
+  WebSocket? socket;
+  bool isWebSocketConnected = false;
+  List<Message> messageQueue = [];
+
+  void connectWebSocket() {
+    socket = WebSocket(wsUrl);
+
+    socket?.onOpen.listen((event) {
+      print('WebSocket connection established');
+      isWebSocketConnected = true;
+      updateConnectionStatus;
+      processMessageQueue();
+    });
+
+    socket?.onClose.listen((event) {
+      print('WebSocket connection closed');
+      isWebSocketConnected = false;
+      updateConnectionStatus;
+      Future.delayed(Duration(seconds: 3), () => connectWebSocket());
+    });
+
+    socket?.onError.listen((e) {
+      print('WebSocket error: $e');
+    });
+
+    socket?.onMessage.listen((MessageEvent event) {
+      try {
+        final data = jsonDecode(event.data as String);
+        chatService.handleWebSocketMessage(data);
+      } catch (error) {
+        print('Error parsing WebSocket message: $error');
+      }
+    });
+  }
+
+  void processMessageQueue() {
+    while (messageQueue.isNotEmpty && isWebSocketConnected) {
+      final message = messageQueue.removeAt(0);
+      sendMessage(message);
+    }
+  }
+
+  void sendMessage(Message message) {
+    print("Message from client: $message");
+    if (isWebSocketConnected) {
+      sharedStates.currentSession = sharedStates.currentSession?.copyWith(
+        messages: [...sharedStates.currentSession!.messages, message],
+      );
+
+      print("sharedStates.currentSession: ${sharedStates.currentSession}");
+      socket?.send(jsonEncode(sharedStates.currentSession));
+    } else {
+      messageQueue.add(message);
+    }
+  }
+
+  void updateConnectionStatus() {
+    if (isWebSocketConnected) {
+      sharedStates.connectionStatus.text = 'Connected';
+      sharedStates.connectionStatus.classes.add('bg-green-500');
+      sharedStates.connectionStatus.classes.remove('bg-red-500');
+    } else {
+      sharedStates.connectionStatus.text = 'Disconnected';
+      sharedStates.connectionStatus.classes.add('bg-red-500');
+      sharedStates.connectionStatus.classes.remove('bg-green-500');
+    }
+  }
+  
+}

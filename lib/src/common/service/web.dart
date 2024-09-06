@@ -152,17 +152,16 @@ class WebService {
   void _handleWebSocket(WebSocketChannel socket) {
     webSocket = socket;
     socket.stream.listen((message) async {
-      final userMsg = Message.fromJson(
+  
+      final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
-      if (_currentSession != null && userMsg.content.trim().isNotEmpty) {
-        final tempSession = _currentSession!
-            .copyWith(messages: [..._currentSession!.messages, userMsg]);
-
+      if (_currentSession != null &&
+          message.trim().isNotEmpty) {
         webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
 
         _currentSession = await openRouter
-            .invoke(session: tempSession, markdown: false)
+            .invoke(session: userSentSession, markdown: false)
             .getOrThrow();
 
         final lastResponse = _currentSession?.messages.last;

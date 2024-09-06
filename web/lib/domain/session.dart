@@ -1,4 +1,4 @@
-import 'package:buddy_gui/open_router.dart';
+import 'package:buddy_gui/domain/open_router.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'session.freezed.dart';
