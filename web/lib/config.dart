@@ -29,7 +29,7 @@ class Configuration with _$Configuration {
     @JsonKey(defaultValue: null, name: 'top_a') double? topA,
     @JsonKey(defaultValue: null, name: 'seed') int? seed,
     @JsonKey(defaultValue: null, name: 'logit_bias')
-    Map<String, dynamic>? logitBias,
+    Map<int, int>? logitBias,
     @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
     @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
     @JsonKey(defaultValue: null, name: 'response_format')

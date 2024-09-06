@@ -22,7 +22,9 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       minP: (json['min_p'] as num?)?.toDouble(),
       topA: (json['top_a'] as num?)?.toDouble(),
       seed: (json['seed'] as num?)?.toInt(),
-      logitBias: json['logit_bias'] as Map<String, dynamic>?,
+      logitBias: (json['logit_bias'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(int.parse(k), (e as num).toInt()),
+      ),
       logprobs: (json['logprobs'] as num?)?.toInt(),
       topLogprobs: (json['top_logprobs'] as num?)?.toInt(),
       responseFormat: json['response_format'] as Map<String, dynamic>?,
@@ -49,7 +51,8 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
       'min_p': instance.minP,
       'top_a': instance.topA,
       'seed': instance.seed,
-      'logit_bias': instance.logitBias,
+      'logit_bias':
+          instance.logitBias?.map((k, e) => MapEntry(k.toString(), e)),
       'logprobs': instance.logprobs,
       'top_logprobs': instance.topLogprobs,
       'response_format': instance.responseFormat,

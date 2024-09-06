@@ -136,17 +136,22 @@ class ConfigService {
 
     final popup = DivElement()
       ..className =
-          'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+          'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
 
     final content = DivElement()
-      ..className = 'bg-white p-6 rounded-lg shadow-lg w-96';
+      ..className =
+          'bg-white rounded-lg shadow-lg w-full max-w-3xl max-h-[70vh] flex flex-col';
 
     content.innerHtml = '''
-    <h2 class="text-2xl font-bold mb-4">Edit Configuration</h2>
-    <form id="configForm">
-      ${_createConfigInputs()}
-    </form>
-    <div class="flex justify-end mt-4">
+    <div class="p-6 flex-shrink-0">
+      <h2 class="text-2xl font-bold mb-4">Edit Configuration</h2>
+    </div>
+    <div class="p-6 overflow-y-auto flex-grow">
+      <form id="configForm">
+        ${_createConfigInputs()}
+      </form>
+    </div>
+    <div class="p-6 flex justify-end flex-shrink-0">
       <button id="cancelBtn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded mr-2">Cancel</button>
       <button id="saveBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Save</button>
     </div>
@@ -154,6 +159,22 @@ class ConfigService {
 
     popup.append(content);
     document.body?.append(popup);
+    content
+        .querySelectorAll('input[type="checkbox"]')
+        .forEach((Element checkbox) {
+      (checkbox as InputElement).onChange.listen((event) {
+        final dot = checkbox.parent?.querySelector('.dot');
+        if (dot != null) {
+          if ((checkbox).checked ?? false) {
+            dot.style.transform = 'translateX(100%)';
+            dot.style.backgroundColor = '#48bb78';
+          } else {
+            dot.style.transform = 'translateX(0)';
+            dot.style.backgroundColor = '#ffffff';
+          }
+        }
+      });
+    });
 
     (content.querySelector('#cancelBtn') as ButtonElement).onClick.listen((_) {
       popup.remove();
@@ -167,38 +188,197 @@ class ConfigService {
 
   String _createConfigInputs() {
     final inputs = StringBuffer();
+    inputs.writeln('<div class="grid grid-cols-2 gap-4">');
+
     currentConfig?.toJson().forEach((key, value) {
       final label = Helper.capitalizeFirstLetter(key.replaceAll('_', ' '));
-      final inputType = value is bool ? 'checkbox' : 'text';
-      final inputValue =
-          value is bool ? (value ? 'checked' : '') : value.toString();
-      inputs.writeln('''
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-          $label
-        </label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               id="$key" type="$inputType" value="$inputValue">
-      </div>
-    ''');
+      final isPromptField = key.contains('prompt');
+
+      if (isPromptField) {
+        inputs.writeln('</div>'); // Close the grid for prompt fields
+        inputs.writeln('''
+        <div class="mb-4 col-span-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+            $label
+          </label>
+          <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="$key" rows="4">${value ?? ''}</textarea>
+        </div>
+      ''');
+        inputs
+            .writeln('<div class="grid grid-cols-2 gap-4">'); // Reopen the grid
+      } else {
+        if (value is bool) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="flex items-center cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" id="$key" class="sr-only" ${value ? 'checked' : ''}>
+                <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+              </div>
+              <div class="ml-3 text-gray-700 font-medium">
+                $label
+              </div>
+            </label>
+          </div>
+        ''');
+        } else if (key == 'response_format') {
+          inputs.writeln('''
+    <div class="mb-4">
+      <label class="flex items-center cursor-pointer">
+        <div class="relative">
+          <input type="checkbox" id="$key" class="sr-only" ${value != null ? 'checked' : ''}>
+          <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+          <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+        </div>
+        <div class="ml-3 text-gray-700 font-medium">
+          Json Output
+        </div>
+      </label>
+    </div>
+  ''');
+        } else if (value is int) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="number" value="$value">
+          </div>
+        ''');
+        } else if (value is double) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="number" value="$value" step="0.1">
+          </div>
+        ''');
+        } else if (value is String) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="text" value="$value">
+          </div>
+        ''');
+        } else if (value is List) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="text" value="${value.join(', ')}">
+          </div>
+        ''');
+        } else if (value is Map) {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="text" value='${json.encode(value)}'>
+          </div>
+        ''');
+        } else {
+          inputs.writeln('''
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+              $label
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                   id="$key" type="text" value="${value?.toString() ?? ''}">
+          </div>
+        ''');
+        }
+      }
     });
+
+    inputs.writeln('</div>'); // Close the final grid
     return inputs.toString();
   }
 
   void saveConfig(DivElement content) async {
     final form = content.querySelector('#configForm') as FormElement;
-    final formData = Map<String, dynamic>.fromEntries(
+    var formData = Map<String, dynamic>.fromEntries(
       currentConfig?.toJson().keys.map((key) {
-            final input = form.querySelector('#$key') as InputElement;
-            final value =
-                input.type == 'checkbox' ? input.checked : input.value;
-            return MapEntry(key, value);
+            final element = form.querySelector('#$key');
+            if (element is InputElement) {
+              if (element.type == 'checkbox') {
+                if (key == 'response_format') {
+                  return MapEntry(key,
+                      element.checked == true ? {'type': 'json_object'} : null);
+                }
+                return MapEntry(key, element.checked);
+              } else if (element.type == 'number') {
+                return MapEntry(
+                    key,
+                    element.value?.trim().isEmpty == true
+                        ? null
+                        : num.tryParse(element.value!));
+              } else {
+                return MapEntry(
+                    key,
+                    element.value?.trim().isEmpty == true
+                        ? null
+                        : element.value);
+              }
+            } else if (element is TextAreaElement) {
+              return MapEntry(key,
+                  element.value?.trim().isEmpty == true ? null : element.value);
+            }
+            return MapEntry(key, null);
           }) ??
           [],
     );
 
-    final newConfig = Configuration.fromJson(formData);
+    // Parse special fields
+    final stop = formData['stop'] as String?;
+    final logitBias = formData['logit_bias']?.toString().trim();
+    formData['stop'] = stop?.isNotEmpty == true
+        ? stop?.split(',').map((e) => e.trim()).toList()
+        : null;
+    formData['logit_bias'] = (logitBias?.isNotEmpty == true)
+        ? jsonDecode(logitBias!)
+        : null;
+
+    // Handle nullable int fields
+    for (var field in [
+      'max_tokens',
+      'top_p',
+      'top_k',
+      'seed',
+      'logprobs',
+      'top_logprobs'
+    ]) {
+      if (formData[field] is String) {
+        formData[field] = int.tryParse(formData[field]);
+      }
+    }
+
+    // Handle nullable double fields
+    for (var field in [
+      'frequency_penalty',
+      'presence_penalty',
+      'repetition_penalty',
+      'min_p',
+      'top_a'
+    ]) {
+      if (formData[field] is String) {
+        formData[field] = double.tryParse(formData[field]);
+      }
+    }
+
     try {
+      final newConfig = Configuration.fromJson(formData);
       final result =
           await dio.post('$baseUrl/config', data: newConfig.toJson());
       if (result.statusCode == 200) {
@@ -220,7 +400,7 @@ class SessionService {
   Future<void> fetchSessions() async {
     try {
       final response = await dio.get('$baseUrl/sessions');
-  
+
       final data = response.data as List<dynamic>;
       final sessions = data.map((json) => ChatSession.fromJson(json)).toList();
 
