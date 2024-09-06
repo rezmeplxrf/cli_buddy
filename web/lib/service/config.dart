@@ -11,7 +11,7 @@ class ConfigService {
   static final configService = ConfigService._internal();
   factory ConfigService() => configService;
   ConfigService._internal();
-  Configuration? currentConfig;
+  Configuration? configCache;
   List<StreamSubscription?> subscriptions = [];
 
   Future<Configuration?> fetchConfig() async {
@@ -27,9 +27,9 @@ class ConfigService {
   }
 
   void showConfigPopup() async {
-    final result = await fetchConfig();
-    if (result != null) {
-      currentConfig = result;
+    final config = await fetchConfig();
+    if (config != null) {
+      configCache = config;
     }
 
     final popup = DivElement()..setInnerHtml('''
@@ -97,7 +97,7 @@ subscriptions.addAll([
     final inputs = StringBuffer();
     inputs.writeln('<div class="grid grid-cols-1 md:grid-cols-2 gap-6">');
 
-    final config = currentConfig;
+    final config = configCache;
     if (config == null) return '';
 
     void addInput(String key, String label, String type, dynamic value,
@@ -259,7 +259,7 @@ subscriptions.addAll([
   void saveConfig(DivElement content) async {
     final form = content.querySelector('#configForm') as FormElement;
     var formData = Map<String, dynamic>.fromEntries(
-      currentConfig?.toJson().keys.map((key) {
+      configCache?.toJson().keys.map((key) {
             final element = form.querySelector('#$key');
             if (element is InputElement) {
               if (element.type == 'checkbox') {
@@ -349,7 +349,7 @@ subscriptions.addAll([
     try {
       final newConfig = Configuration.fromJson(formData);
       // check if the new config is different from the current config
-      if (newConfig == currentConfig) {
+      if (newConfig == configCache) {
         print('Configuration unchanged');
         return;
       }
@@ -358,7 +358,7 @@ subscriptions.addAll([
           await dio.post('$baseUrl/config', data: newConfig.toJson());
       if (result.statusCode == 200) {
         final serverConfig = Configuration.fromJson(result.data);
-        currentConfig = serverConfig;
+        configCache = serverConfig;
         print('Configuration saved successfully');
       }
     } catch (e) {

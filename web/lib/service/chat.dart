@@ -192,12 +192,12 @@ class ChatService {
 
           final path = await showPathInputDialog();
           if (path == null) return;
-          final response = await HttpRequest.postFormData(
+          final response = await dio.post(
             '$baseUrl/make-file',
-            {'code': block.text!, 'path': path},
+            data: {'code': block.text, 'path': path.trim()},
           );
-          if (response.status == 200) {
-            final result = jsonDecode(response.responseText ?? '');
+          if (response.statusCode == 200) {
+            final result = jsonDecode( response.data ?? '');
             print('$result');
 
             showSnackBar('$result');
@@ -334,6 +334,17 @@ class ChatService {
   }
 
   void enableEditMode(DivElement messageElement, Message message) {
+    // Check if the clicked message is already in edit mode
+    if (sharedStates.currentMessageElement == messageElement) {
+      cancelEditMode();
+      return;
+    }
+
+    // Cancel any existing edit mode
+    if (sharedStates.currentMessageElement != null) {
+      cancelEditMode();
+    }
+
     sharedStates.currentMessageElement = messageElement;
     final messageContent = messageElement.querySelector('.prose') as DivElement;
     messageContent.contentEditable = 'true';
@@ -392,11 +403,14 @@ class ChatService {
         return session.id == updatedSession.id ? updatedSession : session;
       }).toList();
 
-      print(sharedStates.currentSession);
       // Re-render message
       displayChat(sharedStates.currentSession!);
       cancelEditMode();
-      websocketService.sendEditedSession(sharedStates.currentSession!);
+
+      // check if updatedMessage's role is not system
+      if (updatedMessage.role != Role.system) {
+        websocketService.sendEditedSession();
+      }
     } else {
       showSnackBar('Something went wrong. Please try again.');
     }

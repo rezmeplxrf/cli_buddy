@@ -71,22 +71,30 @@ class WebSocketService {
       sharedStates.currentSession = sharedStates.currentSession?.copyWith(
         messages: [...sharedStates.currentSession!.messages, message],
       );
-
+      print("sharedStates.currentSession: ${sharedStates.currentSession}");
       socket?.send(jsonEncode(sharedStates.currentSession));
     } else {
       messageQueue.add(message);
     }
   }
 
-  void sendEditedSession(ChatSession editedSession) {
-    print("edited session: $editedSession");
+  void sendEditedSession() async {
+    print("edited session: ${sharedStates.currentSession}");
     if (isWebSocketConnected) {
       // check if editedSession has id, model,
-      // if (editedSession.model == null) {
-
-      //   return;
-      // }
-      socket?.send(jsonEncode(editedSession));
+      if (sharedStates.currentSession?.model == null) {
+        final config = await configService.fetchConfig();
+        if (config != null) {
+          configService.configCache = config;
+          sharedStates.currentSession = sharedStates.currentSession?.copyWith(
+            model: config.defaultModel,
+            id: sharedStates.currentSession?.id ??
+                DateTime.now().millisecondsSinceEpoch,
+          );
+        }
+      }
+      print("sharedStates.currentSession: ${sharedStates.currentSession}");
+      socket?.send(jsonEncode(sharedStates.currentSession));
     } else {
       print('Error: WebSocket is not connected.');
     }

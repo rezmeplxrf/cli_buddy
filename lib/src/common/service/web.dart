@@ -54,19 +54,20 @@ class WebService {
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
       ..post('/remove-session', _removeSessionHandler)
-      ..post('/make-file', _makeFileHandler)
-      
-      ;
+      ..post('/make-file', _makeFileHandler);
     return router.call;
   }
 
   Future<Response> _makeFileHandler(Request request) async {
     final payload = await request.readAsString();
+    print('payload: $payload');
     final data = jsonDecode(payload) as Map<String, dynamic>;
+    print('data: $data');
     final content = data['code'] as String;
     final path = data['path'] as String;
-   await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
-    return Response.ok('File is created');
+    await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
+    return Response.ok({'result': 'File is created'},
+        headers: {'content-type': 'application/json'});
   }
 
   Future<Response> _removeSessionHandler(Request request) async {
@@ -75,18 +76,21 @@ class WebService {
     final sessionId = data['sessionId'];
     final result = await SessionService.removeSession(id: sessionId as int);
     if (result) {
-      return Response.ok(
-        'Session is removed',
-      );
+      return Response.ok({result: 'Session is removed'},
+          headers: {'content-type': 'application/json'});
     } else {
-      return Response.internalServerError(body: 'Failed to remove session');
+      return Response.internalServerError(
+          body: {result: 'Failed to remove session'},
+          headers: {'content-type': 'application/json'});
     }
   }
 
   Future<Response> _getConfigHandler(Request request) async {
     configuration = await ConfigService.loadConfig().getOrNull();
     if (configuration == null) {
-      return Response.notFound('Config is empty or failed to load config');
+      return Response.notFound(
+          {'result': 'Config is empty or failed to load config'},
+          headers: {'content-type': 'application/json'});
     } else {
       return Response.ok(jsonEncode(configuration?.toJson()),
           headers: {'content-type': 'application/json'});
@@ -106,8 +110,8 @@ class WebService {
           headers: {'content-type': 'application/json'});
     } else {
       return Response.ok(
-          'No changes made because it is the same as the current',
-          headers: {'content-type': 'text/plain'});
+          {'result': 'No changes made because it is the same as the current'},
+          headers: {'content-type': 'application/json'});
     }
   }
 
@@ -134,7 +138,10 @@ class WebService {
     _currentSession = ChatSession(id: currentTime, messages: [sysMsg]);
     _sessions?.add(_currentSession!);
 
-    return Response.ok(jsonEncode(_currentSession?.toJson()),
+    return Response.ok(
+        jsonEncode(
+          _currentSession?.toJson(),
+        ),
         headers: {'content-type': 'application/json'});
   }
 
@@ -144,7 +151,7 @@ class WebService {
       _currentSession = null;
       _sessions?.clear();
       return Response.ok(
-        'All sessions are removed',
+        {'result': 'All sessions are removed'},
       );
     } else {
       return Response.internalServerError(
@@ -155,11 +162,14 @@ class WebService {
   Future<Response> _sessionsHandler(Request request) async {
     _sessions = await SessionService.listSessions();
     if (_sessions == null || _sessions!.isEmpty) {
-      return Response.notFound('Session is empty or failed to load sessions');
+      return Response.notFound(
+          {'result': 'Session is empty or failed to load sessions'},
+          headers: {'content-type': 'application/json'});
     }
     final sessionsJson = jsonEncode(_sessions?.map((s) => s.toJson()).toList());
-    return Response.ok(sessionsJson,
-        headers: {'content-type': 'application/json'});
+    return Response.ok(
+      sessionsJson,
+    );
   }
 
   Future<Response> _selectSessionHandler(Request request) async {
@@ -170,11 +180,13 @@ class WebService {
     _currentSession =
         _sessions?.firstWhere((session) => session.id == sessionId);
     if (_currentSession == null) {
-      return Response.notFound('Session is not found');
+      return Response.notFound({'result': 'Session is not found'},
+          headers: {'content-type': 'application/json'});
     }
 
-    return Response.ok(jsonEncode(_currentSession?.toJson()),
-        headers: {'content-type': 'application/json'});
+    return Response.ok(
+      jsonEncode(_currentSession?.toJson()),
+    );
   }
 
   void _handleWebSocket(WebSocketChannel socket) {
