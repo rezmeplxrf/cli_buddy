@@ -1,3 +1,11 @@
+# 0.1.2
+
+* open command will open the default browser automatically
+
+# 0.1.1
+
+* Improved web.
+
 # 0.1.0
 
 * Updated web.
