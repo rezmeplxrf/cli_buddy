@@ -349,9 +349,11 @@ class ConfigService {
     final logitBiasString = formData['logit_bias']?.toString().trim();
     if (logitBiasString?.isNotEmpty == true) {
       try {
-        final Map<String, dynamic> parsedMap = jsonDecode(logitBiasString!);
-        formData['logit_bias'] =
-            parsedMap.map((key, value) => MapEntry(key, int.parse(value)));
+        final correctedLogitBiasString = logitBiasString!.replaceAll("'", '"');
+        final parsedMap = jsonDecode(correctedLogitBiasString) as Map;
+        formData['logit_bias'] = parsedMap.map((key, value) {
+          return MapEntry(key.toString(), int.parse(value.toString()));
+        });
       } catch (e) {
         print('Error parsing logit_bias: $e');
         formData['logit_bias'] = null;
@@ -359,7 +361,6 @@ class ConfigService {
     } else {
       formData['logit_bias'] = null;
     }
-
     // Handle nullable int fields
     for (var field in [
       'max_tokens',
