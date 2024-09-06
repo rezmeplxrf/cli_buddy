@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cli_buddy/cli_buddy.dart';
+import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
@@ -49,17 +50,36 @@ class WebService {
       ..post('/select-session', _selectSessionHandler)
       ..post('/new-session', _newSessionHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket))
-      ..get('/config', _confignHandler);
+      ..get('/config', _getConfigHandler)
+      ..post('/config', _setConfigHandler);
     return router.call;
   }
 
-  Future<Response> _confignHandler(Request request) async {
+  Future<Response> _getConfigHandler(Request request) async {
     configuration = await ConfigService.loadConfig().getOrNull();
     if (configuration == null) {
       return Response.notFound('Config is empty or failed to load config');
     } else {
       return Response.ok(jsonEncode(configuration?.toJson()),
           headers: {'content-type': 'application/json'});
+    }
+  }
+
+  Future<Response> _setConfigHandler(Request request) async {
+    configuration = await ConfigService.loadConfig().getOrNull();
+    final payload = await request.readAsString();
+    final data = jsonDecode(payload) as Map<String, dynamic>;
+    final newConfig = Configuration.fromJson(data);
+    print(newConfig);
+
+    if (newConfig != configuration) {
+      await ConfigService.saveConfig(newConfig: newConfig);
+      return Response.ok(jsonEncode(configuration?.toJson()),
+          headers: {'content-type': 'application/json'});
+    } else {
+      return Response.ok(
+          'No changes made because it is the same as the current',
+          headers: {'content-type': 'text/plain'});
     }
   }
 

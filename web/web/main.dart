@@ -118,8 +118,8 @@ class ConfigService {
   Future<Configuration?> fetchConfig() async {
     try {
       final response = await dio.get('$baseUrl/config');
-      currentConfig = Configuration.fromJson(response.data);
-      return currentConfig;
+      final fetchedConfig = Configuration.fromJson(response.data);
+      return fetchedConfig;
     } catch (e) {
       print('Error fetching config: $e');
       window.alert('Error fetching config: $e');
@@ -128,21 +128,14 @@ class ConfigService {
   }
 
   void showConfigPopup() async {
-    currentConfig = await fetchConfig();
-    if (currentConfig == null) {
-      print('Configuration not loaded');
-      return;
+    final result = await fetchConfig();
+    if (result != null) {
+      currentConfig = result;
     }
 
-    final popup = DivElement()
-      ..className =
-          'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-
-    final content = DivElement()
-      ..className =
-          'bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col';
-
-    content.setInnerHtml('''
+    final popup = DivElement()..setInnerHtml('''
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+<div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
     <div class="p-6 border-b">
       <h2 class="text-2xl font-bold text-gray-800">Edit Configuration</h2>
     </div>
@@ -155,21 +148,17 @@ class ConfigService {
       <button id="cancelBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200">Cancel</button>
       <button id="saveBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">Save</button>
     </div>
+  </div>
   ''', treeSanitizer: NodeTreeSanitizer.trusted);
 
-    popup.append(content);
     document.body?.append(popup);
 
-    // Make checkboxes interactive
-    final checkboxes = content.querySelectorAll('div[type="checkboxWrapper"]');
-    print('length: ${checkboxes.length}');
+    final checkboxes = popup.querySelectorAll('div[type="checkboxWrapper"]');
     if (checkboxes.isNotEmpty) {
       for (var checkbox in checkboxes) {
-        //  output  class: sr-only, attributes: {type: checkbox, id: logprobs, class: sr-only}, id: logprobs
         final input = checkbox.querySelector('input') as InputElement?;
         final toggle = checkbox as DivElement?;
         final dot = toggle?.querySelector('.dot') as DivElement?;
-        print('input: $input, toggle: $toggle, dot: $dot');
 
         // Set initial state
         if (input?.checked ?? false) {
@@ -180,7 +169,6 @@ class ConfigService {
 
         // Add click event listener
         toggle?.onClick.listen((_) {
-          print('checkbox state: ${input?.checked}');
           input?.checked = !(input.checked ?? false);
           if (input?.checked ?? false) {
             dot?.style.transform = 'translateX(100%)';
@@ -195,12 +183,12 @@ class ConfigService {
       }
     }
 
-    (content.querySelector('#cancelBtn') as ButtonElement).onClick.listen((_) {
+    (popup.querySelector('#cancelBtn') as ButtonElement).onClick.listen((_) {
       popup.remove();
     });
 
-    (content.querySelector('#saveBtn') as ButtonElement).onClick.listen((_) {
-      saveConfig(content);
+    (popup.querySelector('#saveBtn') as ButtonElement).onClick.listen((_) {
+      saveConfig(popup);
       popup.remove();
     });
   }
@@ -223,7 +211,6 @@ class ConfigService {
         inputs.writeln('</div>'); // Close the grid for prompt fields
         inputs.writeln('''
 
-    <div class="gap-6">
     <div class="col-span-full mb-6 md:mb-06">
       <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
         $label
@@ -232,26 +219,22 @@ class ConfigService {
                 id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
       <p class="text-red-500 text-xs italic" id="${key}Error"></p>
     </div>
-    </div>
+
   ''');
         inputs.writeln(
             '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">'); // Reopen the grid
       } else if (isCheckbox) {
         inputs.writeln('''
-      <div class="col-span-2">
-        <div class="flex items-center space-x-2">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-            <div class="text-gray-700 font-medium">$label</div>
-          </label>
-          
-          <div type="checkboxWrapper" class="w-14 h-8 ${value == true ? 'bg-green-500' : 'bg-gray-600'} rounded-full relative cursor-pointer">
-            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out" style="transform: ${value == true ? 'translateX(100%)' : 'translateX(0)'}">
-             <input type="checkbox" id="$key" class="sr-only" ${value == true ? 'checked' : ''} />
-            </div>
-        
-          </div>
-        </div>
-      </div>
+<div class="col-span-2 flex items-center py-4 border-t border-b border-gray-200">
+  <label class="flex-grow text-gray-700 text-sm font-bold" for="$key">
+    <div class="text-gray-700 font-medium">$label</div>
+  </label>
+  <div type="checkboxWrapper" class="w-14 h-8 ${value == true ? 'bg-green-500' : 'bg-gray-600'} rounded-full relative cursor-pointer flex items-center">
+    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out" style="transform: ${value == true ? 'translateX(100%)' : 'translateX(0)'}">
+      <input type="checkbox" id="$key" class="sr-only" ${value == true ? 'checked' : ''} />
+    </div>
+  </div>
+</div>
     ''');
       } else {
         final isInt = value is int;
@@ -474,9 +457,9 @@ class ConfigService {
       final result =
           await dio.post('$baseUrl/config', data: newConfig.toJson());
       if (result.statusCode == 200) {
-        currentConfig = newConfig;
+        final serverConfig = Configuration.fromJson(result.data);
+        currentConfig = serverConfig;
         print('Configuration saved successfully');
-        (content.querySelector('#popup') as DivElement).remove();
       }
     } catch (e) {
       print('Error saving configuration: $e');
