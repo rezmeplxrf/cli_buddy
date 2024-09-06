@@ -25,7 +25,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       logitBias: (json['logit_bias'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toInt()),
       ),
-      logprobs: (json['logprobs'] as num?)?.toInt(),
+      logprobs: json['logprobs'] as bool?,
       topLogprobs: (json['top_logprobs'] as num?)?.toInt(),
       responseFormat: json['response_format'] as Map<String, dynamic>?,
       stop: json['stop'] as List<dynamic>?,

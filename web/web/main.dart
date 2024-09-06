@@ -183,7 +183,6 @@ class ConfigService {
 
     (content.querySelector('#saveBtn') as ButtonElement).onClick.listen((_) {
       saveConfig(content);
-      popup.remove();
     });
   }
 
@@ -191,85 +190,101 @@ class ConfigService {
     final inputs = StringBuffer();
     inputs.writeln('<div class="grid grid-cols-1 md:grid-cols-2 gap-6">');
 
-    currentConfig?.toJson().forEach((key, value) {
-      final label = Helper.capitalizeFirstLetter(key.replaceAll('_', ' '));
-      final isPromptField = key.contains('prompt');
+    final config = currentConfig;
+    if (config == null) return '';
 
-      if (isPromptField) {
+    void addInput(String key, String label, String type, dynamic value,
+        {bool isTextArea = false,
+        bool isCheckbox = false,
+        double? min,
+        double? max,
+        int? minInt,
+        int? maxInt}) {
+      if (isTextArea) {
         inputs.writeln('</div>'); // Close the grid for prompt fields
         inputs.writeln('''
-        <div class="col-span-full mb-6">
+      <div class="col-span-full mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+          $label
+        </label>
+        <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                  id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
+        <p class="text-red-500 text-xs italic" id="${key}Error"></p>
+      </div>
+    ''');
+        inputs.writeln(
+            '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">'); // Reopen the grid
+      } else if (isCheckbox) {
+        inputs.writeln('''
+        <div class="col-span-1">
+          <label class="flex items-center space-x-3 cursor-pointer">
+            <div class="relative">
+              <input type="checkbox" id="$key" class="sr-only" ${value ? 'checked' : ''}>
+              <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
+            </div>
+            <span class="text-gray-700 font-medium">$label</span>
+          </label>
+        </div>
+      ''');
+      } else {
+        final isInt = value is int;
+        final step = isInt ? 'step="1"' : 'step="0.1"';
+        final minAttr = min != null ? 'min="$min"' : '';
+        final maxAttr = max != null ? 'max="$max"' : '';
+        final minIntAttr = minInt != null ? 'min="$minInt"' : '';
+        final maxIntAttr = maxInt != null ? 'max="$maxInt"' : '';
+        inputs.writeln('''
+        <div class="col-span-1">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
             $label
           </label>
-          <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-                    id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
+          <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                 id="$key" type="$type" value="${value?.toString() ?? ''}" $step $minAttr $maxAttr $minIntAttr $maxIntAttr placeholder="${_getExampleValue(key)}">
+          <p class="text-red-500 text-xs italic" id="${key}Error"></p>
         </div>
       ''');
-        inputs.writeln(
-            '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">'); // Reopen the grid
-      } else {
-        if (value is bool) {
-          inputs.writeln('''
-          <div class="col-span-1">
-            <label class="flex items-center space-x-3 cursor-pointer">
-              <div class="relative">
-                <input type="checkbox" id="$key" class="sr-only" ${value ? 'checked' : ''}>
-                <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
-              </div>
-              <span class="text-gray-700 font-medium">$label</span>
-            </label>
-          </div>
-        ''');
-          if (key == 'temperature') {
-            inputs.writeln('''
-    <div class="col-span-1">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-        $label
-      </label>
-      <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-             id="$key" type="number" min="0" step="0.1" value="${value.toString()}" placeholder="${_getExampleValue(key)}">
-    </div>
-  ''');
-          } else if (key == 'max_messages') {
-            inputs.writeln('''
-    <div class="col-span-1">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-        $label
-      </label>
-      <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-             id="$key" type="number" min="0" step="1" value="${value.toString()}" placeholder="${_getExampleValue(key)}">
-    </div>
-  ''');
-          }
-        } else if (key == 'response_format') {
-          inputs.writeln('''
-          <div class="col-span-1">
-            <label class="flex items-center space-x-3 cursor-pointer">
-              <div class="relative">
-                <input type="checkbox" id="$key" class="sr-only" ${value != null ? 'checked' : ''}>
-                <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
-              </div>
-              <span class="text-gray-700 font-medium">Json Output</span>
-            </label>
-          </div>
-        ''');
-        } else {
-          final inputType = value is int || value is double ? 'number' : 'text';
-          inputs.writeln('''
-          <div class="col-span-1">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-              $label
-            </label>
-            <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-                   id="$key" type="$inputType" value="${value?.toString() ?? ''}" placeholder="${_getExampleValue(key)}">
-          </div>
-        ''');
-        }
       }
-    });
+    }
+
+    addInput(
+        'secret_env_path', 'Secret Env Path', 'text', config.secretEnvPath);
+    addInput('max_messages', 'Max Messages', 'number', config.maxMessages,
+        minInt: 1);
+    addInput('default_model', 'Default Model', 'text', config.defaultModel);
+    addInput('temperature', 'Temperature', 'number', config.temperature,
+        min: 0.0, max: 2.0);
+    addInput('max_tokens', 'Max Tokens', 'number', config.maxTokens, minInt: 1);
+    addInput('top_p', 'Top P', 'number', config.topP, min: 0.0, max: 1.0);
+    addInput('top_k', 'Top K', 'number', config.topK, minInt: 0);
+    addInput('frequency_penalty', 'Frequency Penalty', 'number',
+        config.frequencyPenalty,
+        min: -2.0, max: 2.0);
+    addInput('presence_penalty', 'Presence Penalty', 'number',
+        config.presencePenalty,
+        min: -2.0, max: 2.0);
+    addInput('repetition_penalty', 'Repetition Penalty', 'number',
+        config.repetitionPenalty,
+        min: 0.0, max: 2.0);
+    addInput('min_p', 'Min P', 'number', config.minP, min: 0.0, max: 1.0);
+    addInput('top_a', 'Top A', 'number', config.topA, min: 0.0, max: 1.0);
+    addInput('seed', 'Seed', 'number', config.seed);
+    addInput('logit_bias', 'Logit Bias', 'text', jsonEncode(config.logitBias));
+    addInput('logprobs', 'Logprobs', 'checkbox', config.logprobs);
+    addInput('top_logprobs', 'Top Logprobs', 'number', config.topLogprobs,
+        minInt: 0, maxInt: 20);
+    addInput('stop', 'Stop', 'text', config.stop?.join(', '));
+    addInput('save_session', 'Save Session', 'checkbox', config.saveSession);
+    addInput('response_format', 'Response Format', 'checkbox',
+        config.responseFormat != null);
+    addInput('cmd_prompt', 'Cmd Prompt', 'text', config.cmdPrompt,
+        isTextArea: true);
+    addInput('explain_prompt', 'Explain Prompt', 'text', config.explainPrompt,
+        isTextArea: true);
+    addInput('code_prompt', 'Code Prompt', 'text', config.codePrompt,
+        isTextArea: true);
+    addInput('chat_prompt', 'Chat Prompt', 'text', config.chatPrompt,
+        isTextArea: true);
 
     inputs.writeln('</div>'); // Close the final grid
     return inputs.toString();
@@ -391,6 +406,7 @@ class ConfigService {
     } else {
       formData['logit_bias'] = null;
     }
+
     // Handle nullable int fields
     for (var field in [
       'max_tokens',
@@ -417,7 +433,6 @@ class ConfigService {
         formData[field] = double.tryParse(formData[field]);
       }
     }
-
     try {
       final newConfig = Configuration.fromJson(formData);
       final result =
@@ -425,6 +440,7 @@ class ConfigService {
       if (result.statusCode == 200) {
         currentConfig = newConfig;
         print('Configuration saved successfully');
+        (content.querySelector('#popup') as DivElement).remove();
       }
     } catch (e) {
       print('Error saving configuration: $e');

@@ -51,7 +51,7 @@ mixin _$Configuration {
   @JsonKey(defaultValue: null, name: 'logit_bias')
   Map<String, int>? get logitBias => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'logprobs')
-  int? get logprobs => throw _privateConstructorUsedError;
+  bool? get logprobs => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'top_logprobs')
   int? get topLogprobs => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'response_format')
@@ -106,7 +106,7 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(defaultValue: null, name: 'seed') int? seed,
       @JsonKey(defaultValue: null, name: 'logit_bias')
       Map<String, int>? logitBias,
-      @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
+      @JsonKey(defaultValue: null, name: 'logprobs') bool? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
       Map<String, dynamic>? responseFormat,
@@ -224,7 +224,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       logprobs: freezed == logprobs
           ? _value.logprobs
           : logprobs // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as bool?,
       topLogprobs: freezed == topLogprobs
           ? _value.topLogprobs
           : topLogprobs // ignore: cast_nullable_to_non_nullable
@@ -287,7 +287,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(defaultValue: null, name: 'seed') int? seed,
       @JsonKey(defaultValue: null, name: 'logit_bias')
       Map<String, int>? logitBias,
-      @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
+      @JsonKey(defaultValue: null, name: 'logprobs') bool? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
       Map<String, dynamic>? responseFormat,
@@ -403,7 +403,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       logprobs: freezed == logprobs
           ? _value.logprobs
           : logprobs // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as bool?,
       topLogprobs: freezed == topLogprobs
           ? _value.topLogprobs
           : topLogprobs // ignore: cast_nullable_to_non_nullable
@@ -539,7 +539,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   @JsonKey(defaultValue: null, name: 'logprobs')
-  final int? logprobs;
+  final bool? logprobs;
   @override
   @JsonKey(defaultValue: null, name: 'top_logprobs')
   final int? topLogprobs;
@@ -701,7 +701,7 @@ abstract class _Configuration implements Configuration {
       @JsonKey(defaultValue: null, name: 'seed') final int? seed,
       @JsonKey(defaultValue: null, name: 'logit_bias')
       final Map<String, int>? logitBias,
-      @JsonKey(defaultValue: null, name: 'logprobs') final int? logprobs,
+      @JsonKey(defaultValue: null, name: 'logprobs') final bool? logprobs,
       @JsonKey(defaultValue: null, name: 'top_logprobs') final int? topLogprobs,
       @JsonKey(defaultValue: null, name: 'response_format')
       final Map<String, dynamic>? responseFormat,
@@ -765,7 +765,7 @@ abstract class _Configuration implements Configuration {
   Map<String, int>? get logitBias;
   @override
   @JsonKey(defaultValue: null, name: 'logprobs')
-  int? get logprobs;
+  bool? get logprobs;
   @override
   @JsonKey(defaultValue: null, name: 'top_logprobs')
   int? get topLogprobs;

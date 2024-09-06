@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'config.freezed.dart';
@@ -17,7 +16,11 @@ class Configuration with _$Configuration {
     @JsonKey(defaultValue: 0.3, name: 'temperature')
     required double temperature,
     @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
-    @JsonKey(defaultValue: null, name: 'top_p') int? topP,
+    @JsonKey(
+      defaultValue: null,
+      name: 'top_p',
+    )
+    int? topP,
     @JsonKey(defaultValue: null, name: 'top_k') int? topK,
     @JsonKey(defaultValue: null, name: 'frequency_penalty')
     double? frequencyPenalty,
@@ -30,18 +33,26 @@ class Configuration with _$Configuration {
     @JsonKey(defaultValue: null, name: 'seed') int? seed,
     @JsonKey(defaultValue: null, name: 'logit_bias')
     Map<String, int>? logitBias,
-    @JsonKey(defaultValue: null, name: 'logprobs') int? logprobs,
+    @JsonKey(defaultValue: null, name: 'logprobs') bool? logprobs,
     @JsonKey(defaultValue: null, name: 'top_logprobs') int? topLogprobs,
     @JsonKey(defaultValue: null, name: 'response_format')
     Map<String, dynamic>? responseFormat,
     @JsonKey(defaultValue: null, name: 'stop') List<dynamic>? stop,
-    @JsonKey(name: 'cmd_prompt',)
+    @JsonKey(
+      name: 'cmd_prompt',
+    )
     String? cmdPrompt,
-    @JsonKey(name: 'explain_prompt', )
+    @JsonKey(
+      name: 'explain_prompt',
+    )
     String? explainPrompt,
-    @JsonKey(name: 'code_prompt', )
+    @JsonKey(
+      name: 'code_prompt',
+    )
     String? codePrompt,
-    @JsonKey(name: 'chat_prompt', )
+    @JsonKey(
+      name: 'chat_prompt',
+    )
     String? chatPrompt,
   }) = _Configuration;
 

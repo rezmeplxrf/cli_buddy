@@ -196,7 +196,7 @@ class SetCommand extends Command<int> {
         ? jsonDecode(argResults!['logit-bias'] as String)
             as Map<String, int>
         : null;
-    final logprobs = int.tryParse(argResults?['logprobs'] as String? ?? '');
+    final logprobs = bool.tryParse(argResults?['logprobs'] as String? ?? '');
     final topLogprobs =
         int.tryParse(argResults?['top-logprobs'] as String? ?? '');
     final formatArg = argResults?['response-format'] as String?;
