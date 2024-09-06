@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:process_run/shell.dart';
 
 /// {@template open_command}
 ///
@@ -51,9 +52,41 @@ class OpenCommand extends Command<int> {
       await server.stop();
       exit(0);
     });
+    // open the webpage with default browser
+    final shell = Shell();
+    await shell.run('open http://127.0.0.1:43210');
 
-    // Keep the server running indefinitely
+    await _open();
     final completer = Completer<int>();
     return completer.future;
+  }
+}
+
+Future<void> _open() async {
+  final shell = Shell();
+  const url = 'http://127.0.0.1:43210';
+
+  if (Platform.isMacOS) {
+    await shell.run('open $url');
+  } else if (Platform.isLinux) {
+    try {
+      await shell.run('xdg-open $url');
+    } catch (e) {
+      print('xdg-open failed, trying gnome-open...');
+      try {
+        await shell.run('gnome-open $url');
+      } catch (e) {
+        print('gnome-open failed, trying kde-open...');
+        try {
+          await shell.run('kde-open $url');
+        } catch (e) {
+          print('All methods failed to open the URL on Linux: $e');
+        }
+      }
+    }
+  } else if (Platform.isWindows) {
+    await shell.run('start $url');
+  } else {
+    throw UnsupportedError('Unsupported platform');
   }
 }
