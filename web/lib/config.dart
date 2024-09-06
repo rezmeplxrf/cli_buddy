@@ -5,6 +5,7 @@ part 'config.g.dart';
 
 @freezed
 class Configuration with _$Configuration {
+    @JsonSerializable(includeIfNull: false)
   const factory Configuration({
     @JsonKey(name: 'secret_env_path', defaultValue: null)
     required String? secretEnvPath,

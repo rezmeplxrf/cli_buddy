@@ -142,7 +142,7 @@ class ConfigService {
       ..className =
           'bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col';
 
-    content.innerHtml = '''
+    content.setInnerHtml('''
     <div class="p-6 border-b">
       <h2 class="text-2xl font-bold text-gray-800">Edit Configuration</h2>
     </div>
@@ -155,27 +155,45 @@ class ConfigService {
       <button id="cancelBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200">Cancel</button>
       <button id="saveBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">Save</button>
     </div>
-  ''';
+  ''', treeSanitizer: NodeTreeSanitizer.trusted);
 
     popup.append(content);
     document.body?.append(popup);
 
-    content
-        .querySelectorAll('input[type="checkbox"]')
-        .forEach((Element checkbox) {
-      (checkbox as InputElement).onChange.listen((event) {
-        final dot = checkbox.parent?.querySelector('.dot');
-        if (dot != null) {
-          if ((checkbox).checked ?? false) {
-            dot.style.transform = 'translateX(100%)';
-            dot.style.backgroundColor = '#48bb78';
-          } else {
-            dot.style.transform = 'translateX(0)';
-            dot.style.backgroundColor = '#ffffff';
-          }
+    // Make checkboxes interactive
+    final checkboxes = content.querySelectorAll('div[type="checkboxWrapper"]');
+    print('length: ${checkboxes.length}');
+    if (checkboxes.isNotEmpty) {
+      for (var checkbox in checkboxes) {
+        //  output  class: sr-only, attributes: {type: checkbox, id: logprobs, class: sr-only}, id: logprobs
+        final input = checkbox.querySelector('input') as InputElement?;
+        final toggle = checkbox as DivElement?;
+        final dot = toggle?.querySelector('.dot') as DivElement?;
+        print('input: $input, toggle: $toggle, dot: $dot');
+
+        // Set initial state
+        if (input?.checked ?? false) {
+          dot?.style.transform = 'translateX(100%)';
+          toggle?.classes.add('bg-green-500');
+          toggle?.classes.remove('bg-gray-600');
         }
-      });
-    });
+
+        // Add click event listener
+        toggle?.onClick.listen((_) {
+          print('checkbox state: ${input?.checked}');
+          input?.checked = !(input.checked ?? false);
+          if (input?.checked ?? false) {
+            dot?.style.transform = 'translateX(100%)';
+            toggle.classes.add('bg-green-500');
+            toggle.classes.remove('bg-gray-600');
+          } else {
+            dot?.style.transform = 'translateX(0)';
+            toggle.classes.remove('bg-green-500');
+            toggle.classes.add('bg-gray-600');
+          }
+        });
+      }
+    }
 
     (content.querySelector('#cancelBtn') as ButtonElement).onClick.listen((_) {
       popup.remove();
@@ -183,6 +201,7 @@ class ConfigService {
 
     (content.querySelector('#saveBtn') as ButtonElement).onClick.listen((_) {
       saveConfig(content);
+      popup.remove();
     });
   }
 
@@ -203,30 +222,37 @@ class ConfigService {
       if (isTextArea) {
         inputs.writeln('</div>'); // Close the grid for prompt fields
         inputs.writeln('''
-      <div class="col-span-full mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-          $label
-        </label>
-        <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-                  id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
-        <p class="text-red-500 text-xs italic" id="${key}Error"></p>
-      </div>
-    ''');
+
+    <div class="gap-6">
+    <div class="col-span-full mb-6 md:mb-06">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+        $label
+      </label>
+      <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+                id="$key" rows="4" placeholder="${_getExampleValue(key)}">${value ?? ''}</textarea>
+      <p class="text-red-500 text-xs italic" id="${key}Error"></p>
+    </div>
+    </div>
+  ''');
         inputs.writeln(
             '<div class="grid grid-cols-1 md:grid-cols-2 gap-6">'); // Reopen the grid
       } else if (isCheckbox) {
         inputs.writeln('''
-        <div class="col-span-1">
-          <label class="flex items-center space-x-3 cursor-pointer">
-            <div class="relative">
-              <input type="checkbox" id="$key" class="sr-only" ${value ? 'checked' : ''}>
-              <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out"></div>
-            </div>
-            <span class="text-gray-700 font-medium">$label</span>
+      <div class="col-span-2">
+        <div class="flex items-center space-x-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+            <div class="text-gray-700 font-medium">$label</div>
           </label>
+          
+          <div type="checkboxWrapper" class="w-14 h-8 ${value == true ? 'bg-green-500' : 'bg-gray-600'} rounded-full relative cursor-pointer">
+            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 ease-in-out" style="transform: ${value == true ? 'translateX(100%)' : 'translateX(0)'}">
+             <input type="checkbox" id="$key" class="sr-only" ${value == true ? 'checked' : ''} />
+            </div>
+        
+          </div>
         </div>
-      ''');
+      </div>
+    ''');
       } else {
         final isInt = value is int;
         final step = isInt ? 'step="1"' : 'step="0.1"';
@@ -235,18 +261,19 @@ class ConfigService {
         final minIntAttr = minInt != null ? 'min="$minInt"' : '';
         final maxIntAttr = maxInt != null ? 'max="$maxInt"' : '';
         inputs.writeln('''
-        <div class="col-span-1">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
-            $label
-          </label>
-          <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-                 id="$key" type="$type" value="${value?.toString() ?? ''}" $step $minAttr $maxAttr $minIntAttr $maxIntAttr placeholder="${_getExampleValue(key)}">
-          <p class="text-red-500 text-xs italic" id="${key}Error"></p>
-        </div>
-      ''');
+      <div class="col-span-1">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="$key">
+          $label
+        </label>
+        <input class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
+               id="$key" type="$type" value="${value?.toString() ?? ''}" $step $minAttr $maxAttr $minIntAttr $maxIntAttr placeholder="${_getExampleValue(key)}">
+        <p class="text-red-500 text-xs italic" id="${key}Error"></p>
+      </div>
+    ''');
       }
     }
 
+    // Add your input fields here
     addInput(
         'secret_env_path', 'Secret Env Path', 'text', config.secretEnvPath);
     addInput('max_messages', 'Max Messages', 'number', config.maxMessages,
@@ -270,13 +297,16 @@ class ConfigService {
     addInput('top_a', 'Top A', 'number', config.topA, min: 0.0, max: 1.0);
     addInput('seed', 'Seed', 'number', config.seed);
     addInput('logit_bias', 'Logit Bias', 'text', jsonEncode(config.logitBias));
-    addInput('logprobs', 'Logprobs', 'checkbox', config.logprobs);
     addInput('top_logprobs', 'Top Logprobs', 'number', config.topLogprobs,
         minInt: 0, maxInt: 20);
     addInput('stop', 'Stop', 'text', config.stop?.join(', '));
-    addInput('save_session', 'Save Session', 'checkbox', config.saveSession);
+    addInput('logprobs', 'Logprobs', 'checkbox', config.logprobs,
+        isCheckbox: true);
+    addInput('save_session', 'Save Session', 'checkbox', config.saveSession,
+        isCheckbox: true);
     addInput('response_format', 'Response Format', 'checkbox',
-        config.responseFormat != null);
+        config.responseFormat != null,
+        isCheckbox: true);
     addInput('cmd_prompt', 'Cmd Prompt', 'text', config.cmdPrompt,
         isTextArea: true);
     addInput('explain_prompt', 'Explain Prompt', 'text', config.explainPrompt,
@@ -435,6 +465,12 @@ class ConfigService {
     }
     try {
       final newConfig = Configuration.fromJson(formData);
+      // check if the new config is different from the current config
+      if (newConfig == currentConfig) {
+        print('Configuration unchanged');
+        return;
+      }
+
       final result =
           await dio.post('$baseUrl/config', data: newConfig.toJson());
       if (result.statusCode == 200) {
@@ -522,12 +558,13 @@ class SessionService {
             .substring(0, min(30, firstUserMessage.content.length))
         : 'New Chat';
 
-    element.innerHtml = '''
+    element
+      ..setInnerHtml('''
     <div class="session-title font-semibold mb-1">$title${firstUserMessage != null && firstUserMessage.content.length > 30 ? '...' : ''}</div>
     <div class="session-info text-xs text-gray-400"><div>ID: ${session.id}</div>
     <div>Messages: ${session.messages.length}</div><div>Model: ${session.model}</div></div>
-  ''';
-    element.style.animationDelay = '${index * 0.05}s';
+  ''', treeSanitizer: NodeTreeSanitizer.trusted)
+      ..style.animationDelay = '${index * 0.05}s';
   }
 
   LIElement createSessionElement(ChatSession session, int index) {
@@ -639,24 +676,14 @@ class ChatService {
         .toLocal()
         .toString();
 
-    div.innerHtml = '''
+    div.setInnerHtml('''
     <div class="font-bold text-blue-600 mb-1">${Helper.capitalizeFirstLetter(message.role.name)}</div>
     <div class="text-sm text-gray-500 mb-2">$timestamp</div>
-    <div class="prose">${md.markdownToHtml(message.content)}</div>''';
-
-    if (message.usage != null) {
-      div.innerHtml = '''
-    ${div.innerHtml}  
-    <div class="text-sm text-gray-500 mt-2 pt-2 border-t">
-    Prompt Tokens: ${message.usage?.promptTokens ?? 0}, 
-    Completion Tokens: ${message.usage?.completionTokens ?? 0}, 
-    Total Tokens: ${message.usage?.totalTokens ?? 0},
-    Response Time: ${message.usage?.responseTime ?? 0}s</div>''';
-    }
-
-    sharedStates.chatContainer.children.add(div);
-    sharedStates.chatContainer.scrollTop =
-        sharedStates.chatContainer.scrollHeight;
+    <div class="prose">${md.markdownToHtml(message.content)}</div>''',
+        treeSanitizer: NodeTreeSanitizer.trusted);
+    sharedStates.chatContainer
+      ..children.add(div)
+      ..scrollTop = sharedStates.chatContainer.scrollHeight;
     addCodeBlockButtons(div);
   }
 
@@ -664,7 +691,7 @@ class ChatService {
     sharedStates.currentMessageElement = DivElement()
       ..className =
           'message assistant-message bg-white rounded-lg shadow-md p-4 mb-4'
-      ..innerHtml = '''
+      ..setInnerHtml('''
         <div class="font-bold text-blue-600 mb-1">Assistant</div>
         <div class="text-sm text-gray-500 mb-2">${DateTime.now().toLocal()}</div>
         <div class="flex items-center">
@@ -672,7 +699,7 @@ class ChatService {
             <div>Thinking...</div>
         </div>
         <div class="prose"></div>
-      ''';
+      ''', treeSanitizer: NodeTreeSanitizer.trusted);
     if (sharedStates.currentMessageElement != null) {
       sharedStates.chatContainer.children
           .add(sharedStates.currentMessageElement!);
@@ -707,12 +734,12 @@ class ChatService {
       if (usage != null) {
         final usageDiv = DivElement()
           ..className = 'text-sm text-gray-500 mt-2 pt-2 border-t'
-          ..innerHtml = '''
+          ..setInnerHtml('''
           Prompt Tokens: ${usage.promptTokens ?? 0}, 
           Completion Tokens: ${usage.completionTokens ?? 0}, 
           Total Tokens: ${usage.totalTokens ?? 0},
           Response Time: ${usage.responseTime ?? 0}s
-        ''';
+        ''', treeSanitizer: NodeTreeSanitizer.trusted);
         sharedStates.currentMessageElement?.children.add(usageDiv);
       }
       sharedStates.chatContainer.scrollTop =
