@@ -8,6 +8,10 @@ import 'package:collection/collection.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:dio/dio.dart';
 
+// TODO:
+// Removing individual session
+// Editing or removing indivisual message and send the message with the modified chatsession
+// Make endpoint for saving to a file and running the code
 void main() {
   init();
 }
@@ -33,7 +37,9 @@ void init() {
   sharedStates.chatInput.onKeyDown.listen((event) {
     if (event.keyCode == KeyCode.ENTER && !event.shiftKey) {
       event.preventDefault();
-      chatService.sendMessage();
+      if (sharedStates.isDone) {
+        chatService.sendMessage();
+      }
     }
   });
 
@@ -638,6 +644,9 @@ class SessionService {
   }
 
   Future<void> removeAllSessions() async {
+    final confirm =
+        window.confirm('Are you sure you want to remove all sessions?');
+    if (!confirm) return;
     try {
       final response = await dio.post(
         '$baseUrl/remove-all',
@@ -698,6 +707,7 @@ class SharedStates {
   DivElement? currentMessageElement;
   var chunkBuffer = StringBuffer();
   var isFirstChunk = true;
+  var isDone = true;
 }
 
 class ChatService {
@@ -709,6 +719,18 @@ class ChatService {
     sharedStates.chatContainer.children.clear();
     for (final message in session.messages) {
       addMessageToChat(message);
+    }
+  }
+
+  void updateSendButtonState() {
+    if (sharedStates.isDone) {
+      sharedStates.sendButton.removeAttribute('disabled');
+      sharedStates.sendButton.classes
+          .removeAll(['opacity-50', 'cursor-not-allowed']);
+    } else {
+      sharedStates.sendButton.setAttribute('disabled', 'true');
+      sharedStates.sendButton.classes
+          .addAll(['opacity-50', 'cursor-not-allowed']);
     }
   }
 
@@ -795,6 +817,8 @@ class ChatService {
     }
     sharedStates.chunkBuffer = StringBuffer();
     sharedStates.currentMessageElement = null;
+    sharedStates.isDone = true;
+    updateSendButtonState();
   }
 
   void sendMessage() {
@@ -810,6 +834,8 @@ class ChatService {
       addMessageToChat(message);
       sharedStates.chatInput.value = '';
       adjustTextareaHeight();
+      sharedStates.isDone = false;
+      updateSendButtonState();
     }
   }
 
