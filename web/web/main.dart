@@ -7,4 +7,6 @@ import 'package:buddy_gui/service/global.dart' show init;
 
 void main() {
   init();
+
+  
 }

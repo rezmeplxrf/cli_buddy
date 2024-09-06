@@ -11,36 +11,50 @@ class WebSocketService {
   WebSocket? socket;
   bool isWebSocketConnected = false;
   List<Message> messageQueue = [];
+  List<StreamSubscription?> subscriptions = [];
 
   void connectWebSocket() {
+    if (isWebSocketConnected) {
+      return;
+    }
+    if (socket != null) {
+      print('closing existing socket');
+      socket?.close();
+      socket = null;
+      subscriptions.clear();
+    }
+
     socket = WebSocket(wsUrl);
 
-    socket?.onOpen.listen((event) {
-      print('WebSocket connection established');
-      isWebSocketConnected = true;
-      updateConnectionStatus;
-      processMessageQueue();
-    });
-
-    socket?.onClose.listen((event) {
-      print('WebSocket connection closed');
-      isWebSocketConnected = false;
-      updateConnectionStatus;
-      Future.delayed(Duration(seconds: 3), () => connectWebSocket());
-    });
-
-    socket?.onError.listen((e) {
-      print('WebSocket error: $e');
-    });
-
-    socket?.onMessage.listen((MessageEvent event) {
-      try {
-        final data = jsonDecode(event.data as String);
-        chatService.handleWebSocketMessage(data);
-      } catch (error) {
-        print('Error parsing WebSocket message: $error');
-      }
-    });
+    subscriptions.addAll([
+      socket?.onOpen.listen((event) {
+        event.stopPropagation();
+        print('WebSocket connection established');
+        isWebSocketConnected = true;
+        updateConnectionStatus;
+        processMessageQueue();
+      }),
+      socket?.onClose.listen((event) {
+        event.stopPropagation();
+        print('WebSocket connection closed');
+        isWebSocketConnected = false;
+        updateConnectionStatus;
+        Future.delayed(Duration(seconds: 3), () => connectWebSocket());
+      }),
+      socket?.onError.listen((event) {
+        event.stopPropagation();
+        isWebSocketConnected = false;
+        print('WebSocket error: $event');
+      }),
+      socket?.onMessage.listen((MessageEvent event) {
+        try {
+          final data = jsonDecode(event.data as String);
+          chatService.handleWebSocketMessage(data);
+        } catch (error) {
+          print('Error parsing WebSocket message: $error');
+        }
+      })
+    ]);
   }
 
   void processMessageQueue() {
@@ -51,13 +65,11 @@ class WebSocketService {
   }
 
   void sendMessage(Message message) {
-    print("Message from client: $message");
+    print("user message: $message");
     if (isWebSocketConnected) {
       sharedStates.currentSession = sharedStates.currentSession?.copyWith(
         messages: [...sharedStates.currentSession!.messages, message],
       );
-
-      print("sharedStates.currentSession: ${sharedStates.currentSession}");
       socket?.send(jsonEncode(sharedStates.currentSession));
     } else {
       messageQueue.add(message);
@@ -75,5 +87,4 @@ class WebSocketService {
       sharedStates.connectionStatus.classes.remove('bg-green-500');
     }
   }
-  
 }

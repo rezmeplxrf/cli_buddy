@@ -10,6 +10,8 @@ class SessionService {
   factory SessionService() => _instance;
   SessionService._internal();
   final sharedStates = SharedStates();
+  final List<StreamSubscription> sessionsSubscriptions = [];
+  final List<StreamSubscription> dropDownSubscriptions = [];
 
   Future<void> fetchSessions() async {
     try {
@@ -28,6 +30,8 @@ class SessionService {
   }
 
   void populateSidebar(List<ChatSession> sessions) {
+    sessionsSubscriptions.clear();
+
     sessions.sort((a, b) => b.id - a.id);
     final currentSessionIds = sessions.map((s) => s.id).toSet();
     sharedStates.sessionList.children.removeWhere((element) {
@@ -84,26 +88,28 @@ class SessionService {
       ..style.animationDelay = '${index * 0.05}s';
 
     final dotIcon = element.querySelector('.dot-icon');
+    if (dotIcon != null) {
+      sessionsSubscriptions.add(element.onMouseEnter.listen((event) {
+        event.stopPropagation();
+        dotIcon.classes.remove('hidden');
+      }));
 
-    element.onMouseEnter.listen((_) {
-      dotIcon?.classes.remove('hidden');
-    });
+      sessionsSubscriptions.add(element.onMouseLeave.listen((event) {
+        event.stopPropagation();
+        dotIcon.classes.add('hidden');
+      }));
 
-    element.onMouseLeave.listen((_) {
-      dotIcon?.classes.add('hidden');
-    });
-
-    dotIcon?.onClick.listen((event) {
-      event.stopPropagation();
-      toggleDropdownMenu(dotIcon);
-    });
+      sessionsSubscriptions.add(dotIcon.onClick.listen((event) {
+        event.stopPropagation();
+        toggleDropdownMenu(dotIcon);
+      }));
+    }
   }
 
   void toggleDropdownMenu(Element dotIcon) {
     closeAllDropdowns();
-
-    final dropdownId =
-        'dropdown-${dotIcon.parent?.getAttribute('data-session-id')}';
+    final id = dotIcon.parent?.getAttribute('data-session-id');
+    final dropdownId = 'dropdown-${id}';
     var dropdown = document.getElementById(dropdownId);
 
     if (dropdown == null) {
@@ -112,27 +118,27 @@ class SessionService {
         ..className = 'fixed bg-white rounded-md shadow-lg z-50'
         ..setInnerHtml('''
           <ul>
-            <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 1</li>
-            <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 2</li>
-            <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Option 3</li>
+            <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Locate</li>
+            <li class="px-4 py-2 hover:bg-gray-200 cursor-pointer">Delete</li>
           </ul>
         ''', treeSanitizer: NodeTreeSanitizer.trusted);
       document.body?.append(dropdown);
+      final dropdownList = dropdown.querySelector('ul');
+      if (dropdownList != null) {
+        dropDownSubscriptions.add(dropdownList.onClick.listen((event) {
+          event.stopPropagation();
 
-      // Add a single event listener to the parent ul element
-      dropdown.querySelector('ul')?.onClick.listen((event) {
-  
-        event.stopPropagation();
-
-        if (event.target is LIElement) {
-       
-          final option = event.target as LIElement;
-          // Handle option click here
-          print('Option clicked: ${option.text}');
-          closeAllDropdowns();
-          
-        }
-      });
+          if (event.target is LIElement) {
+            final option = event.target as LIElement;
+            if (option.text == 'Locate') {
+              print('Locate');
+            } else if (option.text == 'Delete') {
+              removeSession(int.parse(id!));
+            }
+            closeAllDropdowns();
+          }
+        }));
+      }
     }
     final rect = dotIcon.getBoundingClientRect();
     dropdown.style
@@ -140,19 +146,21 @@ class SessionService {
       ..top = '${rect.bottom}px'
       ..display = dropdown.style.display == 'none' ? 'block' : 'none';
 
-    // Close dropdown when clicking outside
-    window.onClick.listen((event) {
+    dropDownSubscriptions.add(window.onClick.listen((event) {
+      event.stopPropagation();
       if (!dotIcon.contains(event.target as Node) &&
           !dropdown!.contains(event.target as Node)) {
         closeAllDropdowns();
       }
-    });
+    }));
   }
 
   void closeAllDropdowns() {
     document.querySelectorAll('[id^="dropdown-"]').forEach((dropdown) {
       (dropdown).style.display = 'none';
     });
+    dropDownSubscriptions.clear();
+    print('cleared');
   }
 
   LIElement createSessionElement(ChatSession session, int index) {
@@ -162,9 +170,32 @@ class SessionService {
       ..setAttribute('data-session-id', session.id.toString());
 
     updateSessionElement(li, session, index);
-    li.onClick.listen((_) => selectSession(session.id));
+    sessionsSubscriptions.add(li.onClick.listen((event) {
+      event.stopPropagation();
+      selectSession(session.id);
+    }));
 
     return li;
+  }
+
+  Future<void> removeSession(int sessionId) async {
+    try {
+      final response = await dio.post(
+        '$baseUrl/remove-session',
+        data: {'sessionId': sessionId},
+      );
+      if (response.statusCode != 200) {
+        throw Exception(response.statusCode);
+      } else {
+        sharedStates.sessions.removeWhere((s) => s.id == sessionId);
+
+        populateSidebar(sharedStates.sessions);
+        await createNewSession();
+      }
+    } catch (e) {
+      print('Error removing session $sessionId: $e');
+      window.alert('Error removing session $sessionId: $e');
+    }
   }
 
   Future<void> selectSession(int sessionId) async {

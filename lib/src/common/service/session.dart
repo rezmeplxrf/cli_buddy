@@ -132,6 +132,34 @@ class SessionService {
     }
   }
 
+  static Future<bool> removeSession({required int id}) async {
+    defaultDir ??= SysInfoService.getConfigDirectory();
+    try {
+      final sessionsPath = p.join(defaultDir!, 'sessions');
+      final sessionFilePath = p.join(sessionsPath, '$id.json');
+   
+      final sessionsFile = File(sessionFilePath);
+
+
+      if (!sessionsFile.existsSync()) {
+        _logger?.err('Sessions directory does not exist.');
+        return false;
+      } else {
+
+        sessionsFile.deleteSync();
+        _sessionsCache?.removeWhere((s) => s.id == id);
+        _lastCacheUpdate = DateTime.now();
+        _logger?.info('Session $id has been removed.');
+        return true;
+      }
+    } catch (e) {
+      _logger
+        ?..err('Error removing session file.')
+        ..detail(e.toString());
+      return false;
+    }
+  }
+
   static Future<bool> removeSessions() async {
     defaultDir ??= SysInfoService.getConfigDirectory();
 

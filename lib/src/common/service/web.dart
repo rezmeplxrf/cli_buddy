@@ -51,8 +51,23 @@ class WebService {
       ..post('/new-session', _newSessionHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/config', _getConfigHandler)
-      ..post('/config', _setConfigHandler);
+      ..post('/config', _setConfigHandler)
+      ..post('/remove-session', _removeSessionHandler);
     return router.call;
+  }
+
+  Future<Response> _removeSessionHandler(Request request) async {
+    final payload = await request.readAsString();
+    final data = jsonDecode(payload) as Map<String, dynamic>;
+    final sessionId = data['sessionId'];
+    final result = await SessionService.removeSession(id: sessionId as int);
+    if (result) {
+      return Response.ok(
+        'Session is removed',
+      );
+    } else {
+      return Response.internalServerError(body: 'Failed to remove session');
+    }
   }
 
   Future<Response> _getConfigHandler(Request request) async {
@@ -152,11 +167,9 @@ class WebService {
   void _handleWebSocket(WebSocketChannel socket) {
     webSocket = socket;
     socket.stream.listen((message) async {
-  
       final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
-      if (_currentSession != null &&
-          message.trim().isNotEmpty) {
+      if (_currentSession != null && message.trim().isNotEmpty) {
         webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
 

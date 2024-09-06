@@ -8,7 +8,14 @@ import 'dart:html';
 
 const String baseUrl = 'http://127.0.0.1:43210';
 const String wsUrl = 'ws://127.0.0.1:43210/ws';
-final dio = Dio();
+final dio = Dio()
+  ..options = BaseOptions(
+    receiveDataWhenStatusError: true,
+    connectTimeout: const Duration(seconds: 10),
+    sendTimeout: const Duration(seconds: 5),
+    persistentConnection: true,
+  );
+
 final sharedStates = SharedStates();
 final sessionService = SessionService();
 final configService = ConfigService();
@@ -40,14 +47,26 @@ class SharedStates {
 }
 
 void init() {
-  sharedStates.newChatBtn.onClick
-      .listen((_) => sessionService.createNewSession());
-  sharedStates.removeAllSessionsBtn.onClick
-      .listen((_) => sessionService.removeAllSessions());
-  sharedStates.chatInput.onInput
-      .listen((_) => chatService.adjustTextareaHeight());
-  sharedStates.sendButton.onClick.listen((_) => chatService.sendMessage());
-  sharedStates.configBtn.onClick.listen((_) => configService.showConfigPopup());
+  sharedStates.newChatBtn.onClick.listen((event) {
+    event.stopPropagation();
+    sessionService.createNewSession();
+  });
+  sharedStates.removeAllSessionsBtn.onClick.listen((event) {
+    event.stopPropagation();
+    sessionService.removeAllSessions();
+  });
+  sharedStates.chatInput.onInput.listen((event) {
+    event.stopPropagation();
+    chatService.adjustTextareaHeight();
+  });
+  sharedStates.sendButton.onClick.listen((event) {
+    event.stopPropagation();
+    chatService.sendMessage();
+  });
+  sharedStates.configBtn.onClick.listen((event) {
+    event.stopPropagation();
+    configService.showConfigPopup();
+  });
   sharedStates.chatInput.onKeyDown.listen((event) {
     if (event.keyCode == KeyCode.ENTER && !event.shiftKey) {
       event.preventDefault();
@@ -55,6 +74,14 @@ void init() {
         chatService.sendMessage();
       }
     }
+  });
+  window.onBeforeUnload.listen((event) {
+    sessionService.sessionsSubscriptions.clear();
+    sessionService.dropDownSubscriptions.clear();
+    websocketService.subscriptions.clear();
+    websocketService.socket?.close();
+    websocketService.socket = null;
+    configService.subscriptions.clear();
   });
 
   websocketService.connectWebSocket();

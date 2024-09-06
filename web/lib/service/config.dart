@@ -12,6 +12,7 @@ class ConfigService {
   factory ConfigService() => configService;
   ConfigService._internal();
   Configuration? currentConfig;
+  List<StreamSubscription?> subscriptions = [];
 
   Future<Configuration?> fetchConfig() async {
     try {
@@ -66,7 +67,7 @@ class ConfigService {
         }
 
         // Add click event listener
-        toggle?.onClick.listen((_) {
+       subscriptions.add(toggle?.onClick.listen((_) {
           input?.checked = !(input.checked ?? false);
           if (input?.checked ?? false) {
             dot?.style.transform = 'translateX(100%)';
@@ -77,18 +78,19 @@ class ConfigService {
             toggle.classes.remove('bg-green-500');
             toggle.classes.add('bg-gray-600');
           }
-        });
+        }));
       }
     }
-
+subscriptions.addAll([
     (popup.querySelector('#cancelBtn') as ButtonElement).onClick.listen((_) {
       popup.remove();
-    });
+    }),
 
     (popup.querySelector('#saveBtn') as ButtonElement).onClick.listen((_) {
       saveConfig(popup);
       popup.remove();
-    });
+    })
+  ]);
   }
 
   String _createConfigInputs() {
