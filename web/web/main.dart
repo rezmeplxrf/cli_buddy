@@ -220,13 +220,13 @@ class SessionService {
   Future<void> fetchSessions() async {
     try {
       final response = await dio.get('$baseUrl/sessions');
+  
       final data = response.data as List<dynamic>;
       final sessions = data.map((json) => ChatSession.fromJson(json)).toList();
 
       populateSidebar(sessions);
     } catch (e) {
       print('Error fetching sessions: $e');
-      window.alert('Error fetching sessions: $e');
     }
   }
 
@@ -518,66 +518,74 @@ class ChatService {
 
       final copyButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.copyIcon));
-      copyButton.onClick.listen((_) {
-        window.navigator.clipboard?.writeText(block.text ?? '');
-        showCheckmark(copyButton);
-      });
+        ..append(Helper.createSvgIcon(Svc.copyIcon))
+        ..onClick.listen((_) {
+          window.navigator.clipboard?.writeText(block.text ?? '');
+          showSnackBar('Copied to clipboard');
+        });
 
       final fileButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.fileIcon));
-      fileButton.onClick.listen((_) async {
-        try {
-          final response = await HttpRequest.postFormData(
-            '$baseUrl/make-file',
-            {'code': block.text ?? ''},
-          );
-          if (response.status == 200) {
-            final result = jsonDecode(response.responseText ?? '');
-            print('make-file: $result');
-            window.alert(result.toString());
-            showCheckmark(fileButton);
+        ..append(Helper.createSvgIcon(Svc.fileIcon))
+        ..onClick.listen((_) async {
+          try {
+            final response = await HttpRequest.postFormData(
+              '$baseUrl/make-file',
+              {'code': block.text ?? ''},
+            );
+            if (response.status == 200) {
+              final result = jsonDecode(response.responseText ?? '');
+              print('make-file: $result');
+
+              showSnackBar('$result');
+            }
+          } catch (e) {
+            print('Error: $e');
+            window.alert('Error making request: $e');
           }
-        } catch (e) {
-          print('Error: $e');
-          window.alert('Error making request: $e');
-        }
-      });
+        });
 
       final runButton = ButtonElement()
         ..className = 'bg-blue-500 text-white py-1 px-2 rounded btn-animate'
-        ..append(Helper.createSvgIcon(Svc.runIcon));
-      runButton.onClick.listen((_) async {
-        try {
-          final response = await HttpRequest.postFormData(
-            '$baseUrl/run-code',
-            {'code': block.text ?? ''},
-          );
-          if (response.status == 200) {
-            final result = jsonDecode(response.responseText ?? '');
-            print('run: $result');
-            window.alert(result.toString());
-            showCheckmark(runButton);
+        ..append(Helper.createSvgIcon(Svc.runIcon))
+        ..onClick.listen((_) async {
+          try {
+            final response = await HttpRequest.postFormData(
+              '$baseUrl/run-code',
+              {'code': block.text ?? ''},
+            );
+            if (response.status == 200) {
+              final result = jsonDecode(response.responseText ?? '');
+              print('run: $result');
+
+              showSnackBar('$result');
+            }
+          } catch (e) {
+            print('Error: $e');
+            window.alert('Error: $e');
           }
-        } catch (e) {
-          print('Error: $e');
-          window.alert('Error: $e');
-        }
-      });
+        });
 
       buttonsDiv.children.addAll([copyButton, fileButton, runButton]);
       (block.parent as Element).children.add(buttonsDiv);
     }
   }
 
-  void showCheckmark(ButtonElement button) {
-    final checkmark = SpanElement()
-      ..className = 'checkmark'
-      ..text = '✓';
-    button.append(checkmark);
-    Future.delayed(Duration(seconds: 5), () {
-      checkmark.remove();
+  void showSnackBar(String message) {
+    final snackbar = DivElement()
+      ..text = message
+      ..className = 'snackbar';
+
+    document.body?.append(snackbar);
+
+    // Add the "show" class to display the snackbar
+    Future.delayed(Duration(milliseconds: 100), () {
+      snackbar.className = 'snackbar show';
+    });
+
+    // Remove the snackbar after 3 seconds
+    Future.delayed(Duration(seconds: 3), () {
+      snackbar.remove();
     });
   }
 
