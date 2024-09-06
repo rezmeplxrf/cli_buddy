@@ -185,13 +185,20 @@ class ChatService {
 
       subscriptons.add(fileButton.onClick.listen((_) async {
         try {
+          if (block.text == null || block.text!.trim().isEmpty) {
+            showSnackBar('Content is empty');
+            return;
+          }
+
+          final path = await showPathInputDialog();
+          if (path == null) return;
           final response = await HttpRequest.postFormData(
             '$baseUrl/make-file',
-            {'code': block.text ?? ''},
+            {'code': block.text!, 'path': path},
           );
           if (response.status == 200) {
             final result = jsonDecode(response.responseText ?? '');
-            print('make-file: $result');
+            print('$result');
 
             showSnackBar('$result');
           }
@@ -226,6 +233,49 @@ class ChatService {
       buttonsDiv.children.addAll([copyButton, fileButton, runButton]);
       (block.parent as Element).children.add(buttonsDiv);
     }
+  }
+// TODO: Add hint which should be current path where buddy open is called. We will pass the current path to the browser.
+
+  Future<String?> showPathInputDialog() {
+    final completer = Completer<String?>();
+
+    final modal = DivElement()
+      ..className =
+          'fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50';
+
+    final dialog = DivElement()
+      ..className = 'bg-white p-4 rounded shadow-lg max-w-md w-full';
+
+    final input = InputElement(type: 'text')
+      ..className = 'w-full p-2 border border-gray-300 rounded'
+      ..placeholder = 'Enter file path';
+
+    final buttonContainer = DivElement()
+      ..className = 'flex justify-end gap-2 mt-4';
+
+    final cancelButton = ButtonElement()
+      ..className = 'bg-gray-500 text-white py-1 px-4 rounded'
+      ..text = 'Cancel'
+      ..onClick.listen((_) {
+        modal.remove();
+        completer.complete(null);
+      });
+
+    final okButton = ButtonElement()
+      ..className = 'bg-blue-500 text-white py-1 px-4 rounded'
+      ..text = 'OK'
+      ..onClick.listen((_) {
+        final path = input.value;
+        modal.remove();
+        completer.complete(path);
+      });
+
+    buttonContainer.children.addAll([cancelButton, okButton]);
+    dialog.children.addAll([input, buttonContainer]);
+    modal.children.add(dialog);
+    document.body?.append(modal);
+
+    return completer.future;
   }
 
   void showSnackBar(String message) {
@@ -293,15 +343,15 @@ class ChatService {
       ..className =
           'save-button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded'
       ..text = 'Save';
-      
-      
-   subscriptons.add(saveButton.onClick.listen((_) => saveEditedMessage(message)));
+
+    subscriptons
+        .add(saveButton.onClick.listen((_) => saveEditedMessage(message)));
 
     final cancelButton = ButtonElement()
       ..className =
           'cancel-button bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
       ..text = 'Cancel';
-      
+
     subscriptons.add(cancelButton.onClick.listen((_) => cancelEditMode()));
 
     final buttonContainer = DivElement()

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/common/domain/config.dart';
+import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
@@ -52,8 +53,20 @@ class WebService {
       ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
-      ..post('/remove-session', _removeSessionHandler);
+      ..post('/remove-session', _removeSessionHandler)
+      ..post('/make-file', _makeFileHandler)
+      
+      ;
     return router.call;
+  }
+
+  Future<Response> _makeFileHandler(Request request) async {
+    final payload = await request.readAsString();
+    final data = jsonDecode(payload) as Map<String, dynamic>;
+    final content = data['code'] as String;
+    final path = data['path'] as String;
+   await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
+    return Response.ok('File is created');
   }
 
   Future<Response> _removeSessionHandler(Request request) async {

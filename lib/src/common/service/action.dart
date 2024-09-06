@@ -13,12 +13,11 @@ class ActionService {
   ActionService._internal();
   static final ActionService _instance = ActionService._internal();
   static void setLogger(Logger? logger) => _logger = logger;
+  static final shell = Shell(throwOnError: false);
 
   static Logger? _logger;
 
   static Future<void> copy(String content) async {
-    final shell = Shell();
-
     if (Platform.isWindows) {
       // Windows
       await shell.run('echo $content | clip');
@@ -53,7 +52,6 @@ class ActionService {
     /// using && won't work with shell.run in a single run so need to run each command separately
     final commandList = command.split('&&').map((cmd) => cmd.trim()).toList();
 
-    final shell = Shell(throwOnError: false);
     try {
       for (final cmd in commandList) {
         await shell.run(cmd);
@@ -63,8 +61,14 @@ class ActionService {
     }
   }
 
-  static Future<void> saveToFile(String fileName, String content) async {
+  static Future<void> saveToFile(String fileName, String content,
+      {bool? shouldAutoOvewrite = false}) async {
     final file = File(fileName);
+    if (shouldAutoOvewrite != null && !shouldAutoOvewrite) {
+      await file.writeAsString(content);
+      _logger?.info('Output saved to $fileName');
+      return;
+    }
 
     if (file.existsSync()) {
       final shouldOverwrite = _logger?.confirm(
@@ -91,8 +95,8 @@ class ActionService {
 
     final newSession =
         session.copyWith(messages: [...session.messages, newMsg]);
-    final newResult =
-        await openRouter.invoke(session: newSession, shouldDebug: shouldDebug, markdown: false);
+    final newResult = await openRouter.invoke(
+        session: newSession, shouldDebug: shouldDebug, markdown: false);
     return newResult;
   }
 }
