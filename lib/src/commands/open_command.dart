@@ -28,8 +28,8 @@ class OpenCommand extends Command<int> {
           help: 'Display raw outputs of prompt and api requests',
           negatable: false)
       ..addFlag(
-        'auto',
-        abbr: 'a',
+        'laucnh',
+        abbr: 'l',
         help: 'Open the page with default browser automatically',
         defaultsTo: true,
       );

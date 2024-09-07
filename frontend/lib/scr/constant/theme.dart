@@ -2,7 +2,9 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 final lightTheme = FlexThemeData.light(
   scheme: FlexScheme.indigoM3,
+
   subThemesData: const FlexSubThemesData(
+    
     interactionEffects: false,
     tintedDisabledControls: false,
     blendOnColors: false,
