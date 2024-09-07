@@ -1,5 +1,6 @@
-import 'package:buddy_gui/domain/open_router.dart';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:frontend/scr/model/open_router.dart';
 
 part 'session.freezed.dart';
 part 'session.g.dart';

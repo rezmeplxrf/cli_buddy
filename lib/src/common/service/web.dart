@@ -6,9 +6,7 @@ import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
-import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
-import 'package:collection/collection.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:shelf/shelf.dart';
@@ -29,7 +27,6 @@ class WebService {
   static HttpServer? _server;
   static WebSocketChannel? webSocket;
   static List<ChatSession>? _sessions = [];
-  static ChatSession? _currentSession;
   static String? msg;
   Future<void> start() async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
@@ -46,10 +43,8 @@ class WebService {
   Handler get _router {
     final router = Router()
       ..get('/', _htmlHandler)
-      ..get('/sessions', _sessionsHandler)
+      ..get('/session-list', _sessionsHandler)
       ..post('/remove-all', _removeAllHandler)
-      ..post('/select-session', _selectSessionHandler)
-      ..post('/new-session', _newSessionHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
@@ -59,15 +54,21 @@ class WebService {
   }
 
   Future<Response> _makeFileHandler(Request request) async {
-    final payload = await request.readAsString();
-    print('payload: $payload');
-    final data = jsonDecode(payload) as Map<String, dynamic>;
-    print('data: $data');
-    final content = data['code'] as String;
-    final path = data['path'] as String;
-    await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
-    return Response.ok({'result': 'File is created'},
-        headers: {'content-type': 'application/json'});
+    try {
+      final payload = await request.readAsString();
+      print('payload: $payload');
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+      print('data: $data');
+      final content = data['code'] as String;
+      final path = data['path'] as String;
+      await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
+      return Response.ok({'result': 'File is created at $path'},
+          headers: {'content-type': 'application/json'});
+    } catch (e) {
+      return Response.internalServerError(
+        body: {'result': 'Failed to create file - $e'},
+      );
+    }
   }
 
   Future<Response> _removeSessionHandler(Request request) async {
@@ -76,7 +77,7 @@ class WebService {
     final sessionId = data['sessionId'];
     final result = await SessionService.removeSession(id: sessionId as int);
     if (result) {
-      return Response.ok({result: 'Session is removed'},
+      return Response.ok({'result': 'Session is removed'},
           headers: {'content-type': 'application/json'});
     } else {
       return Response.internalServerError(
@@ -98,57 +99,33 @@ class WebService {
   }
 
   Future<Response> _setConfigHandler(Request request) async {
-    configuration = await ConfigService.loadConfig().getOrNull();
-    final payload = await request.readAsString();
-    final data = jsonDecode(payload) as Map<String, dynamic>;
-    final newConfig = Configuration.fromJson(data);
-    print(newConfig);
+    try {
+      configuration = await ConfigService.loadConfig().getOrNull();
+      final payload = await request.readAsString();
+      final data = jsonDecode(payload) as Map<String, dynamic>;
+      final newConfig = Configuration.fromJson(data);
+      print(newConfig);
 
-    if (newConfig != configuration) {
-      await ConfigService.saveConfig(newConfig: newConfig);
-      return Response.ok(jsonEncode(configuration?.toJson()),
-          headers: {'content-type': 'application/json'});
-    } else {
-      return Response.ok(
-          {'result': 'No changes made because it is the same as the current'},
-          headers: {'content-type': 'application/json'});
+      if (newConfig != configuration) {
+        await ConfigService.saveConfig(newConfig: newConfig);
+        return Response.ok(jsonEncode(configuration?.toJson()),
+            headers: {'content-type': 'application/json'});
+      } else {
+        return Response.ok(
+            {'result': 'No changes made because it is the same as the current'},
+            headers: {'content-type': 'application/json'});
+      }
+    } catch (e) {
+      _logger?.err('Failed to set config. Error: $e');
+      return Response.internalServerError(
+        body: {e.toString(): 'Failed to set config'},
+      );
     }
-  }
-
-  Future<Response> _newSessionHandler(Request request) async {
-    // Check for an existing session without user messages
-    final existingSession = _sessions?.firstWhereOrNull(
-      (session) =>
-          session.messages.length == 1 &&
-          session.messages.first.role == Role.system,
-    );
-
-    if (existingSession != null) {
-      _currentSession = existingSession;
-      return Response.ok(jsonEncode(_currentSession?.toJson()),
-          headers: {'content-type': 'application/json'});
-    }
-
-    // Create a new session if no such session exists
-    final currentTime = DateTime.now().millisecondsSinceEpoch;
-    final sysMsg = Message(
-        role: Role.system,
-        content: PromptService.chat(),
-        timestamp: currentTime);
-    _currentSession = ChatSession(id: currentTime, messages: [sysMsg]);
-    _sessions?.add(_currentSession!);
-
-    return Response.ok(
-        jsonEncode(
-          _currentSession?.toJson(),
-        ),
-        headers: {'content-type': 'application/json'});
   }
 
   Future<Response> _removeAllHandler(Request request) async {
     final result = await SessionService.removeSessions();
     if (result) {
-      _currentSession = null;
       _sessions?.clear();
       return Response.ok(
         {'result': 'All sessions are removed'},
@@ -160,33 +137,23 @@ class WebService {
   }
 
   Future<Response> _sessionsHandler(Request request) async {
-    _sessions = await SessionService.listSessions();
-    if (_sessions == null || _sessions!.isEmpty) {
-      return Response.notFound(
-          {'result': 'Session is empty or failed to load sessions'},
-          headers: {'content-type': 'application/json'});
+    try {
+      _sessions = await SessionService.listSessions();
+      if (_sessions == null || _sessions!.isEmpty) {
+        return Response.notFound(
+            {'result': 'Session is empty or failed to load sessions'},
+            headers: {'content-type': 'application/json'});
+      }
+      final sessionsJson =
+          jsonEncode(_sessions?.map((s) => s.toJson()).toList());
+      return Response.ok(
+        sessionsJson,
+      );
+    } catch (e) {
+      return Response.internalServerError(
+        body: {'result': 'Failed to load sessions - $e'},
+      );
     }
-    final sessionsJson = jsonEncode(_sessions?.map((s) => s.toJson()).toList());
-    return Response.ok(
-      sessionsJson,
-    );
-  }
-
-  Future<Response> _selectSessionHandler(Request request) async {
-    final payload = await request.readAsString();
-    final data = jsonDecode(payload) as Map<String, dynamic>;
-    final sessionId = data['sessionId'];
-
-    _currentSession =
-        _sessions?.firstWhere((session) => session.id == sessionId);
-    if (_currentSession == null) {
-      return Response.notFound({'result': 'Session is not found'},
-          headers: {'content-type': 'application/json'});
-    }
-
-    return Response.ok(
-      jsonEncode(_currentSession?.toJson()),
-    );
   }
 
   void _handleWebSocket(WebSocketChannel socket) {
@@ -194,13 +161,16 @@ class WebService {
     socket.stream.listen((message) async {
       final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
-      if (_currentSession != null && message.trim().isNotEmpty) {
+      if (message.trim().isNotEmpty) {
         webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
         try {
-          _currentSession = await openRouter
+          final newSession = await openRouter
               .invoke(session: userSentSession, markdown: false)
               .getOrThrow();
+          final lastResponse = newSession.messages.last;
+          webSocket?.sink.add(jsonEncode(
+              MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
         } catch (e) {
           const msgChunk = MessageChunk(
               type: ChunkType.error,
@@ -208,10 +178,6 @@ class WebService {
           WebService.webSocket?.sink.add(jsonEncode(msgChunk));
           return;
         }
-
-        final lastResponse = _currentSession?.messages.last;
-        webSocket?.sink.add(jsonEncode(
-            MessageChunk(type: ChunkType.end, usage: lastResponse?.usage)));
       }
     }, onDone: () {
       webSocket = null;

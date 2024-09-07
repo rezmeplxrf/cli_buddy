@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/scr/constant/global.dart';
+import 'package:talker_riverpod_logger/talker_riverpod_logger_observer.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(ProviderScope(
+    observers: [
+      TalkerRiverpodObserver(
+        talker: talker,
+      ),
+    ],
+    child: const MainApp(),
+  ));
 }
 
 class MainApp extends StatelessWidget {
