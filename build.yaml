@@ -2,4 +2,4 @@ targets:
   $default:
     sources:
       exclude:
-        - web/**
+        - frontend/**

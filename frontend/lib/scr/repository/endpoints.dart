@@ -6,7 +6,7 @@ part 'endpoints.g.dart';
 
 @riverpod
 FutureOr<List<ChatSession>> listSession(
-  RemoveSessionRef ref,
+  ListSessionRef ref,
 ) async {
   final response = await dio.get<Map<String, dynamic>>(
     '$baseUrl/session-list',

@@ -6,7 +6,7 @@ part of 'endpoints.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listSessionHash() => r'c7466a3b7eade884bbf6298b226e0d52a5274335';
+String _$listSessionHash() => r'a3791c9e7ec6a23770a67c0c8c4ceda6d433b506';
 
 /// See also [listSession].
 @ProviderFor(listSession)
