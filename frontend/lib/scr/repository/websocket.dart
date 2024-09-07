@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/scr/constant/global.dart';
-import 'package:frontend/scr/controller/config.dart';
 import 'package:frontend/scr/controller/session.dart';
 import 'package:frontend/scr/model/domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -17,7 +16,11 @@ class WebSocketRespository extends _$WebSocketRespository {
   late final WebSocketChannel? socket;
   @override
   Stream<WebSocketState> build() async* {
-    yield const WebSocketState(connectionState: SocketState.disconnected);
+    yield state.value ??
+        const WebSocketState(
+          connectionState: SocketState.disconnected,
+        );
+    await connect();
   }
 
   Future<void> connect() async {
@@ -90,6 +93,7 @@ enum SocketState { connected, disconnected }
 @freezed
 class WebSocketState with _$WebSocketState {
   const factory WebSocketState({
-    required SocketState connectionState, MessageChunk? chunk,
+    required SocketState connectionState,
+    MessageChunk? chunk,
   }) = _WebSocketState;
 }
