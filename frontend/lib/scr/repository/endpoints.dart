@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:frontend/scr/constant/global.dart';
 import 'package:frontend/scr/model/domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,13 +10,13 @@ part 'endpoints.g.dart';
 FutureOr<List<ChatSession>> listSession(
   ListSessionRef ref,
 ) async {
-  final response = await dio.get<Map<String, dynamic>>(
+  final response = await dio.get<String>(
     '$baseUrl/session-list',
   );
   if (response.statusCode != 200) {
     throw Exception('Error fetching session lis - ${response.data}');
   }
-  final data = response.data! as List<dynamic>;
+  final data = jsonDecode(response.data!) as List<dynamic>;
   final sessions = data
       .map((json) => ChatSession.fromJson(json as Map<String, dynamic>))
       .toList();

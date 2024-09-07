@@ -6,23 +6,22 @@ part of 'session.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sessionListControllerHash() =>
-    r'f6499d7b16a18508990d322cd5a911a5652f9945';
+String _$sessionServiceHash() => r'd2fde3c77028468d60df23ce1cceed14c23bf55f';
 
-/// See also [SessionListController].
-@ProviderFor(SessionListController)
-final sessionListControllerProvider = AutoDisposeAsyncNotifierProvider<
-    SessionListController, List<ChatSession>>.internal(
-  SessionListController.new,
-  name: r'sessionListControllerProvider',
+/// See also [SessionService].
+@ProviderFor(SessionService)
+final sessionServiceProvider = AutoDisposeAsyncNotifierProvider<SessionService,
+    List<ChatSession>>.internal(
+  SessionService.new,
+  name: r'sessionServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$sessionListControllerHash,
+      : _$sessionServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SessionListController = AutoDisposeAsyncNotifier<List<ChatSession>>;
+typedef _$SessionService = AutoDisposeAsyncNotifier<List<ChatSession>>;
 String _$currentSessionControllerHash() =>
     r'821fbca2793f5792be8b84abb459890365e0cfe9';
 

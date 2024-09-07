@@ -59,7 +59,7 @@ class OpenCommand extends Command<int> {
       exit(0);
     });
 
-    final autoFlag = argResults?['auto'] as bool? ?? true;
+    final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
       await _open();

@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'session.g.dart';
 
 @riverpod
-class SessionListController extends _$SessionListController {
+class SessionService extends _$SessionService {
   @override
   FutureOr<List<ChatSession>> build() async {
     if (state.value == null || state.value!.isEmpty) {
@@ -77,9 +77,9 @@ class CurrentSessionController extends _$CurrentSessionController {
     state = AsyncData(session);
   }
 
-  
   Future<ChatSession> newSession() async {
     state = const AsyncLoading();
+
     final config = await ref.read(configControllerProvider.future);
     if (config?.chatPrompt == null ||
         config?.defaultModel == null ||
@@ -96,6 +96,8 @@ class CurrentSessionController extends _$CurrentSessionController {
               content: config.chatPrompt!,
               timestamp: currentTime)
         ]);
+   
+
     return newSession;
   }
 }

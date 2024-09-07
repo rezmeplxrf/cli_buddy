@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/scr/constant/global.dart';
-import 'package:frontend/scr/controller/session.dart';
 import 'package:frontend/scr/model/domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -68,19 +67,19 @@ class WebSocketRespository extends _$WebSocketRespository {
     }
   }
 
-  Future<void> sendMessage(Message message) async {
+  Future<void> sendMessage(ChatSession session) async {
     try {
       if (socket != null) {
-        final currentSession =
-            await ref.read(currentSessionControllerProvider.future);
+        // final currentSession =
+        //     await ref.read(currentSessionControllerProvider.future);
 
-        final newSession = currentSession!.copyWith(
-          messages: [...currentSession.messages, message],
-        );
-        ref
-            .read(currentSessionControllerProvider.notifier)
-            .setSession(newSession);
-        socket?.sink.add(jsonEncode(newSession));
+        // final newSession = currentSession!.copyWith(
+        //   messages: [...currentSession.messages, message],
+        // );
+        // ref
+        //     .read(currentSessionControllerProvider.notifier)
+        //     .setSession(newSession);
+        socket?.sink.add(jsonEncode(session));
       }
     } catch (e) {
       rethrow;

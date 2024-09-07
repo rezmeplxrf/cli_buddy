@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:frontend/scr/widget/chat_history.dart';
+import 'package:frontend/scr/widget/chat.dart';
+import 'package:frontend/scr/widget/panel.dart';
 
 class Layout extends StatelessWidget {
   const Layout({super.key});
@@ -11,20 +11,10 @@ class Layout extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Buddy Chat'),
       ),
-      body: Row(
+      body: const Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            width: 0.2.sw,
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ChatHistory(),
-              ],
-            ),
-          ),
-          const Expanded(child: Center(child: Text('body')))
+          ChatPanel(),
+          Expanded(child: ChatScreen())
         ],
       ),
     );
