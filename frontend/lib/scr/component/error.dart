@@ -11,37 +11,32 @@ class DefaultErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
-    return Wrap(
-      alignment: WrapAlignment.center,
-      runAlignment: WrapAlignment.center,
-      spacing: 3,
-      direction:  Axis.vertical,
-      children: [
-        Text(error ?? 'Something went wrong',
-            style: const TextStyle(
-              fontSize: 12,
-              
-        
-            )),
-        // if (stackTrace != null)
-        //   ExpansionPanelList(
-        //     children: [
-        //       ExpansionPanel(
-        //         headerBuilder: (context, isExpanded) {
-        //           return const Text('Stack trace');
-        //         },
-        //         body: Text(stackTrace.toString()),
-        //         isExpanded: true,
-        //       ),
-        //     ],
-        //   ),
-        if (retry != null)
-          FilledButton(
-            child: const Text('Retry'),
-            onPressed: () => retry,
-          )
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Text(error ?? 'Something went wrong',
+              style: const TextStyle(
+                fontSize: 12,
+              )),
+          if (stackTrace != null)
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ExpansionTile(
+                  title: const Text('Stack Trace'),
+                  children: [
+                    Text(stackTrace.toString()),
+                  ],
+                )),
+          if (retry != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: FilledButton(
+                child: const Text('Retry'),
+                onPressed: () => retry,
+              ),
+            )
+        ],
+      ),
     );
   }
 }
