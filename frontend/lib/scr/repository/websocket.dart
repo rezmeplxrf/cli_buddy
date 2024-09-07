@@ -11,7 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 part 'websocket.freezed.dart';
 part 'websocket.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class WebSocketRespository extends _$WebSocketRespository {
   late final WebSocketChannel? socket;
   @override
