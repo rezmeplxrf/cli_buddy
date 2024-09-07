@@ -18,3 +18,4 @@ release/
 .test_coverage.dart
 coverage/
 .test_runner.dart
+frontend/
