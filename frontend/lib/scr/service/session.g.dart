@@ -6,22 +6,21 @@ part of 'session.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentSessionControllerHash() =>
-    r'821fbca2793f5792be8b84abb459890365e0cfe9';
+String _$sessionServiceHash() => r'd2fde3c77028468d60df23ce1cceed14c23bf55f';
 
-/// See also [CurrentSessionController].
-@ProviderFor(CurrentSessionController)
-final currentSessionControllerProvider = AutoDisposeAsyncNotifierProvider<
-    CurrentSessionController, ChatSession?>.internal(
-  CurrentSessionController.new,
-  name: r'currentSessionControllerProvider',
+/// See also [SessionService].
+@ProviderFor(SessionService)
+final sessionServiceProvider = AutoDisposeAsyncNotifierProvider<SessionService,
+    List<ChatSession>>.internal(
+  SessionService.new,
+  name: r'sessionServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$currentSessionControllerHash,
+      : _$sessionServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrentSessionController = AutoDisposeAsyncNotifier<ChatSession?>;
+typedef _$SessionService = AutoDisposeAsyncNotifier<List<ChatSession>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

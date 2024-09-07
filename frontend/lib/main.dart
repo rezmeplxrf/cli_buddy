@@ -4,13 +4,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:frontend/scr/constant/theme.dart';
 import 'package:frontend/scr/widget/layout.dart';
 import 'package:talker_riverpod_logger/talker_riverpod_logger_observer.dart';
+import 'package:talker_riverpod_logger/talker_riverpod_logger_settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(ProviderScope(
     observers: [
-      TalkerRiverpodObserver(),
+      TalkerRiverpodObserver(
+        settings:  const TalkerRiverpodLoggerSettings(
+           printFailFullData: false,
+           printStateFullData: false
+        )
+      ),
     ],
     child: const MyApp(),
   ));

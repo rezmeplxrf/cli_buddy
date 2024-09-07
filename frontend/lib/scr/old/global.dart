@@ -1,11 +1,8 @@
-
 // import 'package:dio/dio.dart';
 // import 'package:frontend/scr/service/chat.dart';
 // import 'package:frontend/scr/service/config.dart';
 
 // import 'package:frontend/scr/service/session.dart';
-
-
 
 // final configService = ConfigService();
 
@@ -88,6 +85,4 @@ class Helper {
   static String capitalizeFirstLetter(String string) {
     return string[0].toUpperCase() + string.substring(1);
   }
-
-
 }

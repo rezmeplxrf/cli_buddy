@@ -5,6 +5,8 @@ import 'package:frontend/scr/component/dialog.dart';
 import 'package:frontend/scr/component/error.dart';
 import 'package:frontend/scr/component/loading.dart';
 import 'package:frontend/scr/controller/session.dart';
+import 'package:frontend/scr/service/session.dart';
+import 'package:intl/intl.dart';
 
 class ChatPanel extends StatelessWidget {
   const ChatPanel({
@@ -100,8 +102,7 @@ class _ChatHistoryListView extends ConsumerWidget {
           // convert timestamp into yyyy/mm/dd
           final localizedTime =
               DateTime.fromMillisecondsSinceEpoch(session.id).toLocal();
-          final formattedtime =
-              '${localizedTime.year}/${localizedTime.month}/${localizedTime.day} ${localizedTime.hour}:${localizedTime.minute}';
+          final formattedtime = DateFormat.yMMMd().add_jm().format(localizedTime);
           return ListTile(
             title: Text(firstMessageText,
                 maxLines: 2,
