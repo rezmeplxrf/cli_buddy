@@ -21,7 +21,23 @@ final listSessionProvider =
 );
 
 typedef ListSessionRef = AutoDisposeFutureProviderRef<List<ChatSession>>;
-String _$removeSessionHash() => r'71d1cf0c453812696c76e59e0103509b98101654';
+String _$getSysPromptsHash() => r'9f6570ee9071c4dd224903aa86abc4246b0973ed';
+
+/// See also [getSysPrompts].
+@ProviderFor(getSysPrompts)
+final getSysPromptsProvider =
+    AutoDisposeFutureProvider<List<SysPrompt>>.internal(
+  getSysPrompts,
+  name: r'getSysPromptsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getSysPromptsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef GetSysPromptsRef = AutoDisposeFutureProviderRef<List<SysPrompt>>;
+String _$setSysPromptsHash() => r'35ab24eaa552603ce31c97290dd323730e1d911b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,6 +59,135 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [setSysPrompts].
+@ProviderFor(setSysPrompts)
+const setSysPromptsProvider = SetSysPromptsFamily();
+
+/// See also [setSysPrompts].
+class SetSysPromptsFamily extends Family<AsyncValue<bool>> {
+  /// See also [setSysPrompts].
+  const SetSysPromptsFamily();
+
+  /// See also [setSysPrompts].
+  SetSysPromptsProvider call({
+    required List<SysPrompt> sysPrompts,
+  }) {
+    return SetSysPromptsProvider(
+      sysPrompts: sysPrompts,
+    );
+  }
+
+  @override
+  SetSysPromptsProvider getProviderOverride(
+    covariant SetSysPromptsProvider provider,
+  ) {
+    return call(
+      sysPrompts: provider.sysPrompts,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'setSysPromptsProvider';
+}
+
+/// See also [setSysPrompts].
+class SetSysPromptsProvider extends AutoDisposeFutureProvider<bool> {
+  /// See also [setSysPrompts].
+  SetSysPromptsProvider({
+    required List<SysPrompt> sysPrompts,
+  }) : this._internal(
+          (ref) => setSysPrompts(
+            ref as SetSysPromptsRef,
+            sysPrompts: sysPrompts,
+          ),
+          from: setSysPromptsProvider,
+          name: r'setSysPromptsProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$setSysPromptsHash,
+          dependencies: SetSysPromptsFamily._dependencies,
+          allTransitiveDependencies:
+              SetSysPromptsFamily._allTransitiveDependencies,
+          sysPrompts: sysPrompts,
+        );
+
+  SetSysPromptsProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.sysPrompts,
+  }) : super.internal();
+
+  final List<SysPrompt> sysPrompts;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(SetSysPromptsRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SetSysPromptsProvider._internal(
+        (ref) => create(ref as SetSysPromptsRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        sysPrompts: sysPrompts,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _SetSysPromptsProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SetSysPromptsProvider && other.sysPrompts == sysPrompts;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, sysPrompts.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin SetSysPromptsRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `sysPrompts` of this provider.
+  List<SysPrompt> get sysPrompts;
+}
+
+class _SetSysPromptsProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with SetSysPromptsRef {
+  _SetSysPromptsProviderElement(super.provider);
+
+  @override
+  List<SysPrompt> get sysPrompts =>
+      (origin as SetSysPromptsProvider).sysPrompts;
+}
+
+String _$removeSessionHash() => r'71d1cf0c453812696c76e59e0103509b98101654';
 
 /// See also [removeSession].
 @ProviderFor(removeSession)

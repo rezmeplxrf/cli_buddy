@@ -61,9 +61,11 @@ class WebService {
     final defaultDir = SysInfoService.getConfigDirectory();
     final filePath = p.join(defaultDir!, 'prompts.json');
     final content = await ActionService.retrieveFile(filePath);
-    final jsonList = jsonDecode(content as String) as List<dynamic>;
-    final prompts = jsonList.map((e) => SysPrompt.fromJson(e as Map<String, dynamic>)).toList();
-    return Response.ok(jsonEncode(prompts), headers: {'content-type': 'application/json'});
+    final jsonList = jsonDecode(content as String) as List<dynamic>?;
+    if (jsonList == null) {
+      return Response.notFound({'result': 'File not found at $filePath'}, headers: {'content-type': 'application/json'});
+    }
+    return Response.ok(jsonList, headers: {'content-type': 'application/json'});
   }
 
   Future<Response> _setPromptsHandler(Request request) async {

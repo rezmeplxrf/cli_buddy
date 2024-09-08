@@ -24,8 +24,35 @@ FutureOr<List<ChatSession>> listSession(
 }
 
 @riverpod
-FutureOr<int> removeSession(RemoveSessionRef ref,
-    {required int id}) async {
+FutureOr<List<SysPrompt>> getSysPrompts(
+  GetSysPromptsRef ref,
+) async {
+  final response = await dio.get<List<dynamic>>(
+    '$baseUrl/prompts',
+  );
+  if (response.statusCode != 200) {
+    throw Exception('Error fetching session lis - ${response.data}');
+  }
+  final sessions = response.data!
+      .map((json) => SysPrompt.fromJson(json as Map<String, dynamic>))
+      .toList();
+  return sessions;
+}
+
+@riverpod
+FutureOr<bool> setSysPrompts(SetSysPromptsRef ref,
+    {required List<SysPrompt> sysPrompts}) async {
+  final response = await dio.post<List<dynamic>>('$baseUrl/prompts',
+      data: jsonEncode(sysPrompts));
+  if (response.statusCode != 200) {
+    throw Exception('Error fetching session lis - ${response.data}');
+  }
+
+  return true;
+}
+
+@riverpod
+FutureOr<int> removeSession(RemoveSessionRef ref, {required int id}) async {
   final response = await dio.post<Map<String, dynamic>>(
     '$baseUrl/remove-session',
     data: {'sessionId': id},
