@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:process_run/shell.dart';
+import 'package:result_dart/result_dart.dart';
 
 /// {@template open_command}
 ///
@@ -28,9 +30,9 @@ class OpenCommand extends Command<int> {
         defaultsTo: true,
       )
       ..addOption('port',
-          abbr: 'p', help: 'Port to listen on', defaultsTo: '43210')
+          abbr: 'p', help: 'Port to listen on')
       ..addOption('address',
-          abbr: 'a', help: 'Address to listen on', defaultsTo: 'localhost');
+          abbr: 'a', help: 'Address to listen on');
   }
 
   @override
@@ -43,12 +45,13 @@ class OpenCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final sessionId = argResults?['session'];
-    if (sessionId != null && sessionId is int) {
-      _logger.info('Session ID: $sessionId');
-    }
+      configuration ??= await ConfigService.loadConfig().getOrNull();
+      final port = argResults?['port'] as String? ?? configuration?.port;
+      final address = argResults?['address'] as String? ?? configuration?.ipAddress;
+    
     final server = WebService();
-    await server.start();
+   
+    await server.start(address:address!, port: int.parse(port!));
 
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
     ProcessSignal.sigint.watch().listen((signal) async {
@@ -60,8 +63,7 @@ class OpenCommand extends Command<int> {
     final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
-      final port = argResults?['port'] as String? ?? '43210';
-      final address = argResults?['address'] as String? ?? 'localhost';
+    
       await _open(port: port, address: address);
     }
 

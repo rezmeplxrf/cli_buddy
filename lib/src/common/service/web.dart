@@ -30,14 +30,14 @@ class WebService {
   static WebSocketChannel? webSocket;
   static List<ChatSession>? _sessions = [];
   static String? msg;
-  Future<void> start() async {
+  Future<void> start({required String address , required int port}) async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
     final handler = const Pipeline()
         .addMiddleware(logRequests())
         .addMiddleware(corsHeaders())
         .addHandler(_router);
 
-    _server = await io.serve(handler, '127.0.0.1', 43210);
+    _server = await io.serve(handler, address, port);
     _logger
         ?.info('Serving at http://${_server?.address.host}:${_server?.port}');
   }
@@ -58,14 +58,25 @@ class WebService {
   }
 
   Future<Response> _getPromptsHandler(Request request) async {
-    final defaultDir = SysInfoService.getConfigDirectory();
-    final filePath = p.join(defaultDir!, 'prompts.json');
-    final content = await ActionService.retrieveFile(filePath);
-    final jsonList = jsonDecode(content as String) as List<dynamic>?;
-    if (jsonList == null) {
-      return Response.notFound({'result': 'File not found at $filePath'}, headers: {'content-type': 'application/json'});
+    try {
+      final defaultDir = SysInfoService.getConfigDirectory();
+      final filePath = p.join(defaultDir!, 'prompts.json');
+      print(filePath);
+      final content = await ActionService.retrieveFile(filePath).getOrNull();
+      if (content == null) {
+        return Response.notFound('File not found at $filePath');
+      }
+      final jsonList = jsonDecode(content) as List<dynamic>?;
+      if (jsonList == null || jsonList.isEmpty) {
+        return Response.notFound(
+          'File not found at $filePath',
+        );
+      }
+      return Response.ok(jsonList,
+          headers: {'content-type': 'application/json'});
+    } catch (e) {
+      return Response.notFound('File not found');
     }
-    return Response.ok(jsonList, headers: {'content-type': 'application/json'});
   }
 
   Future<Response> _setPromptsHandler(Request request) async {
@@ -73,15 +84,23 @@ class WebService {
       final payload = await request.readAsString();
 
       final jsonList = jsonDecode(payload) as List<dynamic>;
-      final prompts = jsonList.map((e) => SysPrompt.fromJson(e as Map<String, dynamic>)).toList();
+      final prompts = jsonList
+          .map((e) => SysPrompt.fromJson(e as Map<String, dynamic>))
+          .toList();
       defaultDir ??= SysInfoService.getConfigDirectory();
       final filePath = p.join(defaultDir!, 'prompts.json');
-      await ActionService.saveToFile(filePath, jsonEncode(prompts), shouldAutoOvewrite: true);
-      return Response.ok({'result': 'File is created at $filePath'},
-          headers: {'content-type': 'application/json'});
+      final result = await ActionService.saveToFile(
+          filePath, jsonEncode(prompts),
+          shouldAutoOvewrite: true);
+      if (result) {
+        return Response.ok({'result': 'File is created at $filePath'},
+            headers: {'content-type': 'application/json'});
+      } else {
+        return Response.internalServerError(body: 'Failed to create file');
+      }
     } catch (e) {
       return Response.internalServerError(
-        body: {'result': 'Failed to create file - $e'},
+        body: 'Failed to create file - $e',
       );
     }
   }
@@ -98,7 +117,7 @@ class WebService {
           headers: {'content-type': 'application/json'});
     } catch (e) {
       return Response.internalServerError(
-        body: {'result': 'Failed to create file - $e'},
+        body: 'Failed to create file - $e',
       );
     }
   }
@@ -113,8 +132,8 @@ class WebService {
           headers: {'content-type': 'application/json'});
     } else {
       return Response.internalServerError(
-          body: {result: 'Failed to remove session'},
-          headers: {'content-type': 'application/json'});
+        body: 'Failed to remove session',
+      );
     }
   }
 
@@ -122,8 +141,8 @@ class WebService {
     configuration = await ConfigService.loadConfig().getOrNull();
     if (configuration == null) {
       return Response.notFound(
-          {'result': 'Config is empty or failed to load config'},
-          headers: {'content-type': 'application/json'});
+        'Config is empty or failed to load config',
+      );
     } else {
       return Response.ok(jsonEncode(configuration?.toJson()),
           headers: {'content-type': 'application/json'});
@@ -150,7 +169,7 @@ class WebService {
     } catch (e) {
       _logger?.err('Failed to set config. Error: $e');
       return Response.internalServerError(
-        body: {e.toString(): 'Failed to set config'},
+        body: e.toString(),
       );
     }
   }
@@ -172,18 +191,17 @@ class WebService {
     try {
       _sessions = await SessionService.listSessions();
       if (_sessions == null || _sessions!.isEmpty) {
-        return Response.notFound(
-            {'result': 'Session is empty or failed to load sessions'},
-            headers: {'content-type': 'application/json'});
+        return Response.notFound('Session is empty or failed to load sessions');
+      } else {
+        final sessionsJson =
+            jsonEncode(_sessions?.map((s) => s.toJson()).toList());
+        return Response.ok(
+          sessionsJson,
+        );
       }
-      final sessionsJson =
-          jsonEncode(_sessions?.map((s) => s.toJson()).toList());
-      return Response.ok(
-        sessionsJson,
-      );
     } catch (e) {
       return Response.internalServerError(
-        body: {'result': 'Failed to load sessions - $e'},
+        body: 'Failed to load sessions - $e',
       );
     }
   }

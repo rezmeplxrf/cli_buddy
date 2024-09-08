@@ -14,7 +14,8 @@ class SessionService extends _$SessionService {
         final sessions = await getSessions();
         return sessions;
       } catch (e) {
-        rethrow;
+         state = AsyncError(e, StackTrace.current);
+        return [];
       }
     } else {
       return state.value!;
@@ -65,7 +66,8 @@ class CurrentSessionController extends _$CurrentSessionController {
         final session = await newSession();
         return session;
       } catch (e) {
-        rethrow;
+         state = AsyncError(e, StackTrace.current);
+        return null;
       }
     } else {
       return state.value;

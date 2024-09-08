@@ -9,7 +9,6 @@ import 'package:frontend/scr/service/session.dart';
 import 'package:frontend/scr/widget/component/error.dart';
 import 'package:frontend/scr/widget/component/helper.dart';
 import 'package:frontend/scr/widget/component/loading.dart';
-import 'package:frontend/scr/widget/panel.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:markdown_widget/markdown_widget.dart';
@@ -48,7 +47,7 @@ class _BuildInputComponent extends HookConsumerWidget {
     void send() {
       final text = textController.text.trim();
       if (text.isNotEmpty) {
-        // Implement the send action here
+        //TODO: Implement the send action here
         textController.clear();
       }
     }
@@ -325,13 +324,120 @@ class _SysPromptsDropdown extends HookConsumerWidget {
           loading: DefaultLoadingWidget.new,
           error: (error, stack) => Text('Error: $error'),
         ),
-        IconButton(
-          onPressed: () {
-            //show popup to add a new prompt
-          },
-          icon: const Icon(Icons.add),
-        ),
+        const AddPrompt(),
       ],
+    );
+  }
+}
+
+class AddPrompt extends HookConsumerWidget {
+  const AddPrompt({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final aliasController = useTextEditingController();
+    final promptController = useTextEditingController();
+    Future<bool> send() async {
+      final prompt = promptController.text.trim();
+      final alias = aliasController.text.trim();
+      if (alias.isNotEmpty && prompt.isNotEmpty) {
+        final existingPrompts = await ref.read(sysPromptServiceProvider.future);
+        final newPrompts = [
+          ...existingPrompts,
+          SysPrompt(name: alias, prompt: prompt)
+        ];
+        await ref
+            .read(sysPromptServiceProvider.notifier)
+            .setPrompts(newPrompts);
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    final focusNode = useFocusNode(onKeyEvent: (node, event) {
+      if (event.logicalKey.keyLabel == 'Enter' &&
+          !HardwareKeyboard.instance.isShiftPressed) {
+        if (event is KeyDownEvent) {
+          send();
+        }
+        return KeyEventResult.handled;
+      } else {
+        return KeyEventResult.ignored;
+      }
+    });
+    return IconButton(
+      onPressed: () {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              insetPadding: const EdgeInsets.all(10),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                width: 0.7.sw,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10, top: 5),
+                      child: Text('System Prompt'),
+                    ),
+                    TextField(
+                      minLines: 1,
+                      maxLength: 30,
+                      controller: aliasController,
+                      decoration: const InputDecoration(
+                        labelText: 'Alias',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      focusNode: focusNode,
+                      minLines: 3,
+                      controller: promptController,
+                      buildCounter: (context,
+                          {required currentLength,
+                          required isFocused,
+                          required maxLength}) {
+                        return Text('$currentLength');
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Prompt',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 8,
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final result = await send();
+                            if (result && context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+      icon: const Icon(Icons.add),
     );
   }
 }

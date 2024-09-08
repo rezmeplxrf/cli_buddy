@@ -6,7 +6,7 @@ part of 'session.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sessionServiceHash() => r'd2fde3c77028468d60df23ce1cceed14c23bf55f';
+String _$sessionServiceHash() => r'ec166327ba5dd5e939ee9205e86eff0c1f02ec9c';
 
 /// See also [SessionService].
 @ProviderFor(SessionService)
@@ -23,7 +23,7 @@ final sessionServiceProvider = AutoDisposeAsyncNotifierProvider<SessionService,
 
 typedef _$SessionService = AutoDisposeAsyncNotifier<List<ChatSession>>;
 String _$currentSessionControllerHash() =>
-    r'75271d81bcb3a6bf0b7513c41b7408e222830263';
+    r'1698ab5e2c0374655a2acf26552bd582703b4cac';
 
 /// See also [CurrentSessionController].
 @ProviderFor(CurrentSessionController)

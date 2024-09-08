@@ -6,7 +6,7 @@ part of 'config.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$configServiceHash() => r'71a4ed4651f76e13369612aab632a3d44784e455';
+String _$configServiceHash() => r'e017c89dd15b8bbfaa8aaeec9edb350cdca20b3c';
 
 /// See also [ConfigService].
 @ProviderFor(ConfigService)
@@ -22,7 +22,7 @@ final configServiceProvider =
 );
 
 typedef _$ConfigService = AutoDisposeAsyncNotifier<Configuration?>;
-String _$sysPromptServiceHash() => r'92e1f3d2a2d415063b7773ce24cf7d340dc2f3c5';
+String _$sysPromptServiceHash() => r'00f5cc0c458492761dffe14e428d1f32e25b916c';
 
 /// See also [SysPromptService].
 @ProviderFor(SysPromptService)

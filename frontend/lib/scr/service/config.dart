@@ -13,7 +13,8 @@ class ConfigService extends _$ConfigService {
         final config = await getConfig();
         return config;
       } catch (e) {
-        rethrow;
+        state = AsyncError(e, StackTrace.current);
+        return null;
       }
     } else {
       return state.value;
@@ -46,6 +47,7 @@ class SysPromptService extends _$SysPromptService {
         final prompts = await getPrompts();
         return prompts;
       } catch (e) {
+        state = AsyncError(e, StackTrace.current);
         return [];
       }
     } else {
@@ -59,7 +61,7 @@ class SysPromptService extends _$SysPromptService {
     return prompts;
   }
 
-  Future<void> setgetPrompts(List<SysPrompt> prompts) async {
+  Future<void> setPrompts(List<SysPrompt> prompts) async {
     state = const AsyncLoading();
     try {
       await ref.read(setSysPromptsProvider(sysPrompts: prompts).future);

@@ -29,18 +29,17 @@ class SessionService {
       return [];
     }
 
+    // Check if cache is still valid (e.g., not older than 3 minutes)
+    final now = DateTime.now();
+    if (_sessionsCache != null &&
+        _lastCacheUpdate != null &&
+        now.difference(_lastCacheUpdate!).inMinutes < 3) {
+      return _sessionsCache!;
+    }
     final sessionFiles = sessionsDirectory
         .listSync()
         .where((file) => file is File && file.path.endsWith('.json'))
         .cast<File>();
-
-    // Check if cache is still valid (e.g., not older than 5 minutes)
-    final now = DateTime.now();
-    if (_sessionsCache != null &&
-        _lastCacheUpdate != null &&
-        now.difference(_lastCacheUpdate!).inMinutes < 5) {
-      return _sessionsCache!;
-    }
 
     final sessions = <ChatSession>[];
     var hasNewSessions = false;
@@ -137,15 +136,13 @@ class SessionService {
     try {
       final sessionsPath = p.join(defaultDir!, 'sessions');
       final sessionFilePath = p.join(sessionsPath, '$id.json');
-   
-      final sessionsFile = File(sessionFilePath);
 
+      final sessionsFile = File(sessionFilePath);
 
       if (!sessionsFile.existsSync()) {
         _logger?.err('Sessions directory does not exist.');
         return false;
       } else {
-
         sessionsFile.deleteSync();
         _sessionsCache?.removeWhere((s) => s.id == id);
         _lastCacheUpdate = DateTime.now();

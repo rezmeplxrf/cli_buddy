@@ -9,6 +9,8 @@ part of 'config.dart';
 _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
     _$ConfigurationImpl(
       secretEnvPath: json['secret_env_path'] as String?,
+      ipAddress: json['ipAddress'] as String? ?? '127.0.0.1',
+      port: json['port'] as String? ?? '43210',
       saveSession: json['save_session'] as bool? ?? false,
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
       defaultModel: json['default_model'] as String? ?? 'openai/gpt-4o',
@@ -45,6 +47,8 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
   }
 
   writeNotNull('secret_env_path', instance.secretEnvPath);
+  val['ipAddress'] = instance.ipAddress;
+  val['port'] = instance.port;
   val['save_session'] = instance.saveSession;
   val['max_messages'] = instance.maxMessages;
   val['default_model'] = instance.defaultModel;

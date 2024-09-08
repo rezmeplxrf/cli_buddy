@@ -22,6 +22,10 @@ Configuration _$ConfigurationFromJson(Map<String, dynamic> json) {
 mixin _$Configuration {
   @JsonKey(name: 'secret_env_path', defaultValue: null)
   String? get secretEnvPath => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: '127.0.0.1')
+  String get ipAddress => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: '43210')
+  String get port => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: false, name: 'save_session')
   bool get saveSession => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -87,6 +91,8 @@ abstract class $ConfigurationCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'secret_env_path', defaultValue: null)
       String? secretEnvPath,
+      @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
+      @JsonKey(defaultValue: '43210') String port,
       @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -133,6 +139,8 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
   @override
   $Res call({
     Object? secretEnvPath = freezed,
+    Object? ipAddress = null,
+    Object? port = null,
     Object? saveSession = null,
     Object? maxMessages = null,
     Object? defaultModel = null,
@@ -161,6 +169,14 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
           ? _value.secretEnvPath
           : secretEnvPath // ignore: cast_nullable_to_non_nullable
               as String?,
+      ipAddress: null == ipAddress
+          ? _value.ipAddress
+          : ipAddress // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as String,
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
@@ -264,6 +280,8 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'secret_env_path', defaultValue: null)
       String? secretEnvPath,
+      @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
+      @JsonKey(defaultValue: '43210') String port,
       @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -308,6 +326,8 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? secretEnvPath = freezed,
+    Object? ipAddress = null,
+    Object? port = null,
     Object? saveSession = null,
     Object? maxMessages = null,
     Object? defaultModel = null,
@@ -336,6 +356,14 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
           ? _value.secretEnvPath
           : secretEnvPath // ignore: cast_nullable_to_non_nullable
               as String?,
+      ipAddress: null == ipAddress
+          ? _value.ipAddress
+          : ipAddress // ignore: cast_nullable_to_non_nullable
+              as String,
+      port: null == port
+          ? _value.port
+          : port // ignore: cast_nullable_to_non_nullable
+              as String,
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
@@ -435,6 +463,8 @@ class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
       {@JsonKey(name: 'secret_env_path', defaultValue: null)
       required this.secretEnvPath,
+      @JsonKey(defaultValue: '127.0.0.1') required this.ipAddress,
+      @JsonKey(defaultValue: '43210') required this.port,
       @JsonKey(defaultValue: false, name: 'save_session')
       required this.saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -476,6 +506,12 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(name: 'secret_env_path', defaultValue: null)
   final String? secretEnvPath;
+  @override
+  @JsonKey(defaultValue: '127.0.0.1')
+  final String ipAddress;
+  @override
+  @JsonKey(defaultValue: '43210')
+  final String port;
   @override
   @JsonKey(defaultValue: false, name: 'save_session')
   final bool saveSession;
@@ -569,7 +605,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(secretEnvPath: $secretEnvPath, saveSession: $saveSession, maxMessages: $maxMessages, defaultModel: $defaultModel, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
+    return 'Configuration(secretEnvPath: $secretEnvPath, ipAddress: $ipAddress, port: $port, saveSession: $saveSession, maxMessages: $maxMessages, defaultModel: $defaultModel, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
   }
 
   @override
@@ -579,6 +615,9 @@ class _$ConfigurationImpl implements _Configuration {
             other is _$ConfigurationImpl &&
             (identical(other.secretEnvPath, secretEnvPath) ||
                 other.secretEnvPath == secretEnvPath) &&
+            (identical(other.ipAddress, ipAddress) ||
+                other.ipAddress == ipAddress) &&
+            (identical(other.port, port) || other.port == port) &&
             (identical(other.saveSession, saveSession) ||
                 other.saveSession == saveSession) &&
             (identical(other.maxMessages, maxMessages) ||
@@ -624,6 +663,8 @@ class _$ConfigurationImpl implements _Configuration {
   int get hashCode => Object.hashAll([
         runtimeType,
         secretEnvPath,
+        ipAddress,
+        port,
         saveSession,
         maxMessages,
         defaultModel,
@@ -668,6 +709,8 @@ abstract class _Configuration implements Configuration {
   const factory _Configuration(
       {@JsonKey(name: 'secret_env_path', defaultValue: null)
       required final String? secretEnvPath,
+      @JsonKey(defaultValue: '127.0.0.1') required final String ipAddress,
+      @JsonKey(defaultValue: '43210') required final String port,
       @JsonKey(defaultValue: false, name: 'save_session')
       required final bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -707,6 +750,12 @@ abstract class _Configuration implements Configuration {
   @override
   @JsonKey(name: 'secret_env_path', defaultValue: null)
   String? get secretEnvPath;
+  @override
+  @JsonKey(defaultValue: '127.0.0.1')
+  String get ipAddress;
+  @override
+  @JsonKey(defaultValue: '43210')
+  String get port;
   @override
   @JsonKey(defaultValue: false, name: 'save_session')
   bool get saveSession;

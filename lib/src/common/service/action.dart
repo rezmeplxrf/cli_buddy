@@ -75,13 +75,13 @@ class ActionService {
     
     }
   }
-  static Future<void> saveToFile(String fileName, String content,
+  static Future<bool> saveToFile(String fileName, String content,
       {bool? shouldAutoOvewrite = false}) async {
     final file = File(fileName);
     if (shouldAutoOvewrite != null && !shouldAutoOvewrite) {
       await file.writeAsString(content);
       _logger?.info('Output saved to $fileName');
-      return;
+      return true;
     }
 
     if (file.existsSync()) {
@@ -90,12 +90,13 @@ class ActionService {
       );
 
       if (shouldOverwrite == null || !shouldOverwrite) {
-        return;
+        return false;
       }
     }
 
     await file.writeAsString(content);
     _logger?.info('Output saved to $fileName');
+    return true;
   }
 
   static Future<Result<ChatSession, CustomException>> explain(

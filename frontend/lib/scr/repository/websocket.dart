@@ -13,6 +13,7 @@ part 'websocket.g.dart';
 @riverpod
 class WebSocketRespository extends _$WebSocketRespository {
   late final WebSocketChannel? socket;
+   StringBuffer msg = StringBuffer();
   @override
   Stream<WebSocketState> build() async* {
     yield state.value ??
@@ -39,6 +40,7 @@ class WebSocketRespository extends _$WebSocketRespository {
           final msgChunk = MessageChunk.fromJson(
               jsonDecode(message as String) as Map<String, dynamic>);
           if (currentState != null) {
+       
             state = AsyncData(currentState.copyWith(
               chunk: msgChunk,
             ));
@@ -70,15 +72,7 @@ class WebSocketRespository extends _$WebSocketRespository {
   Future<void> sendMessage(ChatSession session) async {
     try {
       if (socket != null) {
-        // final currentSession =
-        //     await ref.read(currentSessionControllerProvider.future);
-
-        // final newSession = currentSession!.copyWith(
-        //   messages: [...currentSession.messages, message],
-        // );
-        // ref
-        //     .read(currentSessionControllerProvider.notifier)
-        //     .setSession(newSession);
+       
         socket?.sink.add(jsonEncode(session));
       }
     } catch (e) {

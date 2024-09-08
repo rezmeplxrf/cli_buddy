@@ -10,14 +10,15 @@ part 'endpoints.g.dart';
 FutureOr<List<ChatSession>> listSession(
   ListSessionRef ref,
 ) async {
-  final response = await dio.get<String>(
+  final response = await dio.get<List<dynamic>>(
     '$baseUrl/session-list',
   );
   if (response.statusCode != 200) {
     throw Exception('Error fetching session lis - ${response.data}');
   }
-  final data = jsonDecode(response.data!) as List<dynamic>;
-  final sessions = data
+ 
+ 
+  final sessions = response.data!
       .map((json) => ChatSession.fromJson(json as Map<String, dynamic>))
       .toList();
   return sessions;

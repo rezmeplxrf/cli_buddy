@@ -7,7 +7,7 @@ part of 'websocket.dart';
 // **************************************************************************
 
 String _$webSocketRespositoryHash() =>
-    r'12db8e7d41f9c7f1af53d68c085a94d8222d0ece';
+    r'eaeb6d01e5b2913991305fe541d33c701df5575b';
 
 /// See also [WebSocketRespository].
 @ProviderFor(WebSocketRespository)

@@ -5,10 +5,12 @@ part 'config.g.dart';
 
 @freezed
 class Configuration with _$Configuration {
-    @JsonSerializable(includeIfNull: false)
+  @JsonSerializable(includeIfNull: false)
   const factory Configuration({
     @JsonKey(name: 'secret_env_path', defaultValue: null)
     required String? secretEnvPath,
+    @JsonKey(defaultValue: '127.0.0.1') required String ipAddress,
+    @JsonKey(defaultValue: '43210') required String port,
     @JsonKey(defaultValue: false, name: 'save_session')
     required bool saveSession,
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,
@@ -61,13 +63,13 @@ class Configuration with _$Configuration {
       _$ConfigurationFromJson(json);
 }
 
-
 @freezed
 class SysPrompt with _$SysPrompt {
   const factory SysPrompt({
-   required String name,
+    required String name,
     required String prompt,
   }) = _SysPrompt;
 
-  factory SysPrompt.fromJson(Map<String, Object?> json) => _$SysPromptFromJson(json);
+  factory SysPrompt.fromJson(Map<String, Object?> json) =>
+      _$SysPromptFromJson(json);
 }

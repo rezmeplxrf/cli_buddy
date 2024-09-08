@@ -10,6 +10,8 @@ class Configuration with _$Configuration {
   const factory Configuration({
     @JsonKey(name: 'secret_env_path', defaultValue: null)
     required String? secretEnvPath,
+   @JsonKey(defaultValue: '127.0.0.1') required String ipAddress,
+    @JsonKey(defaultValue: '43210') required String port,
     @JsonKey(defaultValue: false, name: 'save_session')
     required bool saveSession,
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,
