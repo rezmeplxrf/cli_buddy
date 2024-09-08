@@ -128,7 +128,7 @@ class CodeCommand extends Command<int> {
             final fileName = _logger.prompt(
               'Enter the name of the file you want to save the output:',
             );
-            await ActionService.saveToFile(fileName, lastMsg);
+            await ActionService.saveToFile(fileName, lastMsg, shouldAutoOvewrite: false);
           case ActionType.explain:
             final explainResult =
                 await ActionService.explain(session, shouldDebug: shouldDebug);

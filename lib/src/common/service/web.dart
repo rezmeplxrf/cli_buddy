@@ -30,7 +30,7 @@ class WebService {
   static WebSocketChannel? webSocket;
   static List<ChatSession>? _sessions = [];
   static String? msg;
-  Future<void> start({required String address , required int port}) async {
+  Future<void> start({required String address, required int port}) async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
     final handler = const Pipeline()
         .addMiddleware(logRequests())
@@ -57,22 +57,18 @@ class WebService {
     return router.call;
   }
 
-  Future<Response> _getPromptsHandler(Request request) async {
+  Response _getPromptsHandler(Request request) {
     try {
       final defaultDir = SysInfoService.getConfigDirectory();
       final filePath = p.join(defaultDir!, 'prompts.json');
-      print(filePath);
-      final content = await ActionService.retrieveFile(filePath).getOrNull();
+
+      final content = ActionService.retrieveFile(filePath).getOrNull();
+
       if (content == null) {
         return Response.notFound('File not found at $filePath');
       }
-      final jsonList = jsonDecode(content) as List<dynamic>?;
-      if (jsonList == null || jsonList.isEmpty) {
-        return Response.notFound(
-          'File not found at $filePath',
-        );
-      }
-      return Response.ok(jsonList,
+
+      return Response.ok(content,
           headers: {'content-type': 'application/json'});
     } catch (e) {
       return Response.notFound('File not found');
@@ -89,16 +85,14 @@ class WebService {
           .toList();
       defaultDir ??= SysInfoService.getConfigDirectory();
       final filePath = p.join(defaultDir!, 'prompts.json');
-      final result = await ActionService.saveToFile(
-          filePath, jsonEncode(prompts),
+      await ActionService.saveToFile(filePath, jsonEncode(prompts),
           shouldAutoOvewrite: true);
-      if (result) {
-        return Response.ok({'result': 'File is created at $filePath'},
-            headers: {'content-type': 'application/json'});
-      } else {
-        return Response.internalServerError(body: 'Failed to create file');
-      }
+
+      return Response.ok(
+        'File is created at $filePath',
+      );
     } catch (e) {
+      _logger?.err('Failed to create file - $e');
       return Response.internalServerError(
         body: 'Failed to create file - $e',
       );

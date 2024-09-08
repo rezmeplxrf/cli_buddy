@@ -16,8 +16,7 @@ FutureOr<List<ChatSession>> listSession(
   if (response.statusCode != 200) {
     throw Exception('Error fetching session lis - ${response.data}');
   }
- 
- 
+
   final sessions = response.data!
       .map((json) => ChatSession.fromJson(json as Map<String, dynamic>))
       .toList();
@@ -28,13 +27,15 @@ FutureOr<List<ChatSession>> listSession(
 FutureOr<List<SysPrompt>> getSysPrompts(
   GetSysPromptsRef ref,
 ) async {
-  final response = await dio.get<List<dynamic>>(
+  final response = await dio.get<String>(
     '$baseUrl/prompts',
   );
   if (response.statusCode != 200) {
     throw Exception('Error fetching session lis - ${response.data}');
   }
-  final sessions = response.data!
+  final data = jsonDecode(response.data!) as List<dynamic>;
+  final sessions = data
+    
       .map((json) => SysPrompt.fromJson(json as Map<String, dynamic>))
       .toList();
   return sessions;
@@ -43,7 +44,7 @@ FutureOr<List<SysPrompt>> getSysPrompts(
 @riverpod
 FutureOr<bool> setSysPrompts(SetSysPromptsRef ref,
     {required List<SysPrompt> sysPrompts}) async {
-  final response = await dio.post<List<dynamic>>('$baseUrl/prompts',
+  final response = await dio.post<String>('$baseUrl/prompts',
       data: jsonEncode(sysPrompts));
   if (response.statusCode != 200) {
     throw Exception('Error fetching session lis - ${response.data}');

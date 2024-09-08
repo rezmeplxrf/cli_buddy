@@ -44,10 +44,12 @@ class _BuildInputComponent extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController();
+      final currentSysPrompt = ref.watch(selectedSysPromptProvider);
     void send() {
       final text = textController.text.trim();
       if (text.isNotEmpty) {
         //TODO: Implement the send action here
+      
         textController.clear();
       }
     }
@@ -268,6 +270,7 @@ class _SysPromptsDropdown extends HookConsumerWidget {
     final promptsAsync = ref.watch(sysPromptServiceProvider);
     final configAsync = ref.watch(configServiceProvider);
     final errorMsg = useState<String?>(null);
+    final currentPrompt = ref.watch(selectedSysPromptProvider);
     return Row(
       children: [
         promptsAsync.when(
@@ -301,7 +304,7 @@ class _SysPromptsDropdown extends HookConsumerWidget {
 
                 return index != -1 ? index : null;
               },
-              initialSelection: defaultPrompt,
+              initialSelection: currentPrompt?? defaultPrompt,
               onSelected: (value) {
                 if (value != null) {
                   ref.read(selectedSysPromptProvider.notifier).set(value);
@@ -322,7 +325,7 @@ class _SysPromptsDropdown extends HookConsumerWidget {
             );
           },
           loading: DefaultLoadingWidget.new,
-          error: (error, stack) => Text('Error: $error'),
+          error: (_, __) => const Text('Error occurred'),
         ),
         const AddPrompt(),
       ],
@@ -344,10 +347,10 @@ class AddPrompt extends HookConsumerWidget {
       final alias = aliasController.text.trim();
       if (alias.isNotEmpty && prompt.isNotEmpty) {
         final existingPrompts = await ref.read(sysPromptServiceProvider.future);
-        final newPrompts = [
+        final newPrompts = {
           ...existingPrompts,
           SysPrompt(name: alias, prompt: prompt)
-        ];
+        }.toList();
         await ref
             .read(sysPromptServiceProvider.notifier)
             .setPrompts(newPrompts);

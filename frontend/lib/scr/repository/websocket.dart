@@ -13,9 +13,12 @@ part 'websocket.g.dart';
 @riverpod
 class WebSocketRespository extends _$WebSocketRespository {
   late final WebSocketChannel? socket;
-   StringBuffer msg = StringBuffer();
+  StringBuffer msg = StringBuffer();
   @override
   Stream<WebSocketState> build() async* {
+    ref.onDispose(() async {
+      await disconnect();
+    });
     yield state.value ??
         const WebSocketState(
           connectionState: SocketState.disconnected,
@@ -40,7 +43,6 @@ class WebSocketRespository extends _$WebSocketRespository {
           final msgChunk = MessageChunk.fromJson(
               jsonDecode(message as String) as Map<String, dynamic>);
           if (currentState != null) {
-       
             state = AsyncData(currentState.copyWith(
               chunk: msgChunk,
             ));
@@ -63,6 +65,7 @@ class WebSocketRespository extends _$WebSocketRespository {
   Future<void> disconnect() async {
     if (socket != null) {
       await socket?.sink.close(status.goingAway);
+      socket = null;
       state = const AsyncData(WebSocketState(
         connectionState: SocketState.disconnected,
       ));
@@ -72,7 +75,6 @@ class WebSocketRespository extends _$WebSocketRespository {
   Future<void> sendMessage(ChatSession session) async {
     try {
       if (socket != null) {
-       
         socket?.sink.add(jsonEncode(session));
       }
     } catch (e) {

@@ -21,7 +21,7 @@ final listSessionProvider =
 );
 
 typedef ListSessionRef = AutoDisposeFutureProviderRef<List<ChatSession>>;
-String _$getSysPromptsHash() => r'9f6570ee9071c4dd224903aa86abc4246b0973ed';
+String _$getSysPromptsHash() => r'85d122489e86d5e3040d0c100aa7217c5fc99a59';
 
 /// See also [getSysPrompts].
 @ProviderFor(getSysPrompts)
@@ -37,7 +37,7 @@ final getSysPromptsProvider =
 );
 
 typedef GetSysPromptsRef = AutoDisposeFutureProviderRef<List<SysPrompt>>;
-String _$setSysPromptsHash() => r'35ab24eaa552603ce31c97290dd323730e1d911b';
+String _$setSysPromptsHash() => r'5798f7108337f3a18a1f736efa149397f316e3a6';
 
 /// Copied from Dart SDK
 class _SystemHash {

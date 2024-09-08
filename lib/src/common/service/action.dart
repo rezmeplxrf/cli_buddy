@@ -60,43 +60,49 @@ class ActionService {
       throw Exception('Error running command: $e');
     }
   }
- static Future<Result<String, CustomException>> retrieveFile(String fileName) async {
+
+  static Result<String, CustomException> retrieveFile(String fileName) {
     try {
       final file = File(fileName);
-      
+
       if (!file.existsSync()) {
-        return CustomException(message:  'File not found: $fileName', stack: 'ActionService.retrieveFile').toFailure();
+        return CustomException(
+                message: 'File not found: $fileName',
+                stack: 'ActionService.retrieveFile')
+            .toFailure();
       }
 
-      final content = await file.readAsString();
-      return Success(content);
+      final content = file.readAsStringSync();
+      return content.toSuccess();
     } catch (e) {
-        return CustomException(message:  'Failed to load: $fileName', stack: 'ActionService.retrieveFile', details: {'error': '$e'}).toFailure();
-    
+      return CustomException(
+          message: 'Failed to load: $fileName',
+          stack: 'ActionService.retrieveFile',
+          details: {'error': '$e'}).toFailure();
     }
   }
+
   static Future<bool> saveToFile(String fileName, String content,
-      {bool? shouldAutoOvewrite = false}) async {
-    final file = File(fileName);
-    if (shouldAutoOvewrite != null && !shouldAutoOvewrite) {
+      {required bool shouldAutoOvewrite}) async {
+    try {
+      final file = File(fileName);
+
+      if (file.existsSync() && !shouldAutoOvewrite) {
+        final shouldOverwrite = _logger?.confirm(
+          'File already exists. Do you want to overwrite it?',
+        );
+        if (shouldOverwrite == null || !shouldOverwrite) {
+          return false;
+        }
+      }
+
       await file.writeAsString(content);
       _logger?.info('Output saved to $fileName');
       return true;
+    } catch (e) {
+      _logger?.err('$e');
+      rethrow;
     }
-
-    if (file.existsSync()) {
-      final shouldOverwrite = _logger?.confirm(
-        'File already exists. Do you want to overwrite it?',
-      );
-
-      if (shouldOverwrite == null || !shouldOverwrite) {
-        return false;
-      }
-    }
-
-    await file.writeAsString(content);
-    _logger?.info('Output saved to $fileName');
-    return true;
   }
 
   static Future<Result<ChatSession, CustomException>> explain(
