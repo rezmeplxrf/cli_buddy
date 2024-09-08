@@ -23,7 +23,7 @@ final sessionServiceProvider = AutoDisposeAsyncNotifierProvider<SessionService,
 
 typedef _$SessionService = AutoDisposeAsyncNotifier<List<ChatSession>>;
 String _$currentSessionControllerHash() =>
-    r'821fbca2793f5792be8b84abb459890365e0cfe9';
+    r'75271d81bcb3a6bf0b7513c41b7408e222830263';
 
 /// See also [CurrentSessionController].
 @ProviderFor(CurrentSessionController)

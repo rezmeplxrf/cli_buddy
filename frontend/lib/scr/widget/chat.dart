@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:frontend/scr/model/config.dart';
 import 'package:frontend/scr/model/session.dart';
+import 'package:frontend/scr/service/config.dart';
 import 'package:frontend/scr/service/session.dart';
 import 'package:frontend/scr/widget/component/error.dart';
 import 'package:frontend/scr/widget/component/helper.dart';
 import 'package:frontend/scr/widget/component/loading.dart';
-import 'package:frontend/scr/widget/component/sysprompt_widget.dart';
+import 'package:frontend/scr/widget/panel.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:markdown_widget/markdown_widget.dart';
@@ -100,8 +103,8 @@ class _BuildInputComponent extends HookConsumerWidget {
                   required maxLength}) {
                 return Row(
                   children: [
-                    const SysPromptsDropdownWidget(),
-                      Text('$currentLength'),
+                    const _SysPromptsDropdown(),
+                    Text('$currentLength'),
                   ],
                 );
               },
@@ -253,6 +256,81 @@ class _CodeWrapperWidget extends HookWidget {
             ),
           ),
         )
+      ],
+    );
+  }
+}
+
+class _SysPromptsDropdown extends HookConsumerWidget {
+  const _SysPromptsDropdown();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final promptsAsync = ref.watch(sysPromptServiceProvider);
+    final configAsync = ref.watch(configServiceProvider);
+    final errorMsg = useState<String?>(null);
+    return Row(
+      children: [
+        promptsAsync.when(
+          data: (prompts) {
+            final defaultPrompt = configAsync.maybeWhen(
+              data: (config) {
+                return SysPrompt(
+                  name: 'Default',
+                  prompt: config?.chatPrompt ?? 'You are a Helpful Assistant',
+                );
+              },
+              orElse: () => null,
+            );
+
+            final uniquePrompts = <SysPrompt>{...prompts};
+            if (defaultPrompt != null) {
+              uniquePrompts.add(defaultPrompt);
+            }
+
+            return DropdownMenu<SysPrompt>(
+              hintText: 'System prompt',
+              errorText: errorMsg.value,
+              searchCallback:
+                  (List<DropdownMenuEntry<SysPrompt>> entries, String query) {
+                if (query.isEmpty) {
+                  return null;
+                }
+                final index = entries.indexWhere(
+                    (DropdownMenuEntry<SysPrompt> entry) =>
+                        entry.label == query);
+
+                return index != -1 ? index : null;
+              },
+              initialSelection: defaultPrompt,
+              onSelected: (value) {
+                if (value != null) {
+                  ref.read(selectedSysPromptProvider.notifier).set(value);
+                  errorMsg.value = null;
+                } else {
+                  errorMsg.value = 'Invalid prompt';
+                }
+              },
+              dropdownMenuEntries: uniquePrompts.map((prompt) {
+                return DropdownMenuEntry<SysPrompt>(
+                    label: prompt.name,
+                    value: prompt,
+                    trailingIcon: IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {},
+                        icon: const Icon(Icons.edit)));
+              }).toList(),
+            );
+          },
+          loading: DefaultLoadingWidget.new,
+          error: (error, stack) => Text('Error: $error'),
+        ),
+        IconButton(
+          onPressed: () {
+            //show popup to add a new prompt
+          },
+          icon: const Icon(Icons.add),
+        ),
       ],
     );
   }

@@ -6,38 +6,53 @@ part of 'config.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$configControllerHash() => r'9706cc50c6cce279d678bf388be06b9e8569e306';
+String _$configServiceHash() => r'71a4ed4651f76e13369612aab632a3d44784e455';
 
-/// See also [ConfigController].
-@ProviderFor(ConfigController)
-final configControllerProvider =
-    AutoDisposeAsyncNotifierProvider<ConfigController, Configuration?>.internal(
-  ConfigController.new,
-  name: r'configControllerProvider',
+/// See also [ConfigService].
+@ProviderFor(ConfigService)
+final configServiceProvider =
+    AutoDisposeAsyncNotifierProvider<ConfigService, Configuration?>.internal(
+  ConfigService.new,
+  name: r'configServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$configControllerHash,
+      : _$configServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ConfigController = AutoDisposeAsyncNotifier<Configuration?>;
-String _$sysPromptControllerHash() =>
-    r'a34a6d79f777fd95a159eaf64441c145469b5b7f';
+typedef _$ConfigService = AutoDisposeAsyncNotifier<Configuration?>;
+String _$sysPromptServiceHash() => r'92e1f3d2a2d415063b7773ce24cf7d340dc2f3c5';
 
-/// See also [SysPromptController].
-@ProviderFor(SysPromptController)
-final sysPromptControllerProvider = AutoDisposeAsyncNotifierProvider<
-    SysPromptController, List<SysPrompt>?>.internal(
-  SysPromptController.new,
-  name: r'sysPromptControllerProvider',
+/// See also [SysPromptService].
+@ProviderFor(SysPromptService)
+final sysPromptServiceProvider = AutoDisposeAsyncNotifierProvider<
+    SysPromptService, List<SysPrompt>>.internal(
+  SysPromptService.new,
+  name: r'sysPromptServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$sysPromptControllerHash,
+      : _$sysPromptServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SysPromptController = AutoDisposeAsyncNotifier<List<SysPrompt>?>;
+typedef _$SysPromptService = AutoDisposeAsyncNotifier<List<SysPrompt>>;
+String _$selectedSysPromptHash() => r'2ff4ca73fe3ee54158b97e9a78287cc3d6bcac9e';
+
+/// See also [SelectedSysPrompt].
+@ProviderFor(SelectedSysPrompt)
+final selectedSysPromptProvider =
+    AutoDisposeNotifierProvider<SelectedSysPrompt, SysPrompt?>.internal(
+  SelectedSysPrompt.new,
+  name: r'selectedSysPromptProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$selectedSysPromptHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SelectedSysPrompt = AutoDisposeNotifier<SysPrompt?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'config.g.dart';
 
 @riverpod
-class ConfigController extends _$ConfigController {
+class ConfigService extends _$ConfigService {
   @override
   FutureOr<Configuration?> build() async {
     if (state.value == null) {
@@ -38,10 +38,10 @@ class ConfigController extends _$ConfigController {
 }
 
 @riverpod
-class SysPromptController extends _$SysPromptController {
+class SysPromptService extends _$SysPromptService {
   @override
-  FutureOr<List<SysPrompt>?> build() async {
-    if (state.value == null) {
+  FutureOr<List<SysPrompt>> build() async {
+    if (state.value == null || state.value!.isEmpty) {
       try {
         final prompts = await getPrompts();
         return prompts;
@@ -49,11 +49,11 @@ class SysPromptController extends _$SysPromptController {
         return [];
       }
     } else {
-      return state.value;
+      return state.value!;
     }
   }
 
-  Future<List<SysPrompt>> getPrompts() async {
+  FutureOr<List<SysPrompt>> getPrompts() async {
     state = const AsyncLoading();
     final prompts = await ref.read(getSysPromptsProvider.future);
     return prompts;
@@ -67,5 +67,17 @@ class SysPromptController extends _$SysPromptController {
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
+  }
+}
+
+@riverpod
+class SelectedSysPrompt extends _$SelectedSysPrompt {
+  @override
+  SysPrompt? build() {
+    return null;
+  }
+
+  void set(SysPrompt sysPrompt) {
+    state = sysPrompt;
   }
 }

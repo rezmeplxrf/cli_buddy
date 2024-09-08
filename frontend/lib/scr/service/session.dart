@@ -80,7 +80,7 @@ class CurrentSessionController extends _$CurrentSessionController {
   Future<ChatSession> newSession() async {
     state = const AsyncLoading();
 
-    final config = await ref.read(configControllerProvider.future);
+    final config = await ref.read(configServiceProvider.future);
     if (config?.chatPrompt == null ||
         config?.defaultModel == null ||
         config?.secretEnvPath == null) {
