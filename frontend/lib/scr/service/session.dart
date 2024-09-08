@@ -14,7 +14,7 @@ class SessionService extends _$SessionService {
         final sessions = await getSessions();
         return sessions;
       } catch (e) {
-         state = AsyncError(e, StackTrace.current);
+        state = AsyncError(e, StackTrace.current);
         return [];
       }
     } else {
@@ -66,7 +66,7 @@ class CurrentSessionController extends _$CurrentSessionController {
         final session = await newSession();
         return session;
       } catch (e) {
-         state = AsyncError(e, StackTrace.current);
+        state = AsyncError(e, StackTrace.current);
         return null;
       }
     } else {
@@ -88,6 +88,14 @@ class CurrentSessionController extends _$CurrentSessionController {
         config?.secretEnvPath == null) {
       throw Exception('Required config is not found');
     }
+    SysPrompt? sysPrompt;
+    final selectedSysPrompt = ref.read(selectedSysPromptProvider);
+    if (selectedSysPrompt == null) {
+      final config = await ref.read(configServiceProvider.future);
+      sysPrompt = SysPrompt(name: 'Default', prompt: config!.chatPrompt!);
+    } else {
+      sysPrompt = selectedSysPrompt;
+    }
     final currentTime = DateTime.now().millisecondsSinceEpoch;
     final newSession = ChatSession(
         id: currentTime,
@@ -95,7 +103,7 @@ class CurrentSessionController extends _$CurrentSessionController {
         messages: [
           Message(
               role: Role.system,
-              content: config.chatPrompt!,
+              content: sysPrompt.prompt,
               timestamp: currentTime)
         ]);
 

@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:frontend/scr/model/config.dart';
 import 'package:frontend/scr/model/session.dart';
+import 'package:frontend/scr/repository/websocket.dart';
 import 'package:frontend/scr/service/config.dart';
 import 'package:frontend/scr/service/session.dart';
 import 'package:frontend/scr/widget/component/error.dart';
@@ -44,13 +45,24 @@ class _BuildInputComponent extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController();
-      final currentSysPrompt = ref.watch(selectedSysPromptProvider);
-    void send() {
-      final text = textController.text.trim();
-      if (text.isNotEmpty) {
-        //TODO: Implement the send action here
-      
-        textController.clear();
+
+    Future<void> send() async {
+      final text = textController.text;
+      if (text.trim().isNotEmpty) {
+        final currentSession =
+            await ref.read(currentSessionControllerProvider.future);
+        final newMessage = Message(
+            role: Role.user,
+            content: text,
+            timestamp: DateTime.now().millisecondsSinceEpoch);
+        final newSession = currentSession
+            ?.copyWith(messages: [...currentSession.messages, newMessage]);
+        if (newSession != null) {
+          await ref
+              .read(webSocketRespositoryProvider.notifier)
+              .sendMessage(newSession);
+          textController.clear();
+        }
       }
     }
 
@@ -304,7 +316,7 @@ class _SysPromptsDropdown extends HookConsumerWidget {
 
                 return index != -1 ? index : null;
               },
-              initialSelection: currentPrompt?? defaultPrompt,
+              initialSelection: currentPrompt ?? defaultPrompt,
               onSelected: (value) {
                 if (value != null) {
                   ref.read(selectedSysPromptProvider.notifier).set(value);

@@ -76,6 +76,9 @@ class WebSocketRespository extends _$WebSocketRespository {
     try {
       if (socket != null) {
         socket?.sink.add(jsonEncode(session));
+      } else {
+        await connect();
+        socket?.sink.add(jsonEncode(session));
       }
     } catch (e) {
       rethrow;
