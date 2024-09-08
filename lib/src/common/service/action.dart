@@ -60,7 +60,21 @@ class ActionService {
       throw Exception('Error running command: $e');
     }
   }
+ static Future<Result<String, CustomException>> retrieveFile(String fileName) async {
+    try {
+      final file = File(fileName);
+      
+      if (!file.existsSync()) {
+        return CustomException(message:  'File not found: $fileName', stack: 'ActionService.retrieveFile').toFailure();
+      }
 
+      final content = await file.readAsString();
+      return Success(content);
+    } catch (e) {
+        return CustomException(message:  'Failed to load: $fileName', stack: 'ActionService.retrieveFile', details: {'error': '$e'}).toFailure();
+    
+    }
+  }
   static Future<void> saveToFile(String fileName, String content,
       {bool? shouldAutoOvewrite = false}) async {
     final file = File(fileName);

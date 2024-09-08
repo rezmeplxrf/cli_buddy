@@ -796,3 +796,169 @@ abstract class _Configuration implements Configuration {
   _$$ConfigurationImplCopyWith<_$ConfigurationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+SysPrompt _$SysPromptFromJson(Map<String, dynamic> json) {
+  return _SysPrompt.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SysPrompt {
+  String get name => throw _privateConstructorUsedError;
+  String get prompt => throw _privateConstructorUsedError;
+
+  /// Serializes this SysPrompt to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SysPrompt
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SysPromptCopyWith<SysPrompt> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SysPromptCopyWith<$Res> {
+  factory $SysPromptCopyWith(SysPrompt value, $Res Function(SysPrompt) then) =
+      _$SysPromptCopyWithImpl<$Res, SysPrompt>;
+  @useResult
+  $Res call({String name, String prompt});
+}
+
+/// @nodoc
+class _$SysPromptCopyWithImpl<$Res, $Val extends SysPrompt>
+    implements $SysPromptCopyWith<$Res> {
+  _$SysPromptCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SysPrompt
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? prompt = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      prompt: null == prompt
+          ? _value.prompt
+          : prompt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SysPromptImplCopyWith<$Res>
+    implements $SysPromptCopyWith<$Res> {
+  factory _$$SysPromptImplCopyWith(
+          _$SysPromptImpl value, $Res Function(_$SysPromptImpl) then) =
+      __$$SysPromptImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name, String prompt});
+}
+
+/// @nodoc
+class __$$SysPromptImplCopyWithImpl<$Res>
+    extends _$SysPromptCopyWithImpl<$Res, _$SysPromptImpl>
+    implements _$$SysPromptImplCopyWith<$Res> {
+  __$$SysPromptImplCopyWithImpl(
+      _$SysPromptImpl _value, $Res Function(_$SysPromptImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SysPrompt
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? prompt = null,
+  }) {
+    return _then(_$SysPromptImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      prompt: null == prompt
+          ? _value.prompt
+          : prompt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SysPromptImpl implements _SysPrompt {
+  const _$SysPromptImpl({required this.name, required this.prompt});
+
+  factory _$SysPromptImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SysPromptImplFromJson(json);
+
+  @override
+  final String name;
+  @override
+  final String prompt;
+
+  @override
+  String toString() {
+    return 'SysPrompt(name: $name, prompt: $prompt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SysPromptImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.prompt, prompt) || other.prompt == prompt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, prompt);
+
+  /// Create a copy of SysPrompt
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SysPromptImplCopyWith<_$SysPromptImpl> get copyWith =>
+      __$$SysPromptImplCopyWithImpl<_$SysPromptImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SysPromptImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SysPrompt implements SysPrompt {
+  const factory _SysPrompt(
+      {required final String name,
+      required final String prompt}) = _$SysPromptImpl;
+
+  factory _SysPrompt.fromJson(Map<String, dynamic> json) =
+      _$SysPromptImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get prompt;
+
+  /// Create a copy of SysPrompt
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SysPromptImplCopyWith<_$SysPromptImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

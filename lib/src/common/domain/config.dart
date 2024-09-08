@@ -50,3 +50,14 @@ class Configuration with _$Configuration {
       _$ConfigurationFromJson(json);
 
 }
+
+
+@freezed
+class SysPrompt with _$SysPrompt {
+  const factory SysPrompt({
+   required String name,
+    required String prompt,
+  }) = _SysPrompt;
+
+  factory SysPrompt.fromJson(Map<String, Object?> json) => _$SysPromptFromJson(json);
+}

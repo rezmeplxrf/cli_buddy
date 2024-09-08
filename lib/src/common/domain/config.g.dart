@@ -73,3 +73,15 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
   writeNotNull('chat_prompt', instance.chatPrompt);
   return val;
 }
+
+_$SysPromptImpl _$$SysPromptImplFromJson(Map<String, dynamic> json) =>
+    _$SysPromptImpl(
+      name: json['name'] as String,
+      prompt: json['prompt'] as String,
+    );
+
+Map<String, dynamic> _$$SysPromptImplToJson(_$SysPromptImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'prompt': instance.prompt,
+    };

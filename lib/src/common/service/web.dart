@@ -7,7 +7,9 @@ import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
+import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
@@ -49,16 +51,44 @@ class WebService {
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
       ..post('/remove-session', _removeSessionHandler)
-      ..post('/make-file', _makeFileHandler);
+      ..post('/make-file', _makeFileHandler)
+      ..get('/prompts', _getPromptsHandler)
+      ..post('/prompts', _setPromptsHandler);
     return router.call;
+  }
+
+  Future<Response> _getPromptsHandler(Request request) async {
+    final defaultDir = SysInfoService.getConfigDirectory();
+    final filePath = p.join(defaultDir!, 'prompts.json');
+    final content = await ActionService.retrieveFile(filePath);
+    final jsonList = jsonDecode(content as String) as List<dynamic>;
+    final prompts = jsonList.map((e) => SysPrompt.fromJson(e as Map<String, dynamic>)).toList();
+    return Response.ok(jsonEncode(prompts), headers: {'content-type': 'application/json'});
+  }
+
+  Future<Response> _setPromptsHandler(Request request) async {
+    try {
+      final payload = await request.readAsString();
+
+      final jsonList = jsonDecode(payload) as List<dynamic>;
+      final prompts = jsonList.map((e) => SysPrompt.fromJson(e as Map<String, dynamic>)).toList();
+      defaultDir ??= SysInfoService.getConfigDirectory();
+      final filePath = p.join(defaultDir!, 'prompts.json');
+      await ActionService.saveToFile(filePath, jsonEncode(prompts), shouldAutoOvewrite: true);
+      return Response.ok({'result': 'File is created at $filePath'},
+          headers: {'content-type': 'application/json'});
+    } catch (e) {
+      return Response.internalServerError(
+        body: {'result': 'Failed to create file - $e'},
+      );
+    }
   }
 
   Future<Response> _makeFileHandler(Request request) async {
     try {
       final payload = await request.readAsString();
-      print('payload: $payload');
+
       final data = jsonDecode(payload) as Map<String, dynamic>;
-      print('data: $data');
       final content = data['code'] as String;
       final path = data['path'] as String;
       await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
