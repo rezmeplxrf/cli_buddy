@@ -23,12 +23,12 @@ final sessionServiceProvider = AutoDisposeAsyncNotifierProvider<SessionService,
 
 typedef _$SessionService = AutoDisposeAsyncNotifier<List<ChatSession>>;
 String _$currentSessionControllerHash() =>
-    r'1578a38e744a52f4709f7865d852615d1eeb5ac2';
+    r'aebb32ca9524ee9a97627b4ff17b05ad8cc9ea4e';
 
 /// See also [CurrentSessionController].
 @ProviderFor(CurrentSessionController)
-final currentSessionControllerProvider = AutoDisposeAsyncNotifierProvider<
-    CurrentSessionController, ChatSession?>.internal(
+final currentSessionControllerProvider =
+    AsyncNotifierProvider<CurrentSessionController, ChatSession?>.internal(
   CurrentSessionController.new,
   name: r'currentSessionControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -38,6 +38,6 @@ final currentSessionControllerProvider = AutoDisposeAsyncNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrentSessionController = AutoDisposeAsyncNotifier<ChatSession?>;
+typedef _$CurrentSessionController = AsyncNotifier<ChatSession?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

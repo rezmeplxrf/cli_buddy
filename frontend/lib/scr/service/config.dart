@@ -72,7 +72,7 @@ class SysPromptService extends _$SysPromptService {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SelectedSysPrompt extends _$SelectedSysPrompt {
   @override
   SysPrompt? build() {

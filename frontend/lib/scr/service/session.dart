@@ -57,7 +57,7 @@ class SessionService extends _$SessionService {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentSessionController extends _$CurrentSessionController {
   @override
   FutureOr<ChatSession?> build() async {

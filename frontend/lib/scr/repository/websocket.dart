@@ -46,6 +46,7 @@ class WebSocketRespository extends _$WebSocketRespository {
             state = AsyncData(currentState.copyWith(
               chunk: msgChunk,
             ));
+            // Handle  MessageChunk.ChunkType and usage
           }
         } catch (e, st) {
           state = AsyncError(e, st);
