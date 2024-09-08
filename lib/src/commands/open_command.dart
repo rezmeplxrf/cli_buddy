@@ -17,12 +17,6 @@ class OpenCommand extends Command<int> {
     required Logger logger,
   }) : _logger = logger {
     argParser
-      ..addFlag(
-        'session',
-        abbr: 's',
-        help: 'Pass the existing chat session to AI',
-        negatable: false,
-      )
       ..addFlag('raw',
           abbr: 'r',
           help: 'Display raw outputs of prompt and api requests',
@@ -32,7 +26,11 @@ class OpenCommand extends Command<int> {
         abbr: 'l',
         help: 'Open the page with default browser automatically',
         defaultsTo: true,
-      );
+      )
+      ..addOption('port',
+          abbr: 'p', help: 'Port to listen on', defaultsTo: '43210')
+      ..addOption('address',
+          abbr: 'a', help: 'Address to listen on', defaultsTo: 'localhost');
   }
 
   @override
@@ -62,7 +60,9 @@ class OpenCommand extends Command<int> {
     final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
-      await _open();
+      final port = argResults?['port'] as String? ?? '43210';
+      final address = argResults?['address'] as String? ?? 'localhost';
+      await _open(port: port, address: address);
     }
 
     final completer = Completer<int>();
@@ -70,9 +70,9 @@ class OpenCommand extends Command<int> {
   }
 }
 
-Future<void> _open() async {
+Future<void> _open({required String port, required String address}) async {
   final shell = Shell();
-  const url = 'http://127.0.0.1:43210';
+  final url = 'http://$address:$port';
 
   if (Platform.isMacOS) {
     await shell.run('open $url');
