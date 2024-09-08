@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:frontend/scr/component/error.dart';
-import 'package:frontend/scr/component/helper.dart';
-import 'package:frontend/scr/component/loading.dart';
-import 'package:frontend/scr/controller/session.dart';
 import 'package:frontend/scr/model/session.dart';
-import 'package:frontend/scr/widget/panel.dart';
+import 'package:frontend/scr/service/session.dart';
+import 'package:frontend/scr/widget/component/error.dart';
+import 'package:frontend/scr/widget/component/helper.dart';
+import 'package:frontend/scr/widget/component/loading.dart';
+import 'package:frontend/scr/widget/component/sysprompt_widget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:markdown_widget/markdown_widget.dart';
@@ -101,29 +100,8 @@ class _BuildInputComponent extends HookConsumerWidget {
                   required maxLength}) {
                 return Row(
                   children: [
-                    // TODO: Allow selecting custom system prompts which will be saved in /prompts.
-                    // need to create a model and send it to the server and save there
-                    DropdownButton<String>(
-                      onChanged: (value) => {},
-                      items: [
-                        'Option 1',
-                        'Option 2',
-                        'Option 3',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.star),
-                              const SizedBox(width: 10),
-                              Text(value),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.send)),
-                    Text('$currentLength'),
+                    const SysPromptsDropdownWidget(),
+                      Text('$currentLength'),
                   ],
                 );
               },

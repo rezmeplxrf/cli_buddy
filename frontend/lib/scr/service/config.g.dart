@@ -22,5 +22,22 @@ final configControllerProvider =
 );
 
 typedef _$ConfigController = AutoDisposeAsyncNotifier<Configuration?>;
+String _$sysPromptControllerHash() =>
+    r'a34a6d79f777fd95a159eaf64441c145469b5b7f';
+
+/// See also [SysPromptController].
+@ProviderFor(SysPromptController)
+final sysPromptControllerProvider = AutoDisposeAsyncNotifierProvider<
+    SysPromptController, List<SysPrompt>?>.internal(
+  SysPromptController.new,
+  name: r'sysPromptControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sysPromptControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SysPromptController = AutoDisposeAsyncNotifier<List<SysPrompt>?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

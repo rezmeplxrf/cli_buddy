@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:frontend/scr/component/dialog.dart';
-import 'package:frontend/scr/component/error.dart';
-import 'package:frontend/scr/component/loading.dart';
-import 'package:frontend/scr/controller/session.dart';
 import 'package:frontend/scr/service/session.dart';
+import 'package:frontend/scr/widget/component/dialog.dart';
+import 'package:frontend/scr/widget/component/error.dart';
+import 'package:frontend/scr/widget/component/loading.dart';
 import 'package:intl/intl.dart';
 
 class ChatPanel extends StatelessWidget {
