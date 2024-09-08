@@ -1,3 +1,7 @@
+# 0.1.3
+
+* open command will have port and address options as well as launch flag
+
 # 0.1.2
 
 * open command will open the default browser automatically
