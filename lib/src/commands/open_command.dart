@@ -53,7 +53,8 @@ class OpenCommand extends Command<int> {
     await server.start(address: address!, port: int.parse(port!));
     _logger
       ..info('Web interface is available at $url in your browser.')
-      ..info('It completely private for you only.')
+      ..info(
+          'It is completely private for you only. - No data is collected and nothing is sent to external services.')
       ..info(
           'If you are still worried, you can check out the network section of the devtool');
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
