@@ -52,7 +52,7 @@ class OpenCommand extends Command<int> {
 
     await server.start(address: address!, port: int.parse(port!));
     _logger
-      ..info('Web interface is available at $url in your browser.')
+      ..info('The web interface is available at $url in your browser.')
       ..info(
           'It is completely private for you only. - No data is collected and nothing is sent to external services.')
       ..info(
