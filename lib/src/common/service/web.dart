@@ -232,7 +232,7 @@ class HandlerService {
     final result = await SessionService.removeSessions();
     if (result) {
       WebService.sessions?.clear();
-      return Response.ok({'result': 'All sessions are removed'},
+      return Response.ok(jsonEncode({'result': 'All sessions are removed'}),
           headers: jsonHeaders);
     } else {
       return Response.internalServerError(
