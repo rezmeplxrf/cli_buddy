@@ -48,6 +48,6 @@ dev_dependencies:
 
 executables:
   buddy:
-
+  
 assets:
-  - lib/assets/
+  - bin/assets/
