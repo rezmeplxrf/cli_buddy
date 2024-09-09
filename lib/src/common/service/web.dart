@@ -5,6 +5,7 @@ import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
+import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
@@ -42,7 +43,8 @@ class WebService {
     _logger
         ?.info('Serving at http://${_server?.address.host}:${_server?.port}');
   }
- Future<void> stop() async {
+
+  Future<void> stop() async {
     if (_server != null) {
       WebService.webSocket = null;
       await _server!.close(force: true);
@@ -67,16 +69,15 @@ class MiddlerWareService {
       };
     };
   }
-
-
 }
 
 class HandlerService {
   factory HandlerService() => _instance;
   HandlerService._internal();
   static final HandlerService _instance = HandlerService._internal();
+  static const jsonHeaders = {'content-type': 'application/json'};
 
-    static Handler get router {
+  static Handler get router {
     final router = Router()
       ..get('/', _htmlHandler)
       ..get('/session-list', sessionsHandler)
@@ -87,8 +88,35 @@ class HandlerService {
       ..post('/remove-session', _removeSessionHandler)
       ..post('/make-file', _makeFileHandler)
       ..get('/prompts', _getPromptsHandler)
-      ..post('/prompts', _setPromptsHandler);
+      ..post('/prompts', _setPromptsHandler)
+      ..get('/models', _getModelsHandler)
+      ..post('/parameters', _getParametersHandler);
     return router.call;
+  }
+
+  static Future<Response> _getModelsHandler(Request request) async {
+    try {
+      final models = await openRouter.getModelList().getOrThrow();
+      return Response.ok(jsonEncode(models), headers: jsonHeaders);
+    } catch (e) {
+      return Response.internalServerError(
+        body: 'Failed to get models - $e',
+      );
+    }
+  }
+
+    static Future<Response> _getParametersHandler(Request request) async {
+    try {
+      final payload = await request.readAsString();
+      final json = jsonDecode(payload) as Map<String, dynamic>;
+      final model = json['model'] as String;
+      final parameters = await openRouter.getParameterInfo(model: model).getOrThrow();
+      return Response.ok(jsonEncode(parameters.toJson()), headers: jsonHeaders);
+    } catch (e) {
+      return Response.internalServerError(
+        body: 'Failed to get models - $e',
+      );
+    }
   }
 
 
@@ -103,14 +131,13 @@ class HandlerService {
         return Response.notFound('File not found at $filePath');
       }
 
-      return Response.ok(content,
-          headers: {'content-type': 'application/json'});
+      return Response.ok(content, headers: jsonHeaders);
     } catch (e) {
       return Response.notFound('File not found');
     }
   }
 
- static Future<Response> _setPromptsHandler(Request request) async {
+  static Future<Response> _setPromptsHandler(Request request) async {
     try {
       final payload = await request.readAsString();
 
@@ -127,14 +154,13 @@ class HandlerService {
         'File is created at $filePath',
       );
     } catch (e) {
-   
       return Response.internalServerError(
         body: 'Failed to create file - $e',
       );
     }
   }
 
-static  Future<Response> _makeFileHandler(Request request) async {
+  static Future<Response> _makeFileHandler(Request request) async {
     try {
       final payload = await request.readAsString();
 
@@ -143,7 +169,7 @@ static  Future<Response> _makeFileHandler(Request request) async {
       final path = data['path'] as String;
       await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
       return Response.ok({'result': 'File is created at $path'},
-          headers: {'content-type': 'application/json'});
+          headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
         body: 'Failed to create file - $e',
@@ -151,14 +177,14 @@ static  Future<Response> _makeFileHandler(Request request) async {
     }
   }
 
-static Future<Response> _removeSessionHandler(Request request) async {
+  static Future<Response> _removeSessionHandler(Request request) async {
     final payload = await request.readAsString();
     final data = jsonDecode(payload) as Map<String, dynamic>;
     final sessionId = data['sessionId'];
     final result = await SessionService.removeSession(id: sessionId as int);
     if (result) {
       return Response.ok({'result': 'Session is removed'},
-          headers: {'content-type': 'application/json'});
+          headers: jsonHeaders);
     } else {
       return Response.internalServerError(
         body: 'Failed to remove session',
@@ -166,7 +192,7 @@ static Future<Response> _removeSessionHandler(Request request) async {
     }
   }
 
- static Future<Response> _getConfigHandler(Request request) async {
+  static Future<Response> _getConfigHandler(Request request) async {
     configuration = await ConfigService.loadConfig().getOrNull();
     if (configuration == null) {
       return Response.notFound(
@@ -174,11 +200,11 @@ static Future<Response> _removeSessionHandler(Request request) async {
       );
     } else {
       return Response.ok(jsonEncode(configuration?.toJson()),
-          headers: {'content-type': 'application/json'});
+          headers: jsonHeaders);
     }
   }
 
- static Future<Response> _setConfigHandler(Request request) async {
+  static Future<Response> _setConfigHandler(Request request) async {
     try {
       configuration = await ConfigService.loadConfig().getOrNull();
       final payload = await request.readAsString();
@@ -189,34 +215,32 @@ static Future<Response> _removeSessionHandler(Request request) async {
       if (newConfig != configuration) {
         await ConfigService.saveConfig(newConfig: newConfig);
         return Response.ok(jsonEncode(configuration?.toJson()),
-            headers: {'content-type': 'application/json'});
+            headers: jsonHeaders);
       } else {
         return Response.ok(
             {'result': 'No changes made because it is the same as the current'},
-            headers: {'content-type': 'application/json'});
+            headers: jsonHeaders);
       }
     } catch (e) {
-     
       return Response.internalServerError(
         body: e.toString(),
       );
     }
   }
 
- static Future<Response> _removeAllHandler(Request request) async {
+  static Future<Response> _removeAllHandler(Request request) async {
     final result = await SessionService.removeSessions();
     if (result) {
       WebService.sessions?.clear();
-      return Response.ok(
-        {'result': 'All sessions are removed'},
-      );
+      return Response.ok({'result': 'All sessions are removed'},
+          headers: jsonHeaders);
     } else {
       return Response.internalServerError(
           body: 'Failed to remove all sessions');
     }
   }
 
-static  Future<Response> sessionsHandler(Request request) async {
+  static Future<Response> sessionsHandler(Request request) async {
     try {
       WebService.sessions = await SessionService.listSessions();
       if (WebService.sessions == null || WebService.sessions!.isEmpty) {
@@ -226,6 +250,7 @@ static  Future<Response> sessionsHandler(Request request) async {
             jsonEncode(WebService.sessions?.map((s) => s.toJson()).toList());
         return Response.ok(
           sessionsJson,
+          headers: jsonHeaders,
         );
       }
     } catch (e) {
@@ -235,8 +260,8 @@ static  Future<Response> sessionsHandler(Request request) async {
     }
   }
 
-static  void _handleWebSocket(WebSocketChannel socket) {
-     WebService.webSocket = socket;
+  static void _handleWebSocket(WebSocketChannel socket) {
+    WebService.webSocket = socket;
     socket.stream.listen((message) async {
       final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
@@ -262,7 +287,6 @@ static  void _handleWebSocket(WebSocketChannel socket) {
       WebService.webSocket = null;
     });
   }
-
 
   static Response _htmlHandler(Request request) {
     return Response.ok(htmlContent, headers: {'content-type': 'text/html'});

@@ -132,6 +132,7 @@ class Usage with _$Usage {
 
 @freezed
 class ORModelList with _$ORModelList {
+  @JsonSerializable(explicitToJson: true, includeIfNull: true)
   const factory ORModelList({
     required String id,
     required String name,

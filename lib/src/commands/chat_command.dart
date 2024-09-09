@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
-import 'package:cli_buddy/src/common/service/open_router.dart';
+import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';

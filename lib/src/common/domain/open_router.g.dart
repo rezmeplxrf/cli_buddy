@@ -232,11 +232,11 @@ Map<String, dynamic> _$$ORModelListImplToJson(_$ORModelListImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
-      'pricing': instance.pricing,
+      'pricing': instance.pricing?.toJson(),
       'context_length': instance.contextLength,
-      'architecture': instance.architecture,
-      'top_provider': instance.topProvider,
-      'per_request_limits': instance.perRequestLimits,
+      'architecture': instance.architecture?.toJson(),
+      'top_provider': instance.topProvider?.toJson(),
+      'per_request_limits': instance.perRequestLimits?.toJson(),
     };
 
 _$PricingImpl _$$PricingImplFromJson(Map<String, dynamic> json) =>

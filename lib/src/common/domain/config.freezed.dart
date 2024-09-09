@@ -32,7 +32,7 @@ mixin _$Configuration {
   int get maxMessages => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
   String get defaultModel => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: 0.3, name: 'temperature')
+  @JsonKey(defaultValue: null, name: 'temperature')
   double get temperature => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'max_tokens')
   int? get maxTokens => throw _privateConstructorUsedError;
@@ -97,7 +97,7 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
-      @JsonKey(defaultValue: 0.3, name: 'temperature') double temperature,
+      @JsonKey(defaultValue: null, name: 'temperature') double temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') int? topP,
       @JsonKey(defaultValue: null, name: 'top_k') int? topK,
@@ -290,7 +290,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
-      @JsonKey(defaultValue: 0.3, name: 'temperature') double temperature,
+      @JsonKey(defaultValue: null, name: 'temperature') double temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') int? topP,
       @JsonKey(defaultValue: null, name: 'top_k') int? topK,
@@ -479,7 +479,7 @@ class _$ConfigurationImpl implements _Configuration {
       required this.maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       required this.defaultModel,
-      @JsonKey(defaultValue: 0.3, name: 'temperature')
+      @JsonKey(defaultValue: null, name: 'temperature')
       required this.temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') this.maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') this.topP,
@@ -534,7 +534,7 @@ class _$ConfigurationImpl implements _Configuration {
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
   final String defaultModel;
   @override
-  @JsonKey(defaultValue: 0.3, name: 'temperature')
+  @JsonKey(defaultValue: null, name: 'temperature')
   final double temperature;
   @override
   @JsonKey(defaultValue: null, name: 'max_tokens')
@@ -729,7 +729,7 @@ abstract class _Configuration implements Configuration {
       required final int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       required final String defaultModel,
-      @JsonKey(defaultValue: 0.3, name: 'temperature')
+      @JsonKey(defaultValue: null, name: 'temperature')
       required final double temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') final int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') final int? topP,
@@ -781,7 +781,7 @@ abstract class _Configuration implements Configuration {
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
   String get defaultModel;
   @override
-  @JsonKey(defaultValue: 0.3, name: 'temperature')
+  @JsonKey(defaultValue: null, name: 'temperature')
   double get temperature;
   @override
   @JsonKey(defaultValue: null, name: 'max_tokens')

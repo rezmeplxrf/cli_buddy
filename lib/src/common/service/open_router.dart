@@ -14,7 +14,7 @@ import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
-final openRouter = OpenRouterService();
+
 const _baseUrl = 'https://openrouter.ai/api/v1';
 
 class OpenRouterService {

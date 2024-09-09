@@ -2451,7 +2451,8 @@ class __$$ORModelListImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true, includeIfNull: true)
 class _$ORModelListImpl implements _ORModelList {
   const _$ORModelListImpl(
       {required this.id,

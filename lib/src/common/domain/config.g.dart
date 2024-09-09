@@ -14,7 +14,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       saveSession: json['save_session'] as bool? ?? true,
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
       defaultModel: json['default_model'] as String? ?? 'openai/gpt-4o',
-      temperature: (json['temperature'] as num?)?.toDouble() ?? 0.3,
+      temperature: (json['temperature'] as num).toDouble(),
       maxTokens: (json['max_tokens'] as num?)?.toInt(),
       topP: (json['top_p'] as num?)?.toInt(),
       topK: (json['top_k'] as num?)?.toInt(),
