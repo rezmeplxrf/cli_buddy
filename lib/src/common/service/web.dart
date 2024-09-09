@@ -6,7 +6,6 @@ import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/global.dart';
-import 'package:cli_buddy/src/common/service/html.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -285,7 +284,13 @@ class HandlerService {
     });
   }
 
-  static Response _htmlHandler(Request request) {
-    return Response.ok(htmlContent, headers: {'content-type': 'text/html'});
+    static Future<Response> _htmlHandler(Request request) async {
+    try {
+      final file = File('packages/cli_buddy/lib/assets/web/index.html');
+      final htmlContent = await file.readAsString();
+      return Response.ok(htmlContent, headers: {'content-type': 'text/html'});
+    } catch (e) {
+      return Response.internalServerError(body: 'Error reading HTML file: $e');
+    }
   }
 }
