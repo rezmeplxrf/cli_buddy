@@ -102,7 +102,7 @@ ${lightCyan.wrap(promptForDebug)}
           if (DateTime.now().millisecondsSinceEpoch / 1000 - startTime > 10) {
             progress?.fail();
             const error =
-                'The API server is taking too long to respond. Aborting the request.';
+                'The API server has not sent any data for over 10 seconds. Aborting the request.';
             cancelToken.cancel(error);
             _logger?.err(error);
             const errorMsg =
@@ -117,7 +117,7 @@ ${lightCyan.wrap(promptForDebug)}
       final errorMsg = MessageChunk(
           type: ChunkType.error,
           content:
-              'An error occurred while requesting the API - Status code: ${response?.statusCode} - ${response?.statusMessage}');
+              'An error occurred while requesting the API - Status code: ${response?.statusCode} | message: ${response?.statusMessage}');
       WebService.webSocket?.sink.add(jsonEncode(errorMsg));
 
       return CustomException(
@@ -189,7 +189,7 @@ ${lightCyan.wrap(promptForDebug)}
               final msgChunk = MessageChunk(
                   type: ChunkType.error,
                   content:
-                      'An error occured while processing the API streaming message - error: ${response.choices?.first.error?.message}');
+                      'An error occured while processing the API streaming message | error: ${response.choices?.first.error?.message}');
               WebService.webSocket?.sink.add(jsonEncode(msgChunk));
               return CustomException(
                   message: 'An Error occured from the provider',
