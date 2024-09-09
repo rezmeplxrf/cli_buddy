@@ -29,10 +29,8 @@ class OpenCommand extends Command<int> {
         help: 'Open the page with default browser automatically',
         defaultsTo: true,
       )
-      ..addOption('port',
-          abbr: 'p', help: 'Port to listen on')
-      ..addOption('address',
-          abbr: 'a', help: 'Address to listen on');
+      ..addOption('port', abbr: 'p', help: 'Port to listen on')
+      ..addOption('address', abbr: 'a', help: 'Address to listen on');
   }
 
   @override
@@ -45,14 +43,19 @@ class OpenCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-      configuration ??= await ConfigService.loadConfig().getOrNull();
-      final port = argResults?['port'] as String? ?? configuration?.port;
-      final address = argResults?['address'] as String? ?? configuration?.ipAddress;
-    
-    final server = WebService();
-   
-    await server.start(address:address!, port: int.parse(port!));
+    configuration ??= await ConfigService.loadConfig().getOrNull();
+    final port = argResults?['port'] as String? ?? configuration?.port;
+    final address =
+        argResults?['address'] as String? ?? configuration?.ipAddress;
 
+    final server = WebService();
+
+    await server.start(address: address!, port: int.parse(port!));
+    _logger
+      ..info('Web interface is available at $url in your browser.')
+      ..info('It completely private for you only.')
+      ..info(
+          'If you are still worried, you can check out the network section of the devtool');
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
     ProcessSignal.sigint.watch().listen((signal) async {
       _logger.info('Stopping the server...');
@@ -63,7 +66,6 @@ class OpenCommand extends Command<int> {
     final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
-    
       await _open(port: port, address: address);
     }
 
@@ -74,7 +76,7 @@ class OpenCommand extends Command<int> {
 
 Future<void> _open({required String port, required String address}) async {
   final shell = Shell();
-  final url = 'http://$address:$port';
+  //final url = 'http://$address:$port';
 
   if (Platform.isMacOS) {
     await shell.run('open $url');
@@ -100,3 +102,5 @@ Future<void> _open({required String port, required String address}) async {
     throw UnsupportedError('Unsupported platform');
   }
 }
+
+const url = 'https://buddy-chat-2461c.web.app/';
