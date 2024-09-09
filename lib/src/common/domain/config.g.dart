@@ -11,7 +11,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       secretEnvPath: json['secret_env_path'] as String?,
       ipAddress: json['ipAddress'] as String? ?? '127.0.0.1',
       port: json['port'] as String? ?? '43210',
-      saveSession: json['save_session'] as bool? ?? false,
+      saveSession: json['save_session'] as bool? ?? true,
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
       defaultModel: json['default_model'] as String? ?? 'openai/gpt-4o',
       temperature: (json['temperature'] as num?)?.toDouble() ?? 0.3,

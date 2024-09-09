@@ -12,12 +12,12 @@ class Configuration with _$Configuration {
     required String? secretEnvPath,
    @JsonKey(defaultValue: '127.0.0.1') required String ipAddress,
     @JsonKey(defaultValue: '43210') required String port,
-    @JsonKey(defaultValue: false, name: 'save_session')
+    @JsonKey(defaultValue: true, name: 'save_session')
     required bool saveSession,
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,
     @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
     required String defaultModel,
-    @JsonKey(defaultValue: 0.3, name: 'temperature')
+    @JsonKey(defaultValue: null, name: 'temperature')
     required double temperature,
     @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
     @JsonKey(defaultValue: null, name: 'top_p') int? topP,

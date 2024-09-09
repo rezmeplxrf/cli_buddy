@@ -26,7 +26,7 @@ mixin _$Configuration {
   String get ipAddress => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: '43210')
   String get port => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: false, name: 'save_session')
+  @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_messages', defaultValue: 20)
   int get maxMessages => throw _privateConstructorUsedError;
@@ -93,7 +93,7 @@ abstract class $ConfigurationCopyWith<$Res> {
       String? secretEnvPath,
       @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
       @JsonKey(defaultValue: '43210') String port,
-      @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
@@ -286,7 +286,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       String? secretEnvPath,
       @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
       @JsonKey(defaultValue: '43210') String port,
-      @JsonKey(defaultValue: false, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
@@ -473,7 +473,7 @@ class _$ConfigurationImpl implements _Configuration {
       required this.secretEnvPath,
       @JsonKey(defaultValue: '127.0.0.1') required this.ipAddress,
       @JsonKey(defaultValue: '43210') required this.port,
-      @JsonKey(defaultValue: false, name: 'save_session')
+      @JsonKey(defaultValue: true, name: 'save_session')
       required this.saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required this.maxMessages,
@@ -525,7 +525,7 @@ class _$ConfigurationImpl implements _Configuration {
   @JsonKey(defaultValue: '43210')
   final String port;
   @override
-  @JsonKey(defaultValue: false, name: 'save_session')
+  @JsonKey(defaultValue: true, name: 'save_session')
   final bool saveSession;
   @override
   @JsonKey(name: 'max_messages', defaultValue: 20)
@@ -723,7 +723,7 @@ abstract class _Configuration implements Configuration {
       required final String? secretEnvPath,
       @JsonKey(defaultValue: '127.0.0.1') required final String ipAddress,
       @JsonKey(defaultValue: '43210') required final String port,
-      @JsonKey(defaultValue: false, name: 'save_session')
+      @JsonKey(defaultValue: true, name: 'save_session')
       required final bool saveSession,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required final int maxMessages,
@@ -772,7 +772,7 @@ abstract class _Configuration implements Configuration {
   @JsonKey(defaultValue: '43210')
   String get port;
   @override
-  @JsonKey(defaultValue: false, name: 'save_session')
+  @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession;
   @override
   @JsonKey(name: 'max_messages', defaultValue: 20)

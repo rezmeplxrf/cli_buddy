@@ -28,24 +28,58 @@ class WebService {
   static Logger? _logger;
   static HttpServer? _server;
   static WebSocketChannel? webSocket;
-  static List<ChatSession>? _sessions = [];
+  static List<ChatSession>? sessions = [];
   static String? msg;
   Future<void> start({required String address, required int port}) async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
     final handler = const Pipeline()
         .addMiddleware(logRequests())
         .addMiddleware(corsHeaders())
-        .addHandler(_router);
+        .addMiddleware(MiddlerWareService.addCustomHeaders())
+        .addHandler(HandlerService.router);
 
     _server = await io.serve(handler, address, port);
     _logger
         ?.info('Serving at http://${_server?.address.host}:${_server?.port}');
   }
+ Future<void> stop() async {
+    if (_server != null) {
+      WebService.webSocket = null;
+      await _server!.close(force: true);
+      _logger?.info('Server stopped');
+    }
+  }
+}
 
-  Handler get _router {
+class MiddlerWareService {
+  factory MiddlerWareService() => _instance;
+  MiddlerWareService._internal();
+  static final MiddlerWareService _instance = MiddlerWareService._internal();
+
+  static Middleware addCustomHeaders() {
+    return (Handler handler) {
+      return (Request request) async {
+        final response = await handler(request);
+        return response.change(headers: {
+          'Cross-Origin-Embedder-Policy': 'credentialless',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        });
+      };
+    };
+  }
+
+
+}
+
+class HandlerService {
+  factory HandlerService() => _instance;
+  HandlerService._internal();
+  static final HandlerService _instance = HandlerService._internal();
+
+    static Handler get router {
     final router = Router()
       ..get('/', _htmlHandler)
-      ..get('/session-list', _sessionsHandler)
+      ..get('/session-list', sessionsHandler)
       ..post('/remove-all', _removeAllHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/config', _getConfigHandler)
@@ -57,7 +91,8 @@ class WebService {
     return router.call;
   }
 
-  Response _getPromptsHandler(Request request) {
+
+  static Response _getPromptsHandler(Request request) {
     try {
       final defaultDir = SysInfoService.getConfigDirectory();
       final filePath = p.join(defaultDir!, 'prompts.json');
@@ -75,7 +110,7 @@ class WebService {
     }
   }
 
-  Future<Response> _setPromptsHandler(Request request) async {
+ static Future<Response> _setPromptsHandler(Request request) async {
     try {
       final payload = await request.readAsString();
 
@@ -92,14 +127,14 @@ class WebService {
         'File is created at $filePath',
       );
     } catch (e) {
-      _logger?.err('Failed to create file - $e');
+   
       return Response.internalServerError(
         body: 'Failed to create file - $e',
       );
     }
   }
 
-  Future<Response> _makeFileHandler(Request request) async {
+static  Future<Response> _makeFileHandler(Request request) async {
     try {
       final payload = await request.readAsString();
 
@@ -116,7 +151,7 @@ class WebService {
     }
   }
 
-  Future<Response> _removeSessionHandler(Request request) async {
+static Future<Response> _removeSessionHandler(Request request) async {
     final payload = await request.readAsString();
     final data = jsonDecode(payload) as Map<String, dynamic>;
     final sessionId = data['sessionId'];
@@ -131,7 +166,7 @@ class WebService {
     }
   }
 
-  Future<Response> _getConfigHandler(Request request) async {
+ static Future<Response> _getConfigHandler(Request request) async {
     configuration = await ConfigService.loadConfig().getOrNull();
     if (configuration == null) {
       return Response.notFound(
@@ -143,7 +178,7 @@ class WebService {
     }
   }
 
-  Future<Response> _setConfigHandler(Request request) async {
+ static Future<Response> _setConfigHandler(Request request) async {
     try {
       configuration = await ConfigService.loadConfig().getOrNull();
       final payload = await request.readAsString();
@@ -161,17 +196,17 @@ class WebService {
             headers: {'content-type': 'application/json'});
       }
     } catch (e) {
-      _logger?.err('Failed to set config. Error: $e');
+     
       return Response.internalServerError(
         body: e.toString(),
       );
     }
   }
 
-  Future<Response> _removeAllHandler(Request request) async {
+ static Future<Response> _removeAllHandler(Request request) async {
     final result = await SessionService.removeSessions();
     if (result) {
-      _sessions?.clear();
+      WebService.sessions?.clear();
       return Response.ok(
         {'result': 'All sessions are removed'},
       );
@@ -181,14 +216,14 @@ class WebService {
     }
   }
 
-  Future<Response> _sessionsHandler(Request request) async {
+static  Future<Response> sessionsHandler(Request request) async {
     try {
-      _sessions = await SessionService.listSessions();
-      if (_sessions == null || _sessions!.isEmpty) {
+      WebService.sessions = await SessionService.listSessions();
+      if (WebService.sessions == null || WebService.sessions!.isEmpty) {
         return Response.notFound('Session is empty or failed to load sessions');
       } else {
         final sessionsJson =
-            jsonEncode(_sessions?.map((s) => s.toJson()).toList());
+            jsonEncode(WebService.sessions?.map((s) => s.toJson()).toList());
         return Response.ok(
           sessionsJson,
         );
@@ -200,20 +235,20 @@ class WebService {
     }
   }
 
-  void _handleWebSocket(WebSocketChannel socket) {
-    webSocket = socket;
+static  void _handleWebSocket(WebSocketChannel socket) {
+     WebService.webSocket = socket;
     socket.stream.listen((message) async {
       final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
       if (message.trim().isNotEmpty) {
-        webSocket?.sink
+        WebService.webSocket?.sink
             .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
         try {
           final newSession = await openRouter
               .invoke(session: userSentSession, markdown: false)
               .getOrThrow();
           final lastResponse = newSession.messages.last;
-          webSocket?.sink.add(jsonEncode(
+          WebService.webSocket?.sink.add(jsonEncode(
               MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
         } catch (e) {
           const msgChunk = MessageChunk(
@@ -224,17 +259,10 @@ class WebService {
         }
       }
     }, onDone: () {
-      webSocket = null;
+      WebService.webSocket = null;
     });
   }
 
-  Future<void> stop() async {
-    if (_server != null) {
-      webSocket = null;
-      await _server!.close(force: true);
-      _logger?.info('Server stopped');
-    }
-  }
 
   static Response _htmlHandler(Request request) {
     return Response.ok(htmlContent, headers: {'content-type': 'text/html'});

@@ -15,7 +15,7 @@ import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
 final openRouter = OpenRouterService();
-const _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+const _baseUrl = 'https://openrouter.ai/api/v1';
 
 class OpenRouterService {
   factory OpenRouterService() => _instance;
@@ -25,6 +25,19 @@ class OpenRouterService {
   static void setLogger(Logger? logger) => _logger = logger;
 
   static Logger? _logger;
+
+Future<Map<String, String>> getHeaders() async {
+   openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
+    final header = {
+          'HTTP-Referer': 'insightsentry.com',
+      'X-Title': 'CLI Buddy',
+      'Authorization': 'Bearer $openrouterKey',
+        'Accept': 'application/json',
+      'User-Agent': 'InsightSentry/CLI Buddy',
+    };
+    return header;
+}
+
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
     bool? markdown,
@@ -43,13 +56,7 @@ class OpenRouterService {
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
 
-    final headers = {
-      'HTTP-Referer': 'rfway.org',
-      'X-Title': 'CLI Buddy',
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $openrouterKey',
-      'User-Agent': 'InsightSentry/CLI Buddy',
-    };
+    final headers =await getHeaders();
 
     final model = (session.model != null)
         ? session.model
@@ -86,7 +93,7 @@ ${lightCyan.wrap(promptForDebug)}
     Response<ResponseBody>? response;
     try {
       response = await dio.post<ResponseBody>(
-        _baseUrl,
+        '$_baseUrl/chat/completions',
         cancelToken: cancelToken,
         options: Options(headers: headers, responseType: ResponseType.stream),
         data: prompt,
@@ -97,14 +104,14 @@ ${lightCyan.wrap(promptForDebug)}
             const error = 'The server is taking too long to respond.';
             cancelToken.cancel(error);
             _logger?.err(error);
-          
+
             return;
           }
         },
       );
     } catch (e) {
       progress?.fail();
-    
+
       return CustomException(
         message: 'Error while making API request.',
         stack: 'OpenRouterService.invoke',
@@ -112,7 +119,7 @@ ${lightCyan.wrap(promptForDebug)}
       ).toFailure();
     }
 
-    final msg = StringBuffer();
+    final msgBuffer = StringBuffer();
 
     ChatSession? newSession;
     Usage? usage;
@@ -147,31 +154,29 @@ ${lightCyan.wrap(promptForDebug)}
               usage = response.usage;
             }
             responses.add(response);
-            final content = response.choices?.first.delta?.content;
-            if (content != null) {
-              msg.write(content);
-              if (shouldDebug != null && shouldDebug) {
-                _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
-              } else {
-                final msgChunk =
-                    MessageChunk(type: ChunkType.chunk, content: msg.toString());
-                WebService.webSocket?.sink.add(jsonEncode(msgChunk));
-                // send chunked message to the websocket here
-                if (stdout.hasTerminal && markdown != null && !markdown) {
-                  stdout.write(cyan.wrap(content));
-                  index = msg.length;
+            final content = response.choices?.first.delta?.content ?? '';
+            msgBuffer.write(content);
 
-                  if ((index - lineStart) >= consoleWidth) {
-                    stdout.writeln();
-                    lineStart = index;
-                  }
+            if (shouldDebug != null && shouldDebug) {
+              _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
+            } else {
+              final msgChunk = MessageChunk(
+                  type: ChunkType.chunk, content: msgBuffer.toString());
+              WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+              // send chunked message to the websocket here
+              if (stdout.hasTerminal && markdown != null && !markdown) {
+                stdout.write(cyan.wrap(content));
+                index = msgBuffer.length;
+
+                if ((index - lineStart) >= consoleWidth) {
+                  stdout.writeln();
+                  lineStart = index;
                 }
               }
             }
 
             if (response.choices?.first.error != null) {
-           
-              msg.clear();
+              msgBuffer.clear();
               progress?.fail();
               return CustomException(
                   message: 'An Error occured from the provider',
@@ -187,7 +192,7 @@ ${lightCyan.wrap(promptForDebug)}
 
     if (markdown != null && markdown) {
       progress?.complete('');
-      _logger?.info(markdownStyle.apply(msg.toString()));
+      _logger?.info(markdownStyle.apply(msgBuffer.toString()));
     }
 
     if (responses.isNotEmpty) {
@@ -195,7 +200,7 @@ ${lightCyan.wrap(promptForDebug)}
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final aiResponse = Message(
         role: Role.assistant,
-        content: msg.toString(),
+        content: msgBuffer.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
@@ -212,8 +217,7 @@ ${lightCyan.wrap(promptForDebug)}
 
       return Success(newSession);
     } else {
-   
-      msg.clear();
+      msgBuffer.clear();
       progress?.fail();
       _logger?.err('Something went wrong');
       return CustomException(
@@ -235,15 +239,11 @@ ${lightCyan.wrap(promptForDebug)}
 
   Future<Result<List<ORModelList>, CustomException>> getModelList() async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-    const url = 'https://openrouter.ai/api/v1/models';
-    final header = {
-      'Authorization': 'Bearer $openrouterKey',
-      'User-Agent': 'InsightSentry/CLI Buddy',
-    };
+    const url = '$_baseUrl/models';
+    final headers =await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
-          options: Options(headers: header));
-      //  print(response.data);
+          options: Options(headers: headers));
       final list = <ORModelList>[];
       if (response.data == null) {
         throw Exception('response.data is Empty');
@@ -269,12 +269,9 @@ ${lightCyan.wrap(promptForDebug)}
   }
 
   Future<Result<ORCredit, CustomException>> checkCredits() async {
-    const url = 'https://openrouter.ai/api/v1/auth/key';
+    const url = '$_baseUrl/auth/key';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-    final headers = {
-      'Authorization': 'Bearer $openrouterKey',
-      'User-Agent': 'InsightSentry/CLI Buddy',
-    };
+       final headers =await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: headers));
@@ -295,16 +292,12 @@ ${lightCyan.wrap(promptForDebug)}
   Future<Result<ParameterInfo, CustomException>> getParameterInfo(
       {required String model}) async {
     final encodedModel = Uri.encodeComponent(model);
-    final url = 'https://openrouter.ai/api/v1/parameters/$encodedModel';
+    final url = '$_baseUrl/parameters/$encodedModel';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-    final header = {
-      'Authorization': 'Bearer $openrouterKey',
-      'Accept': 'application/json',
-      'User-Agent': 'InsightSentry/CLI Buddy',
-    };
+       final headers =await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
-          options: Options(headers: header));
+          options: Options(headers: headers));
       if (response.statusCode == 200 && response.data == null) {
         throw Exception('response.data is Empty');
       }
@@ -320,25 +313,3 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 }
-
-// List<ORModelList> _applyOrder(List<ORModelList> data, String order) {
-//   switch (order) {
-//     case 'name':
-//       data.sort((a, b) => a.name.compareTo(b.name));
-//     case 'context':
-//       data.sort(
-//           (a, b) => (a.contextLength ?? 0).compareTo(b.contextLength ?? 0));
-//     case 'prompt':
-//       data.sort(
-//           (a, b) => ((a.pricing?.prompt).toin ?? 0).compareTo(b.pricing?.prompt ?? 0));
-//     case 'completion':
-//       data.sort((a, b) =>
-//           (a.pricing?.completion ?? 0).compareTo(b.pricing?.completion ?? 0));
-//     case 'image':
-//       data.sort(
-//           (a, b) => (a.pricing?.image ?? 0).compareTo(b.pricing?.image ?? 0));
-//     default:
-//       break;
-//   }
-//   return data;
-// }
