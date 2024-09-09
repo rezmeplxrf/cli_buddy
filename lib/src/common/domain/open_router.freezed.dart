@@ -2196,12 +2196,12 @@ abstract class _Usage implements Usage {
       throw _privateConstructorUsedError;
 }
 
-ORModelList _$ORModelListFromJson(Map<String, dynamic> json) {
-  return _ORModelList.fromJson(json);
+ORModel _$ORModelFromJson(Map<String, dynamic> json) {
+  return _ORModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ORModelList {
+mixin _$ORModel {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
@@ -2214,21 +2214,19 @@ mixin _$ORModelList {
   @JsonKey(name: 'per_request_limits')
   PerRequestLimits? get perRequestLimits => throw _privateConstructorUsedError;
 
-  /// Serializes this ORModelList to a JSON map.
+  /// Serializes this ORModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ORModelListCopyWith<ORModelList> get copyWith =>
-      throw _privateConstructorUsedError;
+  $ORModelCopyWith<ORModel> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ORModelListCopyWith<$Res> {
-  factory $ORModelListCopyWith(
-          ORModelList value, $Res Function(ORModelList) then) =
-      _$ORModelListCopyWithImpl<$Res, ORModelList>;
+abstract class $ORModelCopyWith<$Res> {
+  factory $ORModelCopyWith(ORModel value, $Res Function(ORModel) then) =
+      _$ORModelCopyWithImpl<$Res, ORModel>;
   @useResult
   $Res call(
       {String id,
@@ -2247,16 +2245,16 @@ abstract class $ORModelListCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
-    implements $ORModelListCopyWith<$Res> {
-  _$ORModelListCopyWithImpl(this._value, this._then);
+class _$ORModelCopyWithImpl<$Res, $Val extends ORModel>
+    implements $ORModelCopyWith<$Res> {
+  _$ORModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -2306,7 +2304,7 @@ class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
     ) as $Val);
   }
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -2320,7 +2318,7 @@ class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
     });
   }
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -2334,7 +2332,7 @@ class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
     });
   }
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -2348,7 +2346,7 @@ class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
     });
   }
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -2364,11 +2362,10 @@ class _$ORModelListCopyWithImpl<$Res, $Val extends ORModelList>
 }
 
 /// @nodoc
-abstract class _$$ORModelListImplCopyWith<$Res>
-    implements $ORModelListCopyWith<$Res> {
-  factory _$$ORModelListImplCopyWith(
-          _$ORModelListImpl value, $Res Function(_$ORModelListImpl) then) =
-      __$$ORModelListImplCopyWithImpl<$Res>;
+abstract class _$$ORModelImplCopyWith<$Res> implements $ORModelCopyWith<$Res> {
+  factory _$$ORModelImplCopyWith(
+          _$ORModelImpl value, $Res Function(_$ORModelImpl) then) =
+      __$$ORModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -2392,14 +2389,14 @@ abstract class _$$ORModelListImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$ORModelListImplCopyWithImpl<$Res>
-    extends _$ORModelListCopyWithImpl<$Res, _$ORModelListImpl>
-    implements _$$ORModelListImplCopyWith<$Res> {
-  __$$ORModelListImplCopyWithImpl(
-      _$ORModelListImpl _value, $Res Function(_$ORModelListImpl) _then)
+class __$$ORModelImplCopyWithImpl<$Res>
+    extends _$ORModelCopyWithImpl<$Res, _$ORModelImpl>
+    implements _$$ORModelImplCopyWith<$Res> {
+  __$$ORModelImplCopyWithImpl(
+      _$ORModelImpl _value, $Res Function(_$ORModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -2413,7 +2410,7 @@ class __$$ORModelListImplCopyWithImpl<$Res>
     Object? topProvider = freezed,
     Object? perRequestLimits = freezed,
   }) {
-    return _then(_$ORModelListImpl(
+    return _then(_$ORModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -2453,8 +2450,8 @@ class __$$ORModelListImplCopyWithImpl<$Res>
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true, includeIfNull: true)
-class _$ORModelListImpl implements _ORModelList {
-  const _$ORModelListImpl(
+class _$ORModelImpl implements _ORModel {
+  const _$ORModelImpl(
       {required this.id,
       required this.name,
       required this.description,
@@ -2464,8 +2461,8 @@ class _$ORModelListImpl implements _ORModelList {
       @JsonKey(name: 'top_provider') required this.topProvider,
       @JsonKey(name: 'per_request_limits') required this.perRequestLimits});
 
-  factory _$ORModelListImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ORModelListImplFromJson(json);
+  factory _$ORModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ORModelImplFromJson(json);
 
   @override
   final String id;
@@ -2489,14 +2486,14 @@ class _$ORModelListImpl implements _ORModelList {
 
   @override
   String toString() {
-    return 'ORModelList(id: $id, name: $name, description: $description, pricing: $pricing, contextLength: $contextLength, architecture: $architecture, topProvider: $topProvider, perRequestLimits: $perRequestLimits)';
+    return 'ORModel(id: $id, name: $name, description: $description, pricing: $pricing, contextLength: $contextLength, architecture: $architecture, topProvider: $topProvider, perRequestLimits: $perRequestLimits)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ORModelListImpl &&
+            other is _$ORModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
@@ -2517,24 +2514,24 @@ class _$ORModelListImpl implements _ORModelList {
   int get hashCode => Object.hash(runtimeType, id, name, description, pricing,
       contextLength, architecture, topProvider, perRequestLimits);
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ORModelListImplCopyWith<_$ORModelListImpl> get copyWith =>
-      __$$ORModelListImplCopyWithImpl<_$ORModelListImpl>(this, _$identity);
+  _$$ORModelImplCopyWith<_$ORModelImpl> get copyWith =>
+      __$$ORModelImplCopyWithImpl<_$ORModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ORModelListImplToJson(
+    return _$$ORModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _ORModelList implements ORModelList {
-  const factory _ORModelList(
+abstract class _ORModel implements ORModel {
+  const factory _ORModel(
       {required final String id,
       required final String name,
       required final String description,
@@ -2543,10 +2540,9 @@ abstract class _ORModelList implements ORModelList {
       required final Architecture? architecture,
       @JsonKey(name: 'top_provider') required final TopProvider? topProvider,
       @JsonKey(name: 'per_request_limits')
-      required final PerRequestLimits? perRequestLimits}) = _$ORModelListImpl;
+      required final PerRequestLimits? perRequestLimits}) = _$ORModelImpl;
 
-  factory _ORModelList.fromJson(Map<String, dynamic> json) =
-      _$ORModelListImpl.fromJson;
+  factory _ORModel.fromJson(Map<String, dynamic> json) = _$ORModelImpl.fromJson;
 
   @override
   String get id;
@@ -2568,11 +2564,11 @@ abstract class _ORModelList implements ORModelList {
   @JsonKey(name: 'per_request_limits')
   PerRequestLimits? get perRequestLimits;
 
-  /// Create a copy of ORModelList
+  /// Create a copy of ORModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ORModelListImplCopyWith<_$ORModelListImpl> get copyWith =>
+  _$$ORModelImplCopyWith<_$ORModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

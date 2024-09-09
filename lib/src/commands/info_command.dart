@@ -134,13 +134,13 @@ class InfoCommand extends Command<int> {
     }
 
     if (query != null) {
-      final result = await openRouter.getModelList();
-      final data = result.getOrNull();
-      if (data == null) {
+      final result = await openRouter.getModelList().getOrNull();
+
+      if (result == null) {
         _logger.err('Failed to get model list');
       } else {
         final lowerCaseModel = query.toLowerCase().trim();
-        final filteredData = data.where((e) {
+        final filteredData = result.where((e) {
           final nameMatches = e.name.toLowerCase().contains(lowerCaseModel);
           final idMatches = e.id.toLowerCase().contains(lowerCaseModel);
 
@@ -220,7 +220,7 @@ class InfoCommand extends Command<int> {
   }
 }
 
-List<ORModelList> _applyOrder(List<ORModelList> data, String order) {
+List<ORModel> _applyOrder(List<ORModel> data, String order) {
   switch (order) {
     case 'name':
       data.sort((a, b) => a.name.compareTo(b.name));

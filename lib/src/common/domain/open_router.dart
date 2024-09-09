@@ -131,9 +131,9 @@ class Usage with _$Usage {
 }
 
 @freezed
-class ORModelList with _$ORModelList {
+class ORModel with _$ORModel {
   @JsonSerializable(explicitToJson: true, includeIfNull: true)
-  const factory ORModelList({
+  const factory ORModel({
     required String id,
     required String name,
     required String description,
@@ -143,10 +143,10 @@ class ORModelList with _$ORModelList {
     @JsonKey(name: 'top_provider') required TopProvider? topProvider,
     @JsonKey(name: 'per_request_limits')
     required PerRequestLimits? perRequestLimits,
-  }) = _ORModelList;
+  }) = _ORModel;
 
-  factory ORModelList.fromJson(Map<String, dynamic> json) =>
-      _$ORModelListFromJson(json);
+  factory ORModel.fromJson(Map<String, dynamic> json) =>
+      _$ORModelFromJson(json);
 }
 
 @freezed

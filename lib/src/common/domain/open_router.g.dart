@@ -206,8 +206,8 @@ Map<String, dynamic> _$$UsageImplToJson(_$UsageImpl instance) =>
       'response_time': instance.responseTime,
     };
 
-_$ORModelListImpl _$$ORModelListImplFromJson(Map<String, dynamic> json) =>
-    _$ORModelListImpl(
+_$ORModelImpl _$$ORModelImplFromJson(Map<String, dynamic> json) =>
+    _$ORModelImpl(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
@@ -227,7 +227,7 @@ _$ORModelListImpl _$$ORModelListImplFromJson(Map<String, dynamic> json) =>
               json['per_request_limits'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$ORModelListImplToJson(_$ORModelListImpl instance) =>
+Map<String, dynamic> _$$ORModelImplToJson(_$ORModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

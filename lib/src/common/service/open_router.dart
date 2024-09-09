@@ -237,14 +237,14 @@ ${lightCyan.wrap(promptForDebug)}
     return session;
   }
 
-  Future<Result<List<ORModelList>, CustomException>> getModelList() async {
+  Future<Result<List<ORModel>, CustomException>> getModelList() async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     const url = '$_baseUrl/models';
     final headers =await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: headers));
-      final list = <ORModelList>[];
+      final list = <ORModel>[];
       if (response.data == null) {
         throw Exception('response.data is Empty');
       }
@@ -255,7 +255,7 @@ ${lightCyan.wrap(promptForDebug)}
             (name.startsWith('Flavor') || name.startsWith('Auto'))) {
           continue;
         }
-        list.add(ORModelList.fromJson(model));
+        list.add(ORModel.fromJson(model));
       }
 
       return list.toSuccess();

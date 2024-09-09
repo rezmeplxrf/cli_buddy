@@ -166,7 +166,7 @@ class RenderService {
     return (value * 1000).ceil() / 1000;
   }
 
-  static String modelList(List<ORModelList> models) {
+  static String modelList(List<ORModel> models) {
     final rows = models.map((model) {
       final promptPricing =
           double.tryParse(model.pricing?.prompt?.toString() ?? '');
