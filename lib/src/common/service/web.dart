@@ -276,10 +276,7 @@ class HandlerService {
           WebService.webSocket?.sink.add(jsonEncode(
               MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
         } catch (e) {
-          const msgChunk = MessageChunk(
-              type: ChunkType.error,
-              content: 'Error while making API request.');
-          WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+        
           return;
         }
       }

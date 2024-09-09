@@ -14,7 +14,6 @@ import 'package:dio/dio.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 
-
 const _baseUrl = 'https://openrouter.ai/api/v1';
 
 class OpenRouterService {
@@ -26,17 +25,17 @@ class OpenRouterService {
 
   static Logger? _logger;
 
-Future<Map<String, String>> getHeaders() async {
-   openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
+  Future<Map<String, String>> getHeaders() async {
+    openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     final header = {
-          'HTTP-Referer': 'insightsentry.com',
+      'HTTP-Referer': 'insightsentry.com',
       'X-Title': 'CLI Buddy',
       'Authorization': 'Bearer $openrouterKey',
-        'Accept': 'application/json',
+      'Accept': 'application/json',
       'User-Agent': 'InsightSentry/CLI Buddy',
     };
     return header;
-}
+  }
 
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
@@ -56,7 +55,7 @@ Future<Map<String, String>> getHeaders() async {
     final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
 
-    final headers =await getHeaders();
+    final headers = await getHeaders();
 
     final model = (session.model != null)
         ? session.model
@@ -91,6 +90,7 @@ ${lightCyan.wrap(promptForDebug)}
     }
     final cancelToken = CancelToken();
     Response<ResponseBody>? response;
+
     try {
       response = await dio.post<ResponseBody>(
         '$_baseUrl/chat/completions',
@@ -101,16 +101,24 @@ ${lightCyan.wrap(promptForDebug)}
           // if we haven't received anything for 10 seconds, cancel the request and throw an error
           if (DateTime.now().millisecondsSinceEpoch / 1000 - startTime > 10) {
             progress?.fail();
-            const error = 'The server is taking too long to respond.';
+            const error =
+                'The API server is taking too long to respond. Aborting the request.';
             cancelToken.cancel(error);
             _logger?.err(error);
-
+            const errorMsg =
+                MessageChunk(type: ChunkType.error, content: error);
+            WebService.webSocket?.sink.add(jsonEncode(errorMsg));
             return;
           }
         },
       );
     } catch (e) {
       progress?.fail();
+      final errorMsg = MessageChunk(
+          type: ChunkType.error,
+          content:
+              'An error occurred while requesting the API - Status code: ${response?.statusCode} - ${response?.statusMessage}');
+      WebService.webSocket?.sink.add(jsonEncode(errorMsg));
 
       return CustomException(
         message: 'Error while making API request.',
@@ -178,6 +186,11 @@ ${lightCyan.wrap(promptForDebug)}
             if (response.choices?.first.error != null) {
               msgBuffer.clear();
               progress?.fail();
+              final msgChunk = MessageChunk(
+                  type: ChunkType.error,
+                  content:
+                      'An error occured while processing the API streaming message - error: ${response.choices?.first.error?.message}');
+              WebService.webSocket?.sink.add(jsonEncode(msgChunk));
               return CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
@@ -220,6 +233,10 @@ ${lightCyan.wrap(promptForDebug)}
       msgBuffer.clear();
       progress?.fail();
       _logger?.err('Something went wrong');
+      const msgChunk = MessageChunk(
+          type: ChunkType.error,
+          content: 'An unexpected error occured - responses are empty');
+      WebService.webSocket?.sink.add(jsonEncode(msgChunk));
       return CustomException(
               message: 'Something went wrong - newSession is null',
               details: {'api_responses': responses},
@@ -240,7 +257,7 @@ ${lightCyan.wrap(promptForDebug)}
   Future<Result<List<ORModel>, CustomException>> getModelList() async {
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     const url = '$_baseUrl/models';
-    final headers =await getHeaders();
+    final headers = await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: headers));
@@ -271,7 +288,7 @@ ${lightCyan.wrap(promptForDebug)}
   Future<Result<ORCredit, CustomException>> checkCredits() async {
     const url = '$_baseUrl/auth/key';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-       final headers =await getHeaders();
+    final headers = await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: headers));
@@ -294,7 +311,7 @@ ${lightCyan.wrap(promptForDebug)}
     final encodedModel = Uri.encodeComponent(model);
     final url = '$_baseUrl/parameters/$encodedModel';
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-       final headers =await getHeaders();
+    final headers = await getHeaders();
     try {
       final response = await dio.get<Map<String, dynamic>>(url,
           options: Options(headers: headers));
