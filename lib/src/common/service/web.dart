@@ -78,7 +78,7 @@ class HandlerService {
 
   static Handler get router {
     final router = Router()
-      ..get('/', _htmlHandler)
+      // ..get('/', _htmlHandler)
       ..get('/session-list', sessionsHandler)
       ..post('/remove-all', _removeAllHandler)
       ..get('/ws', webSocketHandler(_handleWebSocket))
@@ -284,13 +284,13 @@ class HandlerService {
     });
   }
 
-    static Future<Response> _htmlHandler(Request request) async {
-    try {
-      final file = File('packages/cli_buddy/lib/assets/web/index.html');
-      final htmlContent = await file.readAsString();
-      return Response.ok(htmlContent, headers: {'content-type': 'text/html'});
-    } catch (e) {
-      return Response.internalServerError(body: 'Error reading HTML file: $e');
-    }
-  }
+  //   static Future<Response> _htmlHandler(Request request) async {
+  //   try {
+  //     final file = File('packages/cli_buddy/lib/assets/web/index.html');
+  //     final htmlContent = await file.readAsString();
+  //     return Response.ok(htmlContent, headers: {'content-type': 'text/html'});
+  //   } catch (e) {
+  //     return Response.internalServerError(body: 'Error reading HTML file: $e');
+  //   }
+  // }
 }
