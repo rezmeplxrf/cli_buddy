@@ -5,6 +5,7 @@ import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
+import 'package:cli_buddy/src/common/service/dio.dart';
 import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
@@ -18,6 +19,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:archive/archive_io.dart';
 
 class WebService {
   factory WebService() => _instance;
@@ -37,14 +39,15 @@ class WebService {
 
     // Ensure the directory exists
     final fileDirectory = p.join(defaultDir!, 'web');
+    _logger?.info('File Directory: $fileDirectory');
     final directory = Directory(fileDirectory);
     if (!directory.existsSync()) {
-      directory.createSync(recursive: true);
+      await _downloadAndDecompressWebFiles(defaultDir!);
     }
 
     final staticHandler = createStaticHandler(
       fileDirectory,
-      defaultDocument: 'index.html', 
+      defaultDocument: 'index.html',
       listDirectories: true,
     );
     final routerHandler = HandlerService.router;
@@ -68,6 +71,30 @@ class WebService {
       await _server!.close(force: true);
       _logger?.info('Server stopped');
     }
+  }
+
+  Future<void> _downloadAndDecompressWebFiles(String targetDirectory) async {
+    final zipFilePath = p.join(targetDirectory, 'web.zip');
+    const url =
+        'https://drive.google.com/uc?export=download&id=1BUHFKOJBv68n3btCF3c_JJAjX4cL9icM';
+
+    await dio.download(url, zipFilePath);
+    final bytes = File(zipFilePath).readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
+
+    for (final file in archive) {
+      final fileName = p.join(targetDirectory, file.name);
+      if (file.isFile) {
+        File(fileName)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(file.content as List<int>);
+      } else {
+        await Directory(fileName).create(recursive: true);
+      }
+    }
+
+    // Remove the zip file
+    File(zipFilePath).deleteSync();
   }
 }
 

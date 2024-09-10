@@ -18,6 +18,7 @@ platforms:
   windows:
 
 dependencies:
+  archive: ^3.6.1
   args: ^2.5.0
   barbecue: ^0.5.0
   cli_completion: ^0.5.1
