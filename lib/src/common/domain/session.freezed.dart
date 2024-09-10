@@ -260,6 +260,7 @@ mixin _$Message {
   String get content => throw _privateConstructorUsedError;
   int get timestamp => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
+  Validation? get validation => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -275,9 +276,15 @@ abstract class $MessageCopyWith<$Res> {
   factory $MessageCopyWith(Message value, $Res Function(Message) then) =
       _$MessageCopyWithImpl<$Res, Message>;
   @useResult
-  $Res call({Role role, String content, int timestamp, Usage? usage});
+  $Res call(
+      {Role role,
+      String content,
+      int timestamp,
+      Usage? usage,
+      Validation? validation});
 
   $UsageCopyWith<$Res>? get usage;
+  $ValidationCopyWith<$Res>? get validation;
 }
 
 /// @nodoc
@@ -299,6 +306,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? content = null,
     Object? timestamp = null,
     Object? usage = freezed,
+    Object? validation = freezed,
   }) {
     return _then(_value.copyWith(
       role: null == role
@@ -317,6 +325,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as Usage?,
+      validation: freezed == validation
+          ? _value.validation
+          : validation // ignore: cast_nullable_to_non_nullable
+              as Validation?,
     ) as $Val);
   }
 
@@ -333,6 +345,20 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
       return _then(_value.copyWith(usage: value) as $Val);
     });
   }
+
+  /// Create a copy of Message
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ValidationCopyWith<$Res>? get validation {
+    if (_value.validation == null) {
+      return null;
+    }
+
+    return $ValidationCopyWith<$Res>(_value.validation!, (value) {
+      return _then(_value.copyWith(validation: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -342,10 +368,17 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       __$$MessageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Role role, String content, int timestamp, Usage? usage});
+  $Res call(
+      {Role role,
+      String content,
+      int timestamp,
+      Usage? usage,
+      Validation? validation});
 
   @override
   $UsageCopyWith<$Res>? get usage;
+  @override
+  $ValidationCopyWith<$Res>? get validation;
 }
 
 /// @nodoc
@@ -365,6 +398,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? content = null,
     Object? timestamp = null,
     Object? usage = freezed,
+    Object? validation = freezed,
   }) {
     return _then(_$MessageImpl(
       role: null == role
@@ -383,6 +417,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.usage
           : usage // ignore: cast_nullable_to_non_nullable
               as Usage?,
+      validation: freezed == validation
+          ? _value.validation
+          : validation // ignore: cast_nullable_to_non_nullable
+              as Validation?,
     ));
   }
 }
@@ -395,7 +433,8 @@ class _$MessageImpl implements _Message {
       {required this.role,
       required this.content,
       required this.timestamp,
-      this.usage});
+      this.usage,
+      this.validation});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -408,10 +447,12 @@ class _$MessageImpl implements _Message {
   final int timestamp;
   @override
   final Usage? usage;
+  @override
+  final Validation? validation;
 
   @override
   String toString() {
-    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage)';
+    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation)';
   }
 
   @override
@@ -423,12 +464,15 @@ class _$MessageImpl implements _Message {
             (identical(other.content, content) || other.content == content) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
-            (identical(other.usage, usage) || other.usage == usage));
+            (identical(other.usage, usage) || other.usage == usage) &&
+            (identical(other.validation, validation) ||
+                other.validation == validation));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, role, content, timestamp, usage);
+  int get hashCode =>
+      Object.hash(runtimeType, role, content, timestamp, usage, validation);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -451,7 +495,8 @@ abstract class _Message implements Message {
       {required final Role role,
       required final String content,
       required final int timestamp,
-      final Usage? usage}) = _$MessageImpl;
+      final Usage? usage,
+      final Validation? validation}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -463,12 +508,270 @@ abstract class _Message implements Message {
   int get timestamp;
   @override
   Usage? get usage;
+  @override
+  Validation? get validation;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MessageImplCopyWith<_$MessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Validation _$ValidationFromJson(Map<String, dynamic> json) {
+  return _Validation.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Validation {
+  String get model => throw _privateConstructorUsedError;
+  String get result => throw _privateConstructorUsedError;
+  int get timestamp => throw _privateConstructorUsedError;
+  String? get partialContent => throw _privateConstructorUsedError;
+  Usage? get usage => throw _privateConstructorUsedError;
+
+  /// Serializes this Validation to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ValidationCopyWith<Validation> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ValidationCopyWith<$Res> {
+  factory $ValidationCopyWith(
+          Validation value, $Res Function(Validation) then) =
+      _$ValidationCopyWithImpl<$Res, Validation>;
+  @useResult
+  $Res call(
+      {String model,
+      String result,
+      int timestamp,
+      String? partialContent,
+      Usage? usage});
+
+  $UsageCopyWith<$Res>? get usage;
+}
+
+/// @nodoc
+class _$ValidationCopyWithImpl<$Res, $Val extends Validation>
+    implements $ValidationCopyWith<$Res> {
+  _$ValidationCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? model = null,
+    Object? result = null,
+    Object? timestamp = null,
+    Object? partialContent = freezed,
+    Object? usage = freezed,
+  }) {
+    return _then(_value.copyWith(
+      model: null == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: null == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as int,
+      partialContent: freezed == partialContent
+          ? _value.partialContent
+          : partialContent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      usage: freezed == usage
+          ? _value.usage
+          : usage // ignore: cast_nullable_to_non_nullable
+              as Usage?,
+    ) as $Val);
+  }
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UsageCopyWith<$Res>? get usage {
+    if (_value.usage == null) {
+      return null;
+    }
+
+    return $UsageCopyWith<$Res>(_value.usage!, (value) {
+      return _then(_value.copyWith(usage: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$ValidationImplCopyWith<$Res>
+    implements $ValidationCopyWith<$Res> {
+  factory _$$ValidationImplCopyWith(
+          _$ValidationImpl value, $Res Function(_$ValidationImpl) then) =
+      __$$ValidationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String model,
+      String result,
+      int timestamp,
+      String? partialContent,
+      Usage? usage});
+
+  @override
+  $UsageCopyWith<$Res>? get usage;
+}
+
+/// @nodoc
+class __$$ValidationImplCopyWithImpl<$Res>
+    extends _$ValidationCopyWithImpl<$Res, _$ValidationImpl>
+    implements _$$ValidationImplCopyWith<$Res> {
+  __$$ValidationImplCopyWithImpl(
+      _$ValidationImpl _value, $Res Function(_$ValidationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? model = null,
+    Object? result = null,
+    Object? timestamp = null,
+    Object? partialContent = freezed,
+    Object? usage = freezed,
+  }) {
+    return _then(_$ValidationImpl(
+      model: null == model
+          ? _value.model
+          : model // ignore: cast_nullable_to_non_nullable
+              as String,
+      result: null == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as int,
+      partialContent: freezed == partialContent
+          ? _value.partialContent
+          : partialContent // ignore: cast_nullable_to_non_nullable
+              as String?,
+      usage: freezed == usage
+          ? _value.usage
+          : usage // ignore: cast_nullable_to_non_nullable
+              as Usage?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(includeIfNull: false)
+class _$ValidationImpl implements _Validation {
+  const _$ValidationImpl(
+      {required this.model,
+      required this.result,
+      required this.timestamp,
+      this.partialContent,
+      this.usage});
+
+  factory _$ValidationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ValidationImplFromJson(json);
+
+  @override
+  final String model;
+  @override
+  final String result;
+  @override
+  final int timestamp;
+  @override
+  final String? partialContent;
+  @override
+  final Usage? usage;
+
+  @override
+  String toString() {
+    return 'Validation(model: $model, result: $result, timestamp: $timestamp, partialContent: $partialContent, usage: $usage)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ValidationImpl &&
+            (identical(other.model, model) || other.model == model) &&
+            (identical(other.result, result) || other.result == result) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.partialContent, partialContent) ||
+                other.partialContent == partialContent) &&
+            (identical(other.usage, usage) || other.usage == usage));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, model, result, timestamp, partialContent, usage);
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ValidationImplCopyWith<_$ValidationImpl> get copyWith =>
+      __$$ValidationImplCopyWithImpl<_$ValidationImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ValidationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Validation implements Validation {
+  const factory _Validation(
+      {required final String model,
+      required final String result,
+      required final int timestamp,
+      final String? partialContent,
+      final Usage? usage}) = _$ValidationImpl;
+
+  factory _Validation.fromJson(Map<String, dynamic> json) =
+      _$ValidationImpl.fromJson;
+
+  @override
+  String get model;
+  @override
+  String get result;
+  @override
+  int get timestamp;
+  @override
+  String? get partialContent;
+  @override
+  Usage? get usage;
+
+  /// Create a copy of Validation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ValidationImplCopyWith<_$ValidationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

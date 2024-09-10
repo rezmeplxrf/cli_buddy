@@ -43,6 +43,9 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       usage: json['usage'] == null
           ? null
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
+      validation: json['validation'] == null
+          ? null
+          : Validation.fromJson(json['validation'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
@@ -51,6 +54,7 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'content': instance.content,
       'timestamp': instance.timestamp,
       'usage': instance.usage?.toJson(),
+      'validation': instance.validation?.toJson(),
     };
 
 const _$RoleEnumMap = {
@@ -59,6 +63,35 @@ const _$RoleEnumMap = {
   Role.assistant: 'assistant',
   Role.tool: 'tool',
 };
+
+_$ValidationImpl _$$ValidationImplFromJson(Map<String, dynamic> json) =>
+    _$ValidationImpl(
+      model: json['model'] as String,
+      result: json['result'] as String,
+      timestamp: (json['timestamp'] as num).toInt(),
+      partialContent: json['partialContent'] as String?,
+      usage: json['usage'] == null
+          ? null
+          : Usage.fromJson(json['usage'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ValidationImplToJson(_$ValidationImpl instance) {
+  final val = <String, dynamic>{
+    'model': instance.model,
+    'result': instance.result,
+    'timestamp': instance.timestamp,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('partialContent', instance.partialContent);
+  writeNotNull('usage', instance.usage);
+  return val;
+}
 
 _$ParametersImpl _$$ParametersImplFromJson(Map<String, dynamic> json) =>
     _$ParametersImpl(

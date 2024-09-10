@@ -28,10 +28,24 @@ class Message with _$Message {
     required String content,
     required int timestamp,
     Usage? usage,
+    Validation? validation
   }) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
+}
+
+@freezed
+class Validation with _$Validation {
+  @JsonSerializable( includeIfNull: false)
+  const factory Validation({
+    required String model,
+     required String result, required int timestamp, String? partialContent,
+    Usage? usage,
+  }) = _Validation;
+
+  factory Validation.fromJson(Map<String, Object?> json) =>
+      _$ValidationFromJson(json);
 }
 
 @freezed
