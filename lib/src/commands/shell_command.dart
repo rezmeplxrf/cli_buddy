@@ -2,10 +2,12 @@ import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/action.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
+import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
+import 'package:result_dart/result_dart.dart';
 
 /// {@template shell_command}
 ///
@@ -64,7 +66,8 @@ class ShellCommand extends Command<int> {
       final prompt = args.join(' ');
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
-      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg]);
+            configuration ??= await ConfigService.loadConfig().getOrThrow();
+      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], model: configuration!.defaultModel);
     }
 
     var shouldDebug = false;

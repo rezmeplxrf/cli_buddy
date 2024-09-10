@@ -22,7 +22,8 @@ class OpenRouterService {
   static final OpenRouterService _instance = OpenRouterService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
-
+  // TODO: When clients disconnect or cancel, also cancel the request via cancelToken
+  static CancelToken? cancelToken;
   static Logger? _logger;
 
   Future<Map<String, String>> getHeaders() async {
@@ -57,9 +58,7 @@ class OpenRouterService {
 
     final headers = await getHeaders();
 
-    final model = (session.model != null)
-        ? session.model
-        : configuration?.defaultModel ?? fallbackModel;
+    final model = session.model;
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
 
@@ -88,7 +87,7 @@ ${lightCyan.wrap(promptForDebug)}
 ''';
       _logger?.info(log);
     }
-    final cancelToken = CancelToken();
+    cancelToken = CancelToken();
     Response<ResponseBody>? response;
 
     try {
@@ -231,12 +230,13 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-
-  Future<Result<Message, CustomException>> validate({
-
+  Future<Result<ChatSession, CustomException>> validate({
     required Message message,
+    required Message sysPrompt,
+    required ChatSession session,
+    String? modelId,
+    Parameters? parameters,
   }) async {
-    // TODO: Still use streaming but without sending it to websocket
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
@@ -246,59 +246,30 @@ ${lightCyan.wrap(promptForDebug)}
       ),
     );
 
-    final maxMsg = overrideMaxMsg ?? configuration?.maxMessages ?? 20;
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
-
     final headers = await getHeaders();
 
-    final model = (session.model != null)
-        ? session.model
-        : configuration?.defaultModel ?? fallbackModel;
-    final parameters =
-        (session.parameters != null) ? session.parameters : parametersCache;
-
-    final trimedSession = _removeOldMessages(session, maxMsg);
     final prompt = <String, dynamic>{
-      'model': model,
+      'model': modelId ?? session.model,
       'stream': true,
-      'messages': trimedSession.messages,
+      'messages': [sysPrompt.toJson(), message.toJson()],
     };
 
     if (parameters != null) {
       prompt.addAll(parameters.toJson());
     }
 
-    _logger?.info(
-      '\n',
-    );
-    if (shouldDebug != null && shouldDebug) {
-      final promptForDebug = json.encode(prompt);
-      final log = '''
-
-## Prompt
-${lightCyan.wrap(promptForDebug)}
-
-## Response
-''';
-      _logger?.info(log);
-    }
-    final cancelToken = CancelToken();
     Response<ResponseBody>? response;
 
     try {
       response = await dio.post<ResponseBody>(
         '$_baseUrl/chat/completions',
-        cancelToken: cancelToken,
         options: Options(headers: headers, responseType: ResponseType.stream),
         data: prompt,
       );
     } catch (e) {
       progress?.fail();
-      final errorMsg = MessageChunk(
-          type: ChunkType.error,
-          content:
-              'An error occurred while requesting the API - Status code: ${response?.statusCode} | message: ${response?.statusMessage}');
-      WebService.webSocket?.sink.add(jsonEncode(errorMsg));
+      _logger?.err(e.toString());
 
       return CustomException(
         message: 'Error while making API request.',
@@ -319,15 +290,13 @@ ${lightCyan.wrap(promptForDebug)}
     var firstChunk = false;
     await for (final chunk in response.data!.stream) {
       if (chunk.isEmpty) continue;
-
-      if (!firstChunk && markdown != null && !markdown) {
+      if (!firstChunk) {
         firstChunk = true;
         progress?.complete('');
       }
 
       final decodedString = utf8.decode(chunk);
       final parts = decodedString.split('\n');
-
       for (var i = 0; i < parts.length - 1; i++) {
         final part = parts[i].trim();
         if (part.startsWith('data:') &&
@@ -345,32 +314,20 @@ ${lightCyan.wrap(promptForDebug)}
             final content = response.choices?.first.delta?.content ?? '';
             msgBuffer.write(content);
 
-            if (shouldDebug != null && shouldDebug) {
-              _logger?.info('\n${darkGray.wrap(jsonEncode(decodedJson))}\n');
-            } else {
-              final msgChunk = MessageChunk(
-                  type: ChunkType.chunk, content: msgBuffer.toString());
-              WebService.webSocket?.sink.add(jsonEncode(msgChunk));
-              // send chunked message to the websocket here
-              if (stdout.hasTerminal && markdown != null && !markdown) {
-                stdout.write(cyan.wrap(content));
-                index = msgBuffer.length;
+            if (stdout.hasTerminal) {
+              stdout.write(cyan.wrap(content));
+              index = msgBuffer.length;
 
-                if ((index - lineStart) >= consoleWidth) {
-                  stdout.writeln();
-                  lineStart = index;
-                }
+              if ((index - lineStart) >= consoleWidth) {
+                stdout.writeln();
+                lineStart = index;
               }
             }
 
             if (response.choices?.first.error != null) {
               msgBuffer.clear();
               progress?.fail();
-              final msgChunk = MessageChunk(
-                  type: ChunkType.error,
-                  content:
-                      'An error occured while processing the API streaming message | error: ${response.choices?.first.error?.message}');
-              WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+              _logger?.err('An Error occured from the provider');
               return CustomException(
                   message: 'An Error occured from the provider',
                   stack: 'OpenRouterService.invoke',
@@ -383,24 +340,24 @@ ${lightCyan.wrap(promptForDebug)}
       }
     }
 
-    if (markdown != null && markdown) {
-      progress?.complete('');
-      _logger?.info(markdownStyle.apply(msgBuffer.toString()));
-    }
-
     if (responses.isNotEmpty) {
       final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
-      final aiResponse = Message(
-        role: Role.assistant,
-        content: msgBuffer.toString(),
+      final validatedResult = Validation(
+        model: modelId ?? session.model,
+        result: msgBuffer.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
-      newSession = session.copyWith(
-          messages: [...session.messages, aiResponse],
-          model: model,
-          parameters: parameters);
+      // Update the message in the session
+      final updatedMessages = session.messages.map((m) {
+        if (m == message) {
+          return m.copyWith(validation: validatedResult);
+        }
+        return m;
+      }).toList();
+
+      newSession = session.copyWith(messages: updatedMessages);
 
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
@@ -408,15 +365,12 @@ ${lightCyan.wrap(promptForDebug)}
 
       await SessionService.saveSession(session: newSession);
 
-      return Success(newSession);
+      return newSession.toSuccess();
     } else {
       msgBuffer.clear();
       progress?.fail();
       _logger?.err('Something went wrong');
-      const msgChunk = MessageChunk(
-          type: ChunkType.error,
-          content: 'An unexpected error occured - responses are empty');
-      WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+
       return CustomException(
               message: 'Something went wrong - newSession is null',
               details: {'api_responses': responses},

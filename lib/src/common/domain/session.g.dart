@@ -12,7 +12,7 @@ _$ChatSessionImpl _$$ChatSessionImplFromJson(Map<String, dynamic> json) =>
       messages: (json['messages'] as List<dynamic>)
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
-      model: json['model'] as String?,
+      model: json['model'] as String,
       parameters: json['parameters'] == null
           ? null
           : Parameters.fromJson(json['parameters'] as Map<String, dynamic>),
@@ -22,6 +22,7 @@ Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) {
   final val = <String, dynamic>{
     'id': instance.id,
     'messages': instance.messages.map((e) => e.toJson()).toList(),
+    'model': instance.model,
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -30,7 +31,6 @@ Map<String, dynamic> _$$ChatSessionImplToJson(_$ChatSessionImpl instance) {
     }
   }
 
-  writeNotNull('model', instance.model);
   writeNotNull('parameters', instance.parameters?.toJson());
   return val;
 }
@@ -48,14 +48,23 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
           : Validation.fromJson(json['validation'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
-    <String, dynamic>{
-      'role': _$RoleEnumMap[instance.role]!,
-      'content': instance.content,
-      'timestamp': instance.timestamp,
-      'usage': instance.usage?.toJson(),
-      'validation': instance.validation?.toJson(),
-    };
+Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) {
+  final val = <String, dynamic>{
+    'role': _$RoleEnumMap[instance.role]!,
+    'content': instance.content,
+    'timestamp': instance.timestamp,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('usage', instance.usage?.toJson());
+  writeNotNull('validation', instance.validation?.toJson());
+  return val;
+}
 
 const _$RoleEnumMap = {
   Role.system: 'system',
@@ -69,7 +78,6 @@ _$ValidationImpl _$$ValidationImplFromJson(Map<String, dynamic> json) =>
       model: json['model'] as String,
       result: json['result'] as String,
       timestamp: (json['timestamp'] as num).toInt(),
-      partialContent: json['partialContent'] as String?,
       usage: json['usage'] == null
           ? null
           : Usage.fromJson(json['usage'] as Map<String, dynamic>),
@@ -88,7 +96,6 @@ Map<String, dynamic> _$$ValidationImplToJson(_$ValidationImpl instance) {
     }
   }
 
-  writeNotNull('partialContent', instance.partialContent);
   writeNotNull('usage', instance.usage);
   return val;
 }

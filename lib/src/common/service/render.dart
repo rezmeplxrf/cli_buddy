@@ -13,7 +13,7 @@ class RenderService {
         Cell(
           session.messages.length.toString(),
         ),
-        Cell(session.model ?? 'Unknown')
+        Cell(session.model)
       ]);
     }).toList();
 
