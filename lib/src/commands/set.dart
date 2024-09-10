@@ -63,6 +63,11 @@ class SetCommand extends Command<int> {
         valueHelp: 'double',
       )
       ..addOption(
+        'local-web',
+        help: 'Prefer locally hosted Web UI over hosted version of Web UI.',
+        valueHelp: 'bool',
+      )
+      ..addOption(
         'max-tokens',
         abbr: 'x',
         help: 'Set the maximum number of tokens per response.',
@@ -174,6 +179,8 @@ class SetCommand extends Command<int> {
     final path = argResults?['secret-path']?.toString().trim();
     final key = argResults?['api-key']?.toString().trim();
     final model = argResults?['model']?.toString().trim();
+    final preferLocal =
+        bool.tryParse(argResults?['local_web']?.toString() ?? '');
     final saveSession =
         bool.tryParse(argResults?['save-session'] as String? ?? '');
     final maxMessages =
@@ -193,8 +200,7 @@ class SetCommand extends Command<int> {
     final topA = double.tryParse(argResults?['top-a'] as String? ?? '');
     final seed = int.tryParse(argResults?['seed'] as String? ?? '');
     final logitBias = argResults?['logit-bias'] != null
-        ? jsonDecode(argResults!['logit-bias'] as String)
-            as Map<String, int>
+        ? jsonDecode(argResults!['logit-bias'] as String) as Map<String, int>
         : null;
     final logprobs = bool.tryParse(argResults?['logprobs'] as String? ?? '');
     final topLogprobs =
@@ -262,6 +268,7 @@ class SetCommand extends Command<int> {
           newConfig: configuration!.copyWith(secretEnvPath: path));
     }
     if (_isAnyConfigOptionProvided([
+      preferLocal,
       model,
       saveSession,
       maxMessages,
@@ -287,6 +294,7 @@ class SetCommand extends Command<int> {
     ])) {
       configuration ??= await ConfigService.loadConfig().getOrThrow();
       final newConfig = configuration!.copyWith(
+        isLocal: _logUpdate('local_web', preferLocal, configuration!.isLocal),
         defaultModel: _logUpdate('model', model, configuration!.defaultModel),
         saveSession:
             _logUpdate('save-session', saveSession, configuration!.saveSession),

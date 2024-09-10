@@ -42,21 +42,32 @@ class WebService {
     Cascade? cascade;
     final routerHandler = HandlerService.router;
     if (isLocal) {
-      defaultDir ??= SysInfoService.getConfigDirectory();
-      final fileDirectory = p.join(defaultDir!, 'web');
-      _logger?.info('File Directory: $fileDirectory');
-      final directory = Directory(fileDirectory);
-      if (!directory.existsSync()) {
-        await _downloadAndDecompressWebFiles(defaultDir!);
+      try {
+        defaultDir ??= SysInfoService.getConfigDirectory();
+
+        final fileDirectory = p.join(defaultDir!, 'web');
+
+        final directory = Directory(fileDirectory);
+        final indexPath = p.join(fileDirectory, 'index.html');
+        final indexFile = File(indexPath);
+
+        if (!directory.existsSync() || !_isFileRecent(indexFile)) {
+          await _downloadAndDecompressWebFiles(defaultDir!);
+        }
+
+        final staticHandler = createStaticHandler(
+          fileDirectory,
+          defaultDocument: 'index.html',
+          listDirectories: true,
+        );
+
+        cascade = Cascade().add(staticHandler).add(routerHandler);
+      } catch (e) {
+        _logger?.err(e.toString());
+        _logger?.info('Fallback to hosted web version');
+        cascade = Cascade().add(routerHandler);
+        await ActionService.openWeb(isLocal: false, logger: _logger);
       }
-
-      final staticHandler = createStaticHandler(
-        fileDirectory,
-        defaultDocument: 'index.html',
-        listDirectories: true,
-      );
-
-      cascade = Cascade().add(staticHandler).add(routerHandler);
     } else {
       cascade = Cascade().add(routerHandler);
     }
@@ -80,11 +91,21 @@ class WebService {
     }
   }
 
+  bool _isFileRecent(File file) {
+    if (!file.existsSync()) {
+      return false;
+    }
+    final lastModified = file.lastModifiedSync();
+    final now = DateTime.now();
+    final difference = now.difference(lastModified);
+    return difference.inHours < 24;
+  }
+
   Future<void> _downloadAndDecompressWebFiles(String targetDirectory) async {
     final zipFilePath = p.join(targetDirectory, 'web.zip');
     const url =
-        'https://drive.google.com/uc?export=download&id=1BUHFKOJBv68n3btCF3c_JJAjX4cL9icM';
-    final progress = _logger?.progress('Downloading web files...');
+        'https://drive.google.com/uc?export=download&id=1xhV7pWwsD9H-NSECPf0xJDc_yafL9Iwj';
+    final progress = _logger?.progress('Downloading files for Web UI...');
     final result = await dio.download(
       url,
       zipFilePath,
@@ -103,7 +124,7 @@ class WebService {
     progress?.complete('Completed');
     final bytes = File(zipFilePath).readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
-
+    _logger?.info('Saving in $targetDirectory');
     for (final file in archive) {
       final fileName = p.join(targetDirectory, file.name);
       if (file.isFile) {

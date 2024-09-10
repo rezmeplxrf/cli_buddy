@@ -120,4 +120,40 @@ class ActionService {
         session: newSession, shouldDebug: shouldDebug, markdown: false);
     return newResult;
   }
+
+  static Future<void> openWeb(
+      {required bool isLocal,
+       Logger? logger,
+      String? port,
+      String? address}) async {
+    if (isLocal && (port == null || address == null)) {
+      throw Exception('If isLocal is true, port and address must be provided');
+    }
+    final shell = Shell();
+    final url = isLocal ? 'http://$address:$port' : hostedWeb;
+
+    if (Platform.isMacOS) {
+      await shell.run('open $url');
+    } else if (Platform.isLinux) {
+      try {
+        await shell.run('xdg-open $url');
+      } catch (e) {
+        logger?.info('xdg-open failed, trying gnome-open...');
+        try {
+          await shell.run('gnome-open $url');
+        } catch (e) {
+          logger?.info('gnome-open failed, trying kde-open...');
+          try {
+            await shell.run('kde-open $url');
+          } catch (e) {
+            logger?.err('All methods failed to open the URL on Linux: $e');
+          }
+        }
+      }
+    } else if (Platform.isWindows) {
+      await shell.run('start $url');
+    } else {
+      throw UnsupportedError('Unsupported platform');
+    }
+  }
 }

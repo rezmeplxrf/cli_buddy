@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
+import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:process_run/shell.dart';
 import 'package:result_dart/result_dart.dart';
 
 /// {@template open_command}
@@ -23,9 +24,10 @@ class OpenCommand extends Command<int> {
           abbr: 'r',
           help: 'Display raw outputs of prompt and api requests',
           negatable: false)
-      ..addFlag('local',
-          abbr: 'c',
-          help: 'Donwload the web files locally and serve it from localhost',
+      ..addFlag('local-web',
+          abbr: 'w',
+          help:
+              'Donwload the web files locally and serve the Web UI from localhost. If the value is false, will use the hosted version of the Web UI.',
           defaultsTo: true)
       ..addFlag(
         'launch',
@@ -52,7 +54,7 @@ class OpenCommand extends Command<int> {
     final address =
         argResults?['address'] as String? ?? configuration?.ipAddress;
     final autoFlag = argResults?['launch'] as bool? ?? true;
-    final isLocal = argResults?['local'] as bool? ?? true;
+    final isLocal = argResults?['local-web'] as bool? ?? true;
 
     final server = WebService();
 
@@ -75,7 +77,7 @@ class OpenCommand extends Command<int> {
     });
 
     if (autoFlag) {
-      await _open(
+      await ActionService.openWeb(
           port: port, address: address, isLocal: isLocal, logger: _logger);
     }
 
@@ -84,37 +86,3 @@ class OpenCommand extends Command<int> {
   }
 }
 
-Future<void> _open(
-    {required String port,
-    required String address,
-    required bool isLocal,
-    required Logger logger}) async {
-  final shell = Shell();
-  final url = isLocal ? 'http://$address:$port' : hostedWeb;
-
-  if (Platform.isMacOS) {
-    await shell.run('open $url');
-  } else if (Platform.isLinux) {
-    try {
-      await shell.run('xdg-open $url');
-    } catch (e) {
-      logger.info('xdg-open failed, trying gnome-open...');
-      try {
-        await shell.run('gnome-open $url');
-      } catch (e) {
-        logger.info('gnome-open failed, trying kde-open...');
-        try {
-          await shell.run('kde-open $url');
-        } catch (e) {
-          logger.err('All methods failed to open the URL on Linux: $e');
-        }
-      }
-    }
-  } else if (Platform.isWindows) {
-    await shell.run('start $url');
-  } else {
-    throw UnsupportedError('Unsupported platform');
-  }
-}
-
-const hostedWeb = 'https://buddy-c3bf4.web.app/';
