@@ -160,8 +160,24 @@ class HandlerService {
       ..get('/prompts', _getPromptsHandler)
       ..post('/prompts', _setPromptsHandler)
       ..get('/models', _getModelsHandler)
-      ..post('/parameters', _getParametersHandler);
+      ..post('/parameters', _getParametersHandler)
+      ..post('/validate', _validateHandler);
     return router.call;
+  }
+
+  static Future<Response> _validateHandler(Request request) async {
+    try {
+      final payload = await request.readAsString();
+      final json = jsonDecode(payload) as Map<String, dynamic>;
+      final validateRequest = ValidateRequest.fromJson(json);
+      final result =
+          await openRouter.validate(request: validateRequest).getOrThrow();
+      return Response.ok(jsonEncode(result.toJson()), headers: jsonHeaders);
+    } catch (e) {
+      return Response.internalServerError(
+        body: e.toString(),
+      );
+    }
   }
 
   static Future<Response> _getModelsHandler(Request request) async {

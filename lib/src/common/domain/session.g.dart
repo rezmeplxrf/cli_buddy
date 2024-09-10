@@ -73,6 +73,37 @@ const _$RoleEnumMap = {
   Role.tool: 'tool',
 };
 
+_$ValidateRequestImpl _$$ValidateRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ValidateRequestImpl(
+      message: Message.fromJson(json['message'] as Map<String, dynamic>),
+      sysPrompt: Message.fromJson(json['sysPrompt'] as Map<String, dynamic>),
+      session: ChatSession.fromJson(json['session'] as Map<String, dynamic>),
+      modelId: json['modelId'] as String?,
+      parameters: json['parameters'] == null
+          ? null
+          : Parameters.fromJson(json['parameters'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ValidateRequestImplToJson(
+    _$ValidateRequestImpl instance) {
+  final val = <String, dynamic>{
+    'message': instance.message.toJson(),
+    'sysPrompt': instance.sysPrompt.toJson(),
+    'session': instance.session.toJson(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('modelId', instance.modelId);
+  writeNotNull('parameters', instance.parameters?.toJson());
+  return val;
+}
+
 _$ValidationImpl _$$ValidationImplFromJson(Map<String, dynamic> json) =>
     _$ValidationImpl(
       model: json['model'] as String,

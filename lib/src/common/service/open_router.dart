@@ -231,11 +231,7 @@ ${lightCyan.wrap(promptForDebug)}
   }
 
   Future<Result<ChatSession, CustomException>> validate({
-    required Message message,
-    required Message sysPrompt,
-    required ChatSession session,
-    String? modelId,
-    Parameters? parameters,
+    required ValidateRequest request
   }) async {
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
     const waitingMsg = 'Waiting for response...';
@@ -250,13 +246,13 @@ ${lightCyan.wrap(promptForDebug)}
     final headers = await getHeaders();
 
     final prompt = <String, dynamic>{
-      'model': modelId ?? session.model,
+      'model': request.modelId ?? request.session.model,
       'stream': true,
-      'messages': [sysPrompt.toJson(), message.toJson()],
+      'messages': [request.sysPrompt.toJson(), request.message.toJson()],
     };
 
-    if (parameters != null) {
-      prompt.addAll(parameters.toJson());
+    if (request.parameters != null) {
+      prompt.addAll(request.parameters!.toJson());
     }
 
     Response<ResponseBody>? response;
@@ -344,20 +340,20 @@ ${lightCyan.wrap(promptForDebug)}
       final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final validatedResult = Validation(
-        model: modelId ?? session.model,
+        model: request.modelId ?? request.session.model,
         result: msgBuffer.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
       // Update the message in the session
-      final updatedMessages = session.messages.map((m) {
-        if (m == message) {
+      final updatedMessages = request.session.messages.map((m) {
+        if (m == request.message) {
           return m.copyWith(validation: validatedResult);
         }
         return m;
       }).toList();
 
-      newSession = session.copyWith(messages: updatedMessages);
+      newSession = request.session.copyWith(messages: updatedMessages);
 
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';

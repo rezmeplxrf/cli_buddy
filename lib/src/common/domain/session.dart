@@ -35,6 +35,23 @@ class Message with _$Message {
       _$MessageFromJson(json);
 }
 
+
+
+@freezed
+class ValidateRequest with _$ValidateRequest {
+  @JsonSerializable( includeIfNull: false, explicitToJson: true)
+  const factory ValidateRequest({
+      required Message message,
+    required Message sysPrompt,
+    required ChatSession session,
+    String? modelId,
+    Parameters? parameters,
+  }) = _ValidateRequest;
+
+  factory ValidateRequest.fromJson(Map<String, Object?> json) =>
+      _$ValidateRequestFromJson(json);
+}
+
 @freezed
 class Validation with _$Validation {
   @JsonSerializable( includeIfNull: false)
