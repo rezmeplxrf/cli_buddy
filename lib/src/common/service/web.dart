@@ -15,6 +15,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -32,11 +33,29 @@ class WebService {
   static String? msg;
   Future<void> start({required String address, required int port}) async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
+    defaultDir ??= SysInfoService.getConfigDirectory();
+
+    // Ensure the directory exists
+    final fileDirectory = p.join(defaultDir!, 'web');
+    final directory = Directory(fileDirectory);
+    if (!directory.existsSync()) {
+      directory.createSync(recursive: true);
+    }
+
+    final staticHandler = createStaticHandler(
+      fileDirectory,
+      defaultDocument: 'index.html', 
+      listDirectories: true,
+    );
+    final routerHandler = HandlerService.router;
+
+    final cascade = Cascade().add(staticHandler).add(routerHandler);
+
     final handler = const Pipeline()
         .addMiddleware(logRequests())
         .addMiddleware(corsHeaders())
         .addMiddleware(MiddlerWareService.addCustomHeaders())
-        .addHandler(HandlerService.router);
+        .addHandler(cascade.handler);
 
     _server = await io.serve(handler, address, port);
     _logger
@@ -49,24 +68,6 @@ class WebService {
       await _server!.close(force: true);
       _logger?.info('Server stopped');
     }
-  }
-}
-
-class MiddlerWareService {
-  factory MiddlerWareService() => _instance;
-  MiddlerWareService._internal();
-  static final MiddlerWareService _instance = MiddlerWareService._internal();
-
-  static Middleware addCustomHeaders() {
-    return (Handler handler) {
-      return (Request request) async {
-        final response = await handler(request);
-        return response.change(headers: {
-          'Cross-Origin-Embedder-Policy': 'credentialless',
-          'Cross-Origin-Opener-Policy': 'same-origin',
-        });
-      };
-    };
   }
 }
 
@@ -104,12 +105,13 @@ class HandlerService {
     }
   }
 
-    static Future<Response> _getParametersHandler(Request request) async {
+  static Future<Response> _getParametersHandler(Request request) async {
     try {
       final payload = await request.readAsString();
       final json = jsonDecode(payload) as Map<String, dynamic>;
       final model = json['model'] as String;
-      final parameters = await openRouter.getParameterInfo(model: model).getOrThrow();
+      final parameters =
+          await openRouter.getParameterInfo(model: model).getOrThrow();
       return Response.ok(jsonEncode(parameters.toJson()), headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
@@ -117,7 +119,6 @@ class HandlerService {
       );
     }
   }
-
 
   static Response _getPromptsHandler(Request request) {
     try {
@@ -275,7 +276,6 @@ class HandlerService {
           WebService.webSocket?.sink.add(jsonEncode(
               MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
         } catch (e) {
-        
           return;
         }
       }
@@ -283,14 +283,22 @@ class HandlerService {
       WebService.webSocket = null;
     });
   }
+}
 
-  //   static Future<Response> _htmlHandler(Request request) async {
-  //   try {
-  //     final file = File('packages/cli_buddy/lib/assets/web/index.html');
-  //     final htmlContent = await file.readAsString();
-  //     return Response.ok(htmlContent, headers: {'content-type': 'text/html'});
-  //   } catch (e) {
-  //     return Response.internalServerError(body: 'Error reading HTML file: $e');
-  //   }
-  // }
+class MiddlerWareService {
+  factory MiddlerWareService() => _instance;
+  MiddlerWareService._internal();
+  static final MiddlerWareService _instance = MiddlerWareService._internal();
+
+  static Middleware addCustomHeaders() {
+    return (Handler handler) {
+      return (Request request) async {
+        final response = await handler(request);
+        return response.change(headers: {
+          'Cross-Origin-Embedder-Policy': 'credentialless',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        });
+      };
+    };
+  }
 }

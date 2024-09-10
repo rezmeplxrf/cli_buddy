@@ -32,7 +32,7 @@ class SysInfoService {
       configDir = p.join(
           Platform.environment['HOME']!, 'Library', 'Application Support');
     } else if (Platform.isLinux) {
-      configDir = p.join(Platform.environment['HOME']!, '.config');
+      configDir = p.join(Platform.environment['HOME']!);
     }
 
     if (configDir != null) {

@@ -63,7 +63,8 @@ class OpenCommand extends Command<int> {
       await server.stop();
       exit(0);
     });
-
+// TODO: Maybe at first run, we could download the /web folder and use the files to serve the static files instead
+// and then serve each files in the same name
     final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
@@ -104,4 +105,4 @@ Future<void> _open({required String port, required String address}) async {
   }
 }
 
-const url = 'https://buddy-chat-2461c.web.app/';
+const url = 'https://buddy-c3bf4.web.app/';
