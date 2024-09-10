@@ -1,18 +1,30 @@
+# 0.1.6
+
+* Fixed a bug in requesting API
+
+# 0.1.5
+
+* Updated Web UI
+
+# 0.1.4
+
+* Updated Web UI
+
 # 0.1.3
 
-* open command will have port and address options as well as launch flag
+* Open command will have port and address options as well as launch flag
 
 # 0.1.2
 
-* open command will open the default browser automatically
+* Open command will open the default browser automatically
 
 # 0.1.1
 
-* Improved web.
+* Updated Web UI
 
 # 0.1.0
 
-* Updated web.
+* Updated Web UI
 
 # 0.0.9
 

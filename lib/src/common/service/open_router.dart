@@ -97,20 +97,6 @@ ${lightCyan.wrap(promptForDebug)}
         cancelToken: cancelToken,
         options: Options(headers: headers, responseType: ResponseType.stream),
         data: prompt,
-        onReceiveProgress: (count, total) {
-          // if we haven't received anything for 10 seconds, cancel the request and throw an error
-          if (DateTime.now().millisecondsSinceEpoch / 1000 - startTime > 10) {
-            progress?.fail();
-            const error =
-                'The API server has not sent any data for over 10 seconds. Aborting the request.';
-            cancelToken.cancel(error);
-            _logger?.err(error);
-            const errorMsg =
-                MessageChunk(type: ChunkType.error, content: error);
-            WebService.webSocket?.sink.add(jsonEncode(errorMsg));
-            return;
-          }
-        },
       );
     } catch (e) {
       progress?.fail();
