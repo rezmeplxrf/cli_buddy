@@ -28,6 +28,8 @@ mixin _$Configuration {
   String get port => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: true, name: 'local_web')
+  bool get isLocal => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_messages', defaultValue: 20)
   int get maxMessages => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -94,6 +96,7 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
       @JsonKey(defaultValue: '43210') String port,
       @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: true, name: 'local_web') bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
@@ -146,6 +149,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
     Object? ipAddress = null,
     Object? port = null,
     Object? saveSession = null,
+    Object? isLocal = null,
     Object? maxMessages = null,
     Object? defaultModel = null,
     Object? temperature = null,
@@ -184,6 +188,10 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isLocal: null == isLocal
+          ? _value.isLocal
+          : isLocal // ignore: cast_nullable_to_non_nullable
               as bool,
       maxMessages: null == maxMessages
           ? _value.maxMessages
@@ -287,6 +295,7 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
       @JsonKey(defaultValue: '43210') String port,
       @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: true, name: 'local_web') bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
       String defaultModel,
@@ -337,6 +346,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
     Object? ipAddress = null,
     Object? port = null,
     Object? saveSession = null,
+    Object? isLocal = null,
     Object? maxMessages = null,
     Object? defaultModel = null,
     Object? temperature = null,
@@ -375,6 +385,10 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isLocal: null == isLocal
+          ? _value.isLocal
+          : isLocal // ignore: cast_nullable_to_non_nullable
               as bool,
       maxMessages: null == maxMessages
           ? _value.maxMessages
@@ -475,6 +489,7 @@ class _$ConfigurationImpl implements _Configuration {
       @JsonKey(defaultValue: '43210') required this.port,
       @JsonKey(defaultValue: true, name: 'save_session')
       required this.saveSession,
+      @JsonKey(defaultValue: true, name: 'local_web') required this.isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required this.maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -527,6 +542,9 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(defaultValue: true, name: 'save_session')
   final bool saveSession;
+  @override
+  @JsonKey(defaultValue: true, name: 'local_web')
+  final bool isLocal;
   @override
   @JsonKey(name: 'max_messages', defaultValue: 20)
   final int maxMessages;
@@ -617,7 +635,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(secretEnvPath: $secretEnvPath, ipAddress: $ipAddress, port: $port, saveSession: $saveSession, maxMessages: $maxMessages, defaultModel: $defaultModel, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
+    return 'Configuration(secretEnvPath: $secretEnvPath, ipAddress: $ipAddress, port: $port, saveSession: $saveSession, isLocal: $isLocal, maxMessages: $maxMessages, defaultModel: $defaultModel, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
   }
 
   @override
@@ -632,6 +650,7 @@ class _$ConfigurationImpl implements _Configuration {
             (identical(other.port, port) || other.port == port) &&
             (identical(other.saveSession, saveSession) ||
                 other.saveSession == saveSession) &&
+            (identical(other.isLocal, isLocal) || other.isLocal == isLocal) &&
             (identical(other.maxMessages, maxMessages) ||
                 other.maxMessages == maxMessages) &&
             (identical(other.defaultModel, defaultModel) ||
@@ -678,6 +697,7 @@ class _$ConfigurationImpl implements _Configuration {
         ipAddress,
         port,
         saveSession,
+        isLocal,
         maxMessages,
         defaultModel,
         temperature,
@@ -725,6 +745,8 @@ abstract class _Configuration implements Configuration {
       @JsonKey(defaultValue: '43210') required final String port,
       @JsonKey(defaultValue: true, name: 'save_session')
       required final bool saveSession,
+      @JsonKey(defaultValue: true, name: 'local_web')
+      required final bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required final int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
@@ -774,6 +796,9 @@ abstract class _Configuration implements Configuration {
   @override
   @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession;
+  @override
+  @JsonKey(defaultValue: true, name: 'local_web')
+  bool get isLocal;
   @override
   @JsonKey(name: 'max_messages', defaultValue: 20)
   int get maxMessages;

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
@@ -19,7 +20,6 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:archive/archive_io.dart';
 
 class WebService {
   factory WebService() => _instance;
@@ -33,26 +33,33 @@ class WebService {
   static WebSocketChannel? webSocket;
   static List<ChatSession>? sessions = [];
   static String? msg;
-  Future<void> start({required String address, required int port}) async {
+  Future<void> start(
+      {required String address,
+      required int port,
+      required bool isLocal}) async {
     configuration ??= await ConfigService.loadConfig().getOrThrow();
-    defaultDir ??= SysInfoService.getConfigDirectory();
 
-    // Ensure the directory exists
-    final fileDirectory = p.join(defaultDir!, 'web');
-    _logger?.info('File Directory: $fileDirectory');
-    final directory = Directory(fileDirectory);
-    if (!directory.existsSync()) {
-      await _downloadAndDecompressWebFiles(defaultDir!);
-    }
-
-    final staticHandler = createStaticHandler(
-      fileDirectory,
-      defaultDocument: 'index.html',
-      listDirectories: true,
-    );
+    Cascade? cascade;
     final routerHandler = HandlerService.router;
+    if (isLocal) {
+      defaultDir ??= SysInfoService.getConfigDirectory();
+      final fileDirectory = p.join(defaultDir!, 'web');
+      _logger?.info('File Directory: $fileDirectory');
+      final directory = Directory(fileDirectory);
+      if (!directory.existsSync()) {
+        await _downloadAndDecompressWebFiles(defaultDir!);
+      }
 
-    final cascade = Cascade().add(staticHandler).add(routerHandler);
+      final staticHandler = createStaticHandler(
+        fileDirectory,
+        defaultDocument: 'index.html',
+        listDirectories: true,
+      );
+
+      cascade = Cascade().add(staticHandler).add(routerHandler);
+    } else {
+      cascade = Cascade().add(routerHandler);
+    }
 
     final handler = const Pipeline()
         .addMiddleware(logRequests())
@@ -77,8 +84,23 @@ class WebService {
     final zipFilePath = p.join(targetDirectory, 'web.zip');
     const url =
         'https://drive.google.com/uc?export=download&id=1BUHFKOJBv68n3btCF3c_JJAjX4cL9icM';
+    final progress = _logger?.progress('Downloading web files...');
+    final result = await dio.download(
+      url,
+      zipFilePath,
+      onReceiveProgress: (count, total) {
+        progress?.update(
+            'Downloaded: ${(count / total * 100).toStringAsFixed(0)}%');
+      },
+    );
 
-    await dio.download(url, zipFilePath);
+    if (result.statusCode != 200) {
+      _logger?.err('Failed to download web files');
+      progress?.fail();
+      throw Exception('Failed to download web files');
+    }
+
+    progress?.complete('Completed');
     final bytes = File(zipFilePath).readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
 
@@ -93,7 +115,7 @@ class WebService {
       }
     }
 
-    // Remove the zip file
+    _logger?.info('Cleaning up zip file');
     File(zipFilePath).deleteSync();
   }
 }

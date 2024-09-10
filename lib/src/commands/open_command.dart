@@ -23,6 +23,10 @@ class OpenCommand extends Command<int> {
           abbr: 'r',
           help: 'Display raw outputs of prompt and api requests',
           negatable: false)
+      ..addFlag('local',
+          abbr: 'c',
+          help: 'Donwload the web files locally and serve it from localhost',
+          defaultsTo: true)
       ..addFlag(
         'launch',
         abbr: 'l',
@@ -47,28 +51,32 @@ class OpenCommand extends Command<int> {
     final port = argResults?['port'] as String? ?? configuration?.port;
     final address =
         argResults?['address'] as String? ?? configuration?.ipAddress;
+    final autoFlag = argResults?['launch'] as bool? ?? true;
+    final isLocal = argResults?['local'] as bool? ?? true;
 
     final server = WebService();
 
-    await server.start(address: address!, port: int.parse(port!));
-    _logger
-      ..info('The web interface is available at $url in your browser.')
-      ..info(
-          'It is completely private for you only. - No data is collected and nothing is sent to external services.')
-      ..info(
-          'If you are still worried, you can check out the network section of the devtool');
+    await server.start(
+        address: address!, port: int.parse(port!), isLocal: isLocal);
+    if (!isLocal) {
+      _logger
+        ..info('The web interface is available at $hostedWeb in your browser.')
+        ..info(
+            'It is completely private for you only. - No data is collected and nothing is sent to external services.')
+        ..info(
+            'If you are still worried, you can check out the network section of the devtool');
+    }
+
     // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
     ProcessSignal.sigint.watch().listen((signal) async {
       _logger.info('Stopping the server...');
       await server.stop();
       exit(0);
     });
-// TODO: Maybe at first run, we could download the /web folder and use the files to serve the static files instead
-// and then serve each files in the same name
-    final autoFlag = argResults?['launch'] as bool? ?? true;
 
     if (autoFlag) {
-      await _open(port: port, address: address);
+      await _open(
+          port: port, address: address, isLocal: isLocal, logger: _logger);
     }
 
     final completer = Completer<int>();
@@ -76,9 +84,13 @@ class OpenCommand extends Command<int> {
   }
 }
 
-Future<void> _open({required String port, required String address}) async {
+Future<void> _open(
+    {required String port,
+    required String address,
+    required bool isLocal,
+    required Logger logger}) async {
   final shell = Shell();
-  //final url = 'http://$address:$port';
+  final url = isLocal ? 'http://$address:$port' : hostedWeb;
 
   if (Platform.isMacOS) {
     await shell.run('open $url');
@@ -86,15 +98,15 @@ Future<void> _open({required String port, required String address}) async {
     try {
       await shell.run('xdg-open $url');
     } catch (e) {
-      print('xdg-open failed, trying gnome-open...');
+      logger.info('xdg-open failed, trying gnome-open...');
       try {
         await shell.run('gnome-open $url');
       } catch (e) {
-        print('gnome-open failed, trying kde-open...');
+        logger.info('gnome-open failed, trying kde-open...');
         try {
           await shell.run('kde-open $url');
         } catch (e) {
-          print('All methods failed to open the URL on Linux: $e');
+          logger.err('All methods failed to open the URL on Linux: $e');
         }
       }
     }
@@ -105,4 +117,4 @@ Future<void> _open({required String port, required String address}) async {
   }
 }
 
-const url = 'https://buddy-c3bf4.web.app/';
+const hostedWeb = 'https://buddy-c3bf4.web.app/';

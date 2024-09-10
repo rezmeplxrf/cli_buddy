@@ -12,6 +12,7 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       ipAddress: json['ipAddress'] as String? ?? '127.0.0.1',
       port: json['port'] as String? ?? '43210',
       saveSession: json['save_session'] as bool? ?? true,
+      isLocal: json['local_web'] as bool? ?? true,
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
       defaultModel: json['default_model'] as String? ?? 'openai/gpt-4o',
       temperature: (json['temperature'] as num).toDouble(),
@@ -54,6 +55,7 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
   val['ipAddress'] = instance.ipAddress;
   val['port'] = instance.port;
   val['save_session'] = instance.saveSession;
+  val['local_web'] = instance.isLocal;
   val['max_messages'] = instance.maxMessages;
   val['default_model'] = instance.defaultModel;
   val['temperature'] = instance.temperature;
