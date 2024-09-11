@@ -78,9 +78,11 @@ const _$RoleEnumMap = {
 _$ValidateRequestImpl _$$ValidateRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$ValidateRequestImpl(
-      message: Message.fromJson(json['message'] as Map<String, dynamic>),
+      targetMessage:
+          Message.fromJson(json['targetMessage'] as Map<String, dynamic>),
       sysPrompt: Message.fromJson(json['sysPrompt'] as Map<String, dynamic>),
-      session: ChatSession.fromJson(json['session'] as Map<String, dynamic>),
+      currentSession:
+          ChatSession.fromJson(json['currentSession'] as Map<String, dynamic>),
       modelId: json['modelId'] as String?,
       parameters: json['parameters'] == null
           ? null
@@ -90,9 +92,9 @@ _$ValidateRequestImpl _$$ValidateRequestImplFromJson(
 Map<String, dynamic> _$$ValidateRequestImplToJson(
     _$ValidateRequestImpl instance) {
   final val = <String, dynamic>{
-    'message': instance.message.toJson(),
+    'targetMessage': instance.targetMessage.toJson(),
     'sysPrompt': instance.sysPrompt.toJson(),
-    'session': instance.session.toJson(),
+    'currentSession': instance.currentSession.toJson(),
   };
 
   void writeNotNull(String key, dynamic value) {

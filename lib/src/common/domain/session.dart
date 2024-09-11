@@ -43,9 +43,9 @@ class Message with _$Message {
 class ValidateRequest with _$ValidateRequest {
   @JsonSerializable( includeIfNull: false, explicitToJson: true)
   const factory ValidateRequest({
-      required Message message,
+      required Message targetMessage,
     required Message sysPrompt,
-    required ChatSession session,
+    required ChatSession currentSession,
     String? modelId,
     Parameters? parameters,
   }) = _ValidateRequest;

@@ -546,9 +546,9 @@ ValidateRequest _$ValidateRequestFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ValidateRequest {
-  Message get message => throw _privateConstructorUsedError;
+  Message get targetMessage => throw _privateConstructorUsedError;
   Message get sysPrompt => throw _privateConstructorUsedError;
-  ChatSession get session => throw _privateConstructorUsedError;
+  ChatSession get currentSession => throw _privateConstructorUsedError;
   String? get modelId => throw _privateConstructorUsedError;
   Parameters? get parameters => throw _privateConstructorUsedError;
 
@@ -569,15 +569,15 @@ abstract class $ValidateRequestCopyWith<$Res> {
       _$ValidateRequestCopyWithImpl<$Res, ValidateRequest>;
   @useResult
   $Res call(
-      {Message message,
+      {Message targetMessage,
       Message sysPrompt,
-      ChatSession session,
+      ChatSession currentSession,
       String? modelId,
       Parameters? parameters});
 
-  $MessageCopyWith<$Res> get message;
+  $MessageCopyWith<$Res> get targetMessage;
   $MessageCopyWith<$Res> get sysPrompt;
-  $ChatSessionCopyWith<$Res> get session;
+  $ChatSessionCopyWith<$Res> get currentSession;
   $ParametersCopyWith<$Res>? get parameters;
 }
 
@@ -596,24 +596,24 @@ class _$ValidateRequestCopyWithImpl<$Res, $Val extends ValidateRequest>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? targetMessage = null,
     Object? sysPrompt = null,
-    Object? session = null,
+    Object? currentSession = null,
     Object? modelId = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_value.copyWith(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      targetMessage: null == targetMessage
+          ? _value.targetMessage
+          : targetMessage // ignore: cast_nullable_to_non_nullable
               as Message,
       sysPrompt: null == sysPrompt
           ? _value.sysPrompt
           : sysPrompt // ignore: cast_nullable_to_non_nullable
               as Message,
-      session: null == session
-          ? _value.session
-          : session // ignore: cast_nullable_to_non_nullable
+      currentSession: null == currentSession
+          ? _value.currentSession
+          : currentSession // ignore: cast_nullable_to_non_nullable
               as ChatSession,
       modelId: freezed == modelId
           ? _value.modelId
@@ -630,9 +630,9 @@ class _$ValidateRequestCopyWithImpl<$Res, $Val extends ValidateRequest>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $MessageCopyWith<$Res> get message {
-    return $MessageCopyWith<$Res>(_value.message, (value) {
-      return _then(_value.copyWith(message: value) as $Val);
+  $MessageCopyWith<$Res> get targetMessage {
+    return $MessageCopyWith<$Res>(_value.targetMessage, (value) {
+      return _then(_value.copyWith(targetMessage: value) as $Val);
     });
   }
 
@@ -650,9 +650,9 @@ class _$ValidateRequestCopyWithImpl<$Res, $Val extends ValidateRequest>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ChatSessionCopyWith<$Res> get session {
-    return $ChatSessionCopyWith<$Res>(_value.session, (value) {
-      return _then(_value.copyWith(session: value) as $Val);
+  $ChatSessionCopyWith<$Res> get currentSession {
+    return $ChatSessionCopyWith<$Res>(_value.currentSession, (value) {
+      return _then(_value.copyWith(currentSession: value) as $Val);
     });
   }
 
@@ -680,18 +680,18 @@ abstract class _$$ValidateRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Message message,
+      {Message targetMessage,
       Message sysPrompt,
-      ChatSession session,
+      ChatSession currentSession,
       String? modelId,
       Parameters? parameters});
 
   @override
-  $MessageCopyWith<$Res> get message;
+  $MessageCopyWith<$Res> get targetMessage;
   @override
   $MessageCopyWith<$Res> get sysPrompt;
   @override
-  $ChatSessionCopyWith<$Res> get session;
+  $ChatSessionCopyWith<$Res> get currentSession;
   @override
   $ParametersCopyWith<$Res>? get parameters;
 }
@@ -709,24 +709,24 @@ class __$$ValidateRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? targetMessage = null,
     Object? sysPrompt = null,
-    Object? session = null,
+    Object? currentSession = null,
     Object? modelId = freezed,
     Object? parameters = freezed,
   }) {
     return _then(_$ValidateRequestImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
+      targetMessage: null == targetMessage
+          ? _value.targetMessage
+          : targetMessage // ignore: cast_nullable_to_non_nullable
               as Message,
       sysPrompt: null == sysPrompt
           ? _value.sysPrompt
           : sysPrompt // ignore: cast_nullable_to_non_nullable
               as Message,
-      session: null == session
-          ? _value.session
-          : session // ignore: cast_nullable_to_non_nullable
+      currentSession: null == currentSession
+          ? _value.currentSession
+          : currentSession // ignore: cast_nullable_to_non_nullable
               as ChatSession,
       modelId: freezed == modelId
           ? _value.modelId
@@ -745,9 +745,9 @@ class __$$ValidateRequestImplCopyWithImpl<$Res>
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class _$ValidateRequestImpl implements _ValidateRequest {
   const _$ValidateRequestImpl(
-      {required this.message,
+      {required this.targetMessage,
       required this.sysPrompt,
-      required this.session,
+      required this.currentSession,
       this.modelId,
       this.parameters});
 
@@ -755,11 +755,11 @@ class _$ValidateRequestImpl implements _ValidateRequest {
       _$$ValidateRequestImplFromJson(json);
 
   @override
-  final Message message;
+  final Message targetMessage;
   @override
   final Message sysPrompt;
   @override
-  final ChatSession session;
+  final ChatSession currentSession;
   @override
   final String? modelId;
   @override
@@ -767,7 +767,7 @@ class _$ValidateRequestImpl implements _ValidateRequest {
 
   @override
   String toString() {
-    return 'ValidateRequest(message: $message, sysPrompt: $sysPrompt, session: $session, modelId: $modelId, parameters: $parameters)';
+    return 'ValidateRequest(targetMessage: $targetMessage, sysPrompt: $sysPrompt, currentSession: $currentSession, modelId: $modelId, parameters: $parameters)';
   }
 
   @override
@@ -775,10 +775,12 @@ class _$ValidateRequestImpl implements _ValidateRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ValidateRequestImpl &&
-            (identical(other.message, message) || other.message == message) &&
+            (identical(other.targetMessage, targetMessage) ||
+                other.targetMessage == targetMessage) &&
             (identical(other.sysPrompt, sysPrompt) ||
                 other.sysPrompt == sysPrompt) &&
-            (identical(other.session, session) || other.session == session) &&
+            (identical(other.currentSession, currentSession) ||
+                other.currentSession == currentSession) &&
             (identical(other.modelId, modelId) || other.modelId == modelId) &&
             (identical(other.parameters, parameters) ||
                 other.parameters == parameters));
@@ -786,8 +788,8 @@ class _$ValidateRequestImpl implements _ValidateRequest {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, message, sysPrompt, session, modelId, parameters);
+  int get hashCode => Object.hash(runtimeType, targetMessage, sysPrompt,
+      currentSession, modelId, parameters);
 
   /// Create a copy of ValidateRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -808,9 +810,9 @@ class _$ValidateRequestImpl implements _ValidateRequest {
 
 abstract class _ValidateRequest implements ValidateRequest {
   const factory _ValidateRequest(
-      {required final Message message,
+      {required final Message targetMessage,
       required final Message sysPrompt,
-      required final ChatSession session,
+      required final ChatSession currentSession,
       final String? modelId,
       final Parameters? parameters}) = _$ValidateRequestImpl;
 
@@ -818,11 +820,11 @@ abstract class _ValidateRequest implements ValidateRequest {
       _$ValidateRequestImpl.fromJson;
 
   @override
-  Message get message;
+  Message get targetMessage;
   @override
   Message get sysPrompt;
   @override
-  ChatSession get session;
+  ChatSession get currentSession;
   @override
   String? get modelId;
   @override

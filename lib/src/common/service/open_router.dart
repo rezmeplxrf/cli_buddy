@@ -37,7 +37,7 @@ class OpenRouterService {
     };
     return header;
   }
-
+// TODO: Refractor
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
     bool? markdown,
@@ -243,11 +243,10 @@ ${lightCyan.wrap(promptForDebug)}
 
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     final headers = await getHeaders();
-
     final prompt = <String, dynamic>{
-      'model': request.modelId ?? request.session.model,
+      'model': request.modelId ?? request.currentSession.model,
       'stream': true,
-      'messages': [request.sysPrompt.toJson(), request.message.toJson()],
+      'messages': [request.sysPrompt.toJson(), request.targetMessage.toJson()],
     };
 
     if (request.parameters != null) {
@@ -339,20 +338,20 @@ ${lightCyan.wrap(promptForDebug)}
       final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final validatedResult = Validation(
-        model: request.modelId ?? request.session.model,
+        model: request.modelId ?? request.currentSession.model,
         result: msgBuffer.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
       // Update the message in the session
-      final updatedMessages = request.session.messages.map((m) {
-        if (m == request.message) {
+      final updatedMessages = request.currentSession.messages.map((m) {
+        if (m.timestamp == request.targetMessage.timestamp) {
           return m.copyWith(validation: validatedResult);
         }
         return m;
       }).toList();
 
-      newSession = request.session.copyWith(messages: updatedMessages);
+      newSession = request.currentSession.copyWith(messages: updatedMessages);
 
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
