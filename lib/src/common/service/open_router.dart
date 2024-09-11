@@ -7,6 +7,7 @@ import 'package:cli_buddy/src/common/domain/open_router.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
+import 'package:cli_buddy/src/common/service/helper.dart';
 import 'package:cli_buddy/src/common/service/markdown.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/web.dart';
@@ -66,9 +67,8 @@ class OpenRouterService {
     final prompt = <String, dynamic>{
       'model': overRidingModel ?? session.model,
       'stream': true,
-      // {"role": "user", "content": "Who are you?"}
       'messages':
-          trimedSession.messages.map((e) => e.toAPICompatibleJson).toList(),
+          trimedSession.messages.map(Helper.toAPICompatibleJson).toList(),
     };
 
     if (parameters != null) {
@@ -248,14 +248,13 @@ ${lightCyan.wrap(promptForDebug)}
       'model': request.modelId ?? request.currentSession.model,
       'stream': true,
       'messages': [
-        request.sysPrompt.toAPICompatibleJson(),
-        request.targetMessage.toAPICompatibleJson(),
-        Message(
-                role: Role.user,
-                content:
-                    'The Previous message is from another AI response. Validate the previous message according to the System guideline',
-                timestamp: DateTime.now().millisecondsSinceEpoch)
-            .toAPICompatibleJson()
+        Helper.toAPICompatibleJson(request.sysPrompt),
+        Helper.toAPICompatibleJson(request.targetMessage),
+        Helper.toAPICompatibleJson(Message(
+            role: Role.user,
+            content:
+                'The Previous message is from another AI response. Validate the previous message according to the System guideline',
+            timestamp: DateTime.now().millisecondsSinceEpoch))
       ],
     };
 

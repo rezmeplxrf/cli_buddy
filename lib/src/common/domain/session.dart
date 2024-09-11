@@ -10,7 +10,7 @@ class ChatSession with _$ChatSession {
   const factory ChatSession({
     required int id,
     required List<Message> messages,
-   required String model,
+    required String model,
     Parameters? parameters,
   }) = _ChatSession;
 
@@ -23,34 +23,24 @@ enum Role { system, user, assistant, tool }
 @freezed
 class Message with _$Message {
   @JsonSerializable(explicitToJson: true, includeIfNull: false)
-  const factory Message({
-    required Role role,
-    required String content,
-    required int timestamp,
-    Usage? usage,
-    Validation? validation,
-    String? overideModel
-  }) = _Message;
+  const factory Message(
+      {required Role role,
+      required String content,
+      required int timestamp,
+      Usage? usage,
+      Validation? validation,
+      String? overideModel}) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
-
-       Map<String, dynamic> toAPICompatibleJson() {
-    return {
-      'role': role.name, 
-      'content': content,
-    };
-  }
 }
-
-
 
 
 @freezed
 class ValidateRequest with _$ValidateRequest {
-  @JsonSerializable( includeIfNull: false, explicitToJson: true)
+  @JsonSerializable(includeIfNull: false, explicitToJson: true)
   const factory ValidateRequest({
-      required Message targetMessage,
+    required Message targetMessage,
     required Message sysPrompt,
     required ChatSession currentSession,
     String? modelId,
@@ -63,10 +53,11 @@ class ValidateRequest with _$ValidateRequest {
 
 @freezed
 class Validation with _$Validation {
-  @JsonSerializable( includeIfNull: false)
+  @JsonSerializable(includeIfNull: false)
   const factory Validation({
     required String model,
-     required String result, required int timestamp, 
+    required String result,
+    required int timestamp,
     Usage? usage,
   }) = _Validation;
 
@@ -319,7 +310,7 @@ class Parameters with _$Parameters {
 //   }
 // }
 
-enum ChunkType { start, chunk, end , error}
+enum ChunkType { start, chunk, end, error }
 
 @freezed
 class MessageChunk with _$MessageChunk {
