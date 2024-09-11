@@ -34,6 +34,13 @@ class Message with _$Message {
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
+
+       Map<String, dynamic> toAPICompatibleJson() {
+    return {
+      'role': role.name, 
+      'content': content,
+    };
+  }
 }
 
 

@@ -37,6 +37,7 @@ class OpenRouterService {
     };
     return header;
   }
+
 // TODO: Refractor
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
@@ -58,7 +59,6 @@ class OpenRouterService {
 
     final headers = await getHeaders();
 
-  
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
     final overRidingModel = session.messages.last.overideModel;
@@ -66,7 +66,9 @@ class OpenRouterService {
     final prompt = <String, dynamic>{
       'model': overRidingModel ?? session.model,
       'stream': true,
-      'messages': trimedSession.messages,
+      // {"role": "user", "content": "Who are you?"}
+      'messages':
+          trimedSession.messages.map((e) => e.toAPICompatibleJson).toList(),
     };
 
     if (parameters != null) {
@@ -203,8 +205,8 @@ ${lightCyan.wrap(promptForDebug)}
         usage: usage?.copyWith(responseTime: difference),
       );
       newSession = session.copyWith(
-          messages: [...session.messages, aiResponse],
-        );
+        messages: [...session.messages, aiResponse],
+      );
 
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
@@ -229,9 +231,8 @@ ${lightCyan.wrap(promptForDebug)}
     }
   }
 
-  Future<Result<ChatSession, CustomException>> validate({
-    required ValidateRequest request
-  }) async {
+  Future<Result<ChatSession, CustomException>> validate(
+      {required ValidateRequest request}) async {
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
@@ -246,7 +247,16 @@ ${lightCyan.wrap(promptForDebug)}
     final prompt = <String, dynamic>{
       'model': request.modelId ?? request.currentSession.model,
       'stream': true,
-      'messages': [request.sysPrompt.toJson(), request.targetMessage.toJson()],
+      'messages': [
+        request.sysPrompt.toAPICompatibleJson(),
+        request.targetMessage.toAPICompatibleJson(),
+        Message(
+                role: Role.user,
+                content:
+                    'The Previous message is from another AI response. Validate the previous message according to the System guideline',
+                timestamp: DateTime.now().millisecondsSinceEpoch)
+            .toAPICompatibleJson()
+      ],
     };
 
     if (request.parameters != null) {
