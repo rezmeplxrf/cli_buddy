@@ -1,3 +1,11 @@
+# 0.1.8
+
+* Fixed a bug
+
+# 0.1.7
+
+* Fixed a bug
+
 # 0.1.6
 
 * Fixed a bug in requesting API
