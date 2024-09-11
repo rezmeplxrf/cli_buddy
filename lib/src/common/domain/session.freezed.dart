@@ -261,6 +261,7 @@ mixin _$Message {
   int get timestamp => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
   Validation? get validation => throw _privateConstructorUsedError;
+  String? get overideModel => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -281,7 +282,8 @@ abstract class $MessageCopyWith<$Res> {
       String content,
       int timestamp,
       Usage? usage,
-      Validation? validation});
+      Validation? validation,
+      String? overideModel});
 
   $UsageCopyWith<$Res>? get usage;
   $ValidationCopyWith<$Res>? get validation;
@@ -307,6 +309,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
+    Object? overideModel = freezed,
   }) {
     return _then(_value.copyWith(
       role: null == role
@@ -329,6 +332,10 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
+      overideModel: freezed == overideModel
+          ? _value.overideModel
+          : overideModel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -373,7 +380,8 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       String content,
       int timestamp,
       Usage? usage,
-      Validation? validation});
+      Validation? validation,
+      String? overideModel});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -399,6 +407,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
+    Object? overideModel = freezed,
   }) {
     return _then(_$MessageImpl(
       role: null == role
@@ -421,6 +430,10 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
+      overideModel: freezed == overideModel
+          ? _value.overideModel
+          : overideModel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -434,7 +447,8 @@ class _$MessageImpl implements _Message {
       required this.content,
       required this.timestamp,
       this.usage,
-      this.validation});
+      this.validation,
+      this.overideModel});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -449,10 +463,12 @@ class _$MessageImpl implements _Message {
   final Usage? usage;
   @override
   final Validation? validation;
+  @override
+  final String? overideModel;
 
   @override
   String toString() {
-    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation)';
+    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation, overideModel: $overideModel)';
   }
 
   @override
@@ -466,13 +482,15 @@ class _$MessageImpl implements _Message {
                 other.timestamp == timestamp) &&
             (identical(other.usage, usage) || other.usage == usage) &&
             (identical(other.validation, validation) ||
-                other.validation == validation));
+                other.validation == validation) &&
+            (identical(other.overideModel, overideModel) ||
+                other.overideModel == overideModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, role, content, timestamp, usage, validation);
+  int get hashCode => Object.hash(
+      runtimeType, role, content, timestamp, usage, validation, overideModel);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -496,7 +514,8 @@ abstract class _Message implements Message {
       required final String content,
       required final int timestamp,
       final Usage? usage,
-      final Validation? validation}) = _$MessageImpl;
+      final Validation? validation,
+      final String? overideModel}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -510,6 +529,8 @@ abstract class _Message implements Message {
   Usage? get usage;
   @override
   Validation? get validation;
+  @override
+  String? get overideModel;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.

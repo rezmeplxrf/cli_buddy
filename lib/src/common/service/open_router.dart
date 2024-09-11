@@ -58,13 +58,13 @@ class OpenRouterService {
 
     final headers = await getHeaders();
 
-    final model = session.model;
+  
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
-
+    final overRidingModel = session.messages.last.overideModel;
     final trimedSession = _removeOldMessages(session, maxMsg);
     final prompt = <String, dynamic>{
-      'model': model,
+      'model': overRidingModel ?? session.model,
       'stream': true,
       'messages': trimedSession.messages,
     };
@@ -204,8 +204,7 @@ ${lightCyan.wrap(promptForDebug)}
       );
       newSession = session.copyWith(
           messages: [...session.messages, aiResponse],
-          model: model,
-          parameters: parameters);
+        );
 
       final usageLog =
           '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
@@ -213,7 +212,7 @@ ${lightCyan.wrap(promptForDebug)}
 
       await SessionService.saveSession(session: newSession);
 
-      return Success(newSession);
+      return newSession.toSuccess();
     } else {
       msgBuffer.clear();
       progress?.fail();
