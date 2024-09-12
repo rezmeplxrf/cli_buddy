@@ -51,8 +51,10 @@ class WebService {
         final indexPath = p.join(fileDirectory, 'index.html');
         final indexFile = File(indexPath);
 
-        if (!directory.existsSync() || !_isFileRecent(indexFile)) {
-          await _downloadAndDecompressWebFiles(defaultDir!);
+        if (!directory.existsSync() ||
+            !LocalWebService.isFileRecent(indexFile)) {
+          await LocalWebService.downloadAndDecompressWebFiles(
+              defaultDir!, _logger);
         }
 
         final staticHandler = createStaticHandler(
@@ -89,55 +91,6 @@ class WebService {
       await _server!.close(force: true);
       _logger?.info('Server stopped');
     }
-  }
-
-  bool _isFileRecent(File file) {
-    if (!file.existsSync()) {
-      return false;
-    }
-    final lastModified = file.lastModifiedSync();
-    final now = DateTime.now();
-    final difference = now.difference(lastModified);
-    return difference.inHours < 24;
-  }
-
-  Future<void> _downloadAndDecompressWebFiles(String targetDirectory) async {
-    final zipFilePath = p.join(targetDirectory, 'web.zip');
-    const url =
-        'https://drive.google.com/uc?export=download&id=1xhV7pWwsD9H-NSECPf0xJDc_yafL9Iwj';
-    final progress = _logger?.progress('Downloading files for Web UI...');
-    final result = await dio.download(
-      url,
-      zipFilePath,
-      onReceiveProgress: (count, total) {
-        progress?.update(
-            'Downloaded: ${(count / total * 100).toStringAsFixed(0)}%');
-      },
-    );
-
-    if (result.statusCode != 200) {
-      _logger?.err('Failed to download web files');
-      progress?.fail();
-      throw Exception('Failed to download web files');
-    }
-
-    progress?.complete('Completed');
-    final bytes = File(zipFilePath).readAsBytesSync();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    _logger?.info('Saving in $targetDirectory');
-    for (final file in archive) {
-      final fileName = p.join(targetDirectory, file.name);
-      if (file.isFile) {
-        File(fileName)
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(file.content as List<int>);
-      } else {
-        await Directory(fileName).create(recursive: true);
-      }
-    }
-
-    _logger?.info('Cleaning up zip file');
-    File(zipFilePath).deleteSync();
   }
 }
 
@@ -386,5 +339,61 @@ class MiddlerWareService {
         });
       };
     };
+  }
+}
+
+class LocalWebService {
+  factory LocalWebService() => _instance;
+  LocalWebService._internal();
+  static final LocalWebService _instance = LocalWebService._internal();
+
+  static bool isFileRecent(File file) {
+    if (!file.existsSync()) {
+      return false;
+    }
+    final lastModified = file.lastModifiedSync();
+    final now = DateTime.now();
+    final difference = now.difference(lastModified);
+    return difference.inHours < 24;
+  }
+
+  static Future<void> downloadAndDecompressWebFiles(
+      String targetDirectory, Logger? logger) async {
+    final zipFilePath = p.join(targetDirectory, 'web.zip');
+    const url =
+        'https://drive.google.com/uc?export=download&id=1xhV7pWwsD9H-NSECPf0xJDc_yafL9Iwj';
+    final progress = logger?.progress('Downloading files for Web UI...');
+    final result = await dio.download(
+      url,
+      zipFilePath,
+      onReceiveProgress: (count, total) {
+        progress?.update(
+            'Downloaded: ${(count / total * 100).toStringAsFixed(0)}%');
+      },
+    );
+
+    if (result.statusCode != 200) {
+      logger?.err('Failed to download web files');
+      progress?.fail();
+      throw Exception('Failed to download web files');
+    }
+
+    progress?.complete('Completed');
+    final bytes = File(zipFilePath).readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(bytes);
+    logger?.info('Saving in $targetDirectory');
+    for (final file in archive) {
+      final fileName = p.join(targetDirectory, file.name);
+      if (file.isFile) {
+        File(fileName)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(file.content as List<int>);
+      } else {
+        await Directory(fileName).create(recursive: true);
+      }
+    }
+
+    logger?.info('Cleaning up zip file');
+    File(zipFilePath).deleteSync();
   }
 }
