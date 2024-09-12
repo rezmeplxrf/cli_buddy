@@ -55,6 +55,8 @@ class Configuration with _$Configuration {
     String? codePrompt,
     @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
     String? chatPrompt,
+    @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+    String? validatePrompt,
   }) = _Configuration;
 
   factory Configuration.fromJson(Map<String, dynamic> json) =>

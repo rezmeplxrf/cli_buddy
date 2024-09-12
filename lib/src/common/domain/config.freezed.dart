@@ -83,6 +83,8 @@ mixin _$Configuration {
   String? get codePrompt => throw _privateConstructorUsedError;
   @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
   String? get chatPrompt => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+  String? get validatePrompt => throw _privateConstructorUsedError;
 
   /// Serializes this Configuration to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -145,7 +147,9 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(name: 'code_prompt', defaultValue: defaultCodePrompt)
       String? codePrompt,
       @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
-      String? chatPrompt});
+      String? chatPrompt,
+      @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+      String? validatePrompt});
 }
 
 /// @nodoc
@@ -194,6 +198,7 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
     Object? explainPrompt = freezed,
     Object? codePrompt = freezed,
     Object? chatPrompt = freezed,
+    Object? validatePrompt = freezed,
   }) {
     return _then(_value.copyWith(
       apiProvider: null == apiProvider
@@ -320,6 +325,10 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
           ? _value.chatPrompt
           : chatPrompt // ignore: cast_nullable_to_non_nullable
               as String?,
+      validatePrompt: freezed == validatePrompt
+          ? _value.validatePrompt
+          : validatePrompt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -377,7 +386,9 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(name: 'code_prompt', defaultValue: defaultCodePrompt)
       String? codePrompt,
       @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
-      String? chatPrompt});
+      String? chatPrompt,
+      @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+      String? validatePrompt});
 }
 
 /// @nodoc
@@ -424,6 +435,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
     Object? explainPrompt = freezed,
     Object? codePrompt = freezed,
     Object? chatPrompt = freezed,
+    Object? validatePrompt = freezed,
   }) {
     return _then(_$ConfigurationImpl(
       apiProvider: null == apiProvider
@@ -550,6 +562,10 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
           ? _value.chatPrompt
           : chatPrompt // ignore: cast_nullable_to_non_nullable
               as String?,
+      validatePrompt: freezed == validatePrompt
+          ? _value.validatePrompt
+          : validatePrompt // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -605,7 +621,9 @@ class _$ConfigurationImpl implements _Configuration {
       @JsonKey(name: 'code_prompt', defaultValue: defaultCodePrompt)
       this.codePrompt,
       @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
-      this.chatPrompt})
+      this.chatPrompt,
+      @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+      this.validatePrompt})
       : _logitBias = logitBias,
         _responseFormat = responseFormat,
         _stop = stop;
@@ -730,10 +748,13 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
   final String? chatPrompt;
+  @override
+  @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+  final String? validatePrompt;
 
   @override
   String toString() {
-    return 'Configuration(apiProvider: $apiProvider, localEndpoint: $localEndpoint, saveSession: $saveSession, saveOnline: $saveOnline, isLocal: $isLocal, maxMessages: $maxMessages, openrouterDefaultModel: $openrouterDefaultModel, buddyDefaultModel: $buddyDefaultModel, buddyKey: $buddyKey, ollamaDefaultModel: $ollamaDefaultModel, ollamaEndpoint: $ollamaEndpoint, openrouterKey: $openrouterKey, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
+    return 'Configuration(apiProvider: $apiProvider, localEndpoint: $localEndpoint, saveSession: $saveSession, saveOnline: $saveOnline, isLocal: $isLocal, maxMessages: $maxMessages, openrouterDefaultModel: $openrouterDefaultModel, buddyDefaultModel: $buddyDefaultModel, buddyKey: $buddyKey, ollamaDefaultModel: $ollamaDefaultModel, ollamaEndpoint: $ollamaEndpoint, openrouterKey: $openrouterKey, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt, validatePrompt: $validatePrompt)';
   }
 
   @override
@@ -795,7 +816,9 @@ class _$ConfigurationImpl implements _Configuration {
             (identical(other.codePrompt, codePrompt) ||
                 other.codePrompt == codePrompt) &&
             (identical(other.chatPrompt, chatPrompt) ||
-                other.chatPrompt == chatPrompt));
+                other.chatPrompt == chatPrompt) &&
+            (identical(other.validatePrompt, validatePrompt) ||
+                other.validatePrompt == validatePrompt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -832,7 +855,8 @@ class _$ConfigurationImpl implements _Configuration {
         cmdPrompt,
         explainPrompt,
         codePrompt,
-        chatPrompt
+        chatPrompt,
+        validatePrompt
       ]);
 
   /// Create a copy of Configuration
@@ -903,7 +927,9 @@ abstract class _Configuration implements Configuration {
       @JsonKey(name: 'code_prompt', defaultValue: defaultCodePrompt)
       final String? codePrompt,
       @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
-      final String? chatPrompt}) = _$ConfigurationImpl;
+      final String? chatPrompt,
+      @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+      final String? validatePrompt}) = _$ConfigurationImpl;
 
   factory _Configuration.fromJson(Map<String, dynamic> json) =
       _$ConfigurationImpl.fromJson;
@@ -1001,6 +1027,9 @@ abstract class _Configuration implements Configuration {
   @override
   @JsonKey(name: 'chat_prompt', defaultValue: defaultChatPrompt)
   String? get chatPrompt;
+  @override
+  @JsonKey(defaultValue: defaultValidatePrompt, name: 'validate_prompt')
+  String? get validatePrompt;
 
   /// Create a copy of Configuration
   /// with the given fields replaced by the non-null parameter values.

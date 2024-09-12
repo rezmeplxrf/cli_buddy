@@ -24,6 +24,10 @@ const defaultChatPrompt = '''
 You are a helpful assistant.
 Provide concise response unless asked for more details.''';
 
+const defaultValidatePrompt = '''
+Your job is to verify if the provided code by the previous AI assistant is valid.
+Provide concise response unless asked for more details.''';
+
 String cmdPromptCache = defaultCommandPrompt;
 String explainPromptCache = defaultExplainPrompt;
 String codePromptCache = defaultCodePrompt;

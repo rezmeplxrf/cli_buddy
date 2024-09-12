@@ -174,6 +174,27 @@ class SetCommand extends Command<int> {
         'chat-prompt',
         help: 'Set the chat prompt template which is used as a system message.',
         valueHelp: 'String',
+      )
+      ..addOption(
+        'local-endpoint',
+        help: 'Set the local endpoint.',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'save-online',
+        help: 'Enable or disable online saving.',
+        valueHelp: 'bool',
+        allowed: ['true', 'false'],
+      )
+      ..addOption(
+        'ollama-endpoint',
+        help: 'Set the Ollama endpoint.',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'validate-prompt',
+        help: 'Set the validate prompt template.',
+        valueHelp: 'String',
       );
   }
 
@@ -189,16 +210,21 @@ class SetCommand extends Command<int> {
   @override
   Future<int> run() async {
     final progress = _logger.progress('');
-    final buddyKey = argResults?['sor-api-key']?.toString().trim();
+    final buddyKey = argResults?['buddy-api-key']?.toString().trim();
     final orkey = argResults?['or-api-key']?.toString().trim();
     final orModel = argResults?['or-model']?.toString().trim();
     final buddyModel = argResults?['buddy-model']?.toString().trim();
     final ollamaModel = argResults?['ollama-model']?.toString().trim();
+    final localEndpoint = argResults?['local-endpoint']?.toString().trim();
+    final ollamaEndpoint = argResults?['ollama-endpoint']?.toString().trim();
+    final validatePrompt = argResults?['validate-prompt']?.toString().trim();
 
     final preferLocal =
-        bool.tryParse(argResults?['local_web']?.toString() ?? '');
+        bool.tryParse(argResults?['local-web']?.toString() ?? '');
     final saveSession =
         bool.tryParse(argResults?['save-session'] as String? ?? '');
+    final saveOnline =
+        bool.tryParse(argResults?['save-online'] as String? ?? '');
     final maxMessages =
         int.tryParse(argResults?['max-messages'] as String? ?? '');
     final temperature =
@@ -282,7 +308,11 @@ class SetCommand extends Command<int> {
       buddyModel,
       buddyKey,
       ollamaModel,
+      localEndpoint,
+      ollamaEndpoint,
+      validatePrompt,
       saveSession,
+      saveOnline,
       maxMessages,
       temperature,
       maxTokens,
@@ -308,7 +338,7 @@ class SetCommand extends Command<int> {
       final newConfig = configuration!.copyWith(
         apiProvider:
             _logUpdate('api-provider', apiprovider, configuration!.apiProvider),
-        isLocal: _logUpdate('local_web', preferLocal, configuration!.isLocal),
+        isLocal: _logUpdate('local-web', preferLocal, configuration!.isLocal),
         openrouterKey:
             _logUpdate('openrouter_key', orkey, configuration!.openrouterKey),
         openrouterDefaultModel: _logUpdate('openrouter_default_model', orModel,
@@ -320,6 +350,8 @@ class SetCommand extends Command<int> {
             configuration!.ollamaDefaultModel),
         saveSession:
             _logUpdate('save-session', saveSession, configuration!.saveSession),
+        saveOnline:
+            _logUpdate('save-online', saveOnline, configuration!.saveOnline),
         maxMessages:
             _logUpdate('max-messages', maxMessages, configuration!.maxMessages),
         temperature:
@@ -353,6 +385,12 @@ class SetCommand extends Command<int> {
             _logUpdate('code-prompt', codePrompt, configuration!.codePrompt),
         chatPrompt:
             _logUpdate('chat-prompt', chatPrompt, configuration!.chatPrompt),
+        localEndpoint: _logUpdate(
+            'local-endpoint', localEndpoint, configuration!.localEndpoint),
+        ollamaEndpoint: _logUpdate(
+            'ollama-endpoint', ollamaEndpoint, configuration!.ollamaEndpoint),
+        validatePrompt: _logUpdate(
+            'validate-prompt', validatePrompt, configuration!.validatePrompt),
       );
 
       await ConfigService.saveConfig(newConfig: newConfig);
