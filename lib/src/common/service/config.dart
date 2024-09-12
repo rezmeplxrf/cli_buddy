@@ -42,6 +42,9 @@ class ConfigService {
         final configContent = await configFile.readAsString();
         config = Configuration.fromJson(
             jsonDecode(configContent) as Map<String, dynamic>);
+        final clickableLink =
+            '\x1B]8;;file://${configFile.path}\x1B\\${configFile.path}\x1B]8;;\x1B\\';
+        _logger?.info('Config file: ${blue.wrap(clickableLink)}');
       }
       parametersCache = Parameters.fromJson(config.toJson());
       cmdPromptCache = config.cmdPrompt ?? defaultCommandPrompt;
@@ -92,7 +95,7 @@ class ConfigService {
               stack: 'ConfigService.loadOpenrouterKey')
           .toFailure();
     }
-    
+
     return openrouterKey.toSuccess();
   }
 }
