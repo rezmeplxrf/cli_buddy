@@ -1,6 +1,7 @@
 # 0.1.9
 
 * Changed Configuration Model and removed use of secret.env
+* Now web version will directly call API within the browser
 
 # 0.1.8
 

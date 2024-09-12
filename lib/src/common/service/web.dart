@@ -7,7 +7,6 @@ import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
-import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -18,7 +17,6 @@ import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
-import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebService {
@@ -105,59 +103,16 @@ class HandlerService {
       // ..get('/', _htmlHandler)
       ..get('/session-list', sessionsHandler)
       ..post('/remove-all', _removeAllHandler)
-      ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
       ..post('/remove-session', _removeSessionHandler)
       ..post('/make-file', _makeFileHandler)
       ..get('/prompts', _getPromptsHandler)
-      ..post('/prompts', _setPromptsHandler)
-      ..get('/models', _getModelsHandler)
-      ..post('/parameters', _getParametersHandler)
-      ..post('/validate', _validateHandler);
+      ..post('/prompts', _setPromptsHandler);
     return router.call;
   }
 
-  static Future<Response> _validateHandler(Request request) async {
-    try {
-      final payload = await request.readAsString();
-      final json = jsonDecode(payload) as Map<String, dynamic>;
-      final validateRequest = ValidateRequest.fromJson(json);
-      final result =
-          await openRouter.validate(request: validateRequest).getOrThrow();
-      return Response.ok(jsonEncode(result.toJson()), headers: jsonHeaders);
-    } catch (e) {
-      return Response.internalServerError(
-        body: e.toString(),
-      );
-    }
-  }
 
-  static Future<Response> _getModelsHandler(Request request) async {
-    try {
-      final models = await openRouter.getModelList().getOrThrow();
-      return Response.ok(jsonEncode(models), headers: jsonHeaders);
-    } catch (e) {
-      return Response.internalServerError(
-        body: 'Failed to get models - $e',
-      );
-    }
-  }
-
-  static Future<Response> _getParametersHandler(Request request) async {
-    try {
-      final payload = await request.readAsString();
-      final json = jsonDecode(payload) as Map<String, dynamic>;
-      final model = json['model'] as String;
-      final parameters =
-          await openRouter.getParameterInfo(model: model).getOrThrow();
-      return Response.ok(jsonEncode(parameters.toJson()), headers: jsonHeaders);
-    } catch (e) {
-      return Response.internalServerError(
-        body: 'Failed to get models - $e',
-      );
-    }
-  }
 
   static Response _getPromptsHandler(Request request) {
     try {
@@ -299,29 +254,6 @@ class HandlerService {
     }
   }
 
-  static void _handleWebSocket(WebSocketChannel socket) {
-    WebService.webSocket = socket;
-    socket.stream.listen((message) async {
-      final userSentSession = ChatSession.fromJson(
-          jsonDecode(message as String) as Map<String, dynamic>);
-      if (message.trim().isNotEmpty) {
-        WebService.webSocket?.sink
-            .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
-        try {
-          final newSession = await openRouter
-              .invoke(session: userSentSession, markdown: false)
-              .getOrThrow();
-          final lastResponse = newSession.messages.last;
-          WebService.webSocket?.sink.add(jsonEncode(
-              MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
-        } catch (e) {
-          return;
-        }
-      }
-    }, onDone: () {
-      WebService.webSocket = null;
-    });
-  }
 }
 
 class MiddlerWareService {
