@@ -105,7 +105,8 @@ buddy set --or-api-key <your openrouter key>
   "cmd_prompt": "If there is a lack of details, provide most logical solution.\nEnsure the output is a valid shell command.\nIf multiple steps required try to combine them together in one command.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```",
   "explain_prompt": "Provide short and concise explanation of your previous response about command or code.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```",
   "code_prompt": "Provide only code as output without any description.\nProvide only code in plain text format without Markdown formatting.\nDo not include symbols such as ``` or ```python.\nIf there is a lack of details, provide most logical solution.\nYou are not allowed to ask for more details.\nFor example if the prompt is \"Hello world Python\", you should return \"print('Hello world')\".\n",
-  "chat_prompt": "You are a Flutter/Dart developer. Don't be verbose in your response but focus on solving problem or coding."
+  "chat_prompt": "You are a Flutter/Dart developer. Don't be verbose in your response but focus on solving problem or coding. As for state management, use hooks_flutter and riverpod_hook packages.",
+  "validate_prompt": "Your job is to verify if the provided code by the previous AI assistant is valid.\nProvide concise response unless asked for more details."
 }
 ```
 
@@ -172,61 +173,6 @@ $ buddy info -s list
 
 # View a specific chat history by session ID
 $ buddy info -s "session_id"
-```
-
-## Set Command
-
-The `set` command allows you to set or update configuration values. Below are the available options and flags:
-
-- `--or-api-key`: Set the api key for OpenRouter. Will be saved in the the buddy.config.
-- `-r, --remove-sessions`: Remove all saved sessions.
-- `--or-model`: Set the default AI model to be used.
-- `-e, --save-session`: Enable or disable session saving. Allowed values: `true`, `false`.
-- `-a, --max-messages`: Set the maximum number of messages to retain.
-- `-t, --temperature`: Set the temperature for AI responses (controls randomness).
-- `-x, --max-tokens`: Set the maximum number of tokens per response.
-- `--top-p`: Set the top-p sampling parameter.
-- `--top-k`: Set the top-k sampling parameter.
-- `--freq-penalty`: Set the frequency penalty for repetitive responses.
-- `--presence-penalty`: Set the presence penalty for repetitive responses.
-- `--repetition-penalty`: Set the penalty for repeating the same phrases.
-- `--min-p`: Set the minimum probability parameter.
-- `--top-a`: Set the top-a sampling parameter.
-- `--seed`: Set the seed for random number generation.
-- `--logit-bias`: Set the logit bias for specific tokens.
-- `--logprobs`: Set the number of log probabilities to return.
-- `--top-logprobs`: Set the number of top log probabilities to return.
-- `--response-format`: Set the format for AI responses.
-- `--stop-seq`: Set the sequences where the AI should stop generating responses.
-- `--cmd-prompt`: Set the command prompt template which is used as a system message.
-- `--explain-prompt`: Set the explanation prompt template which is used as a system message.
-- `--code-prompt`: Set the code generation prompt template which is used as a system message.
-- `--chat-prompt`: Set the chat prompt template which is used as a system message.
-
-### Example Usage
-
-```sh
-# Set the API key
-$ buddy set --or-api-key "your_openrouter_key"
-
-
-# Set the default AI model
-$ buddy set --or-model "openai/gpt-3.5-turbo"
-
-# Enable session saving
-$ buddy set -e true
-
-# Set the maximum number of messages to retain as context to provide to the AI
-$ buddy set -a 50
-
-# Set the temperature for AI responses
-$ buddy set -t 0.7
-
-# Set the maximum number of tokens per response (by default it's set to null and API will use the maximum number of tokens)
-$ buddy set -x 4000
-
-# Remove all saved sessions
-$ buddy set -r
 ```
 
 ## Markdown format
