@@ -100,8 +100,8 @@ class HandlerService {
 
   static Handler get router {
     final router = Router()
-      // ..get('/', _htmlHandler)
-      ..get('/session-list', sessionsHandler)
+      ..get('/session-list', _sessionListHandler)
+      ..post('/save-session', _saveSessionHandler)
       ..post('/remove-all', _removeAllHandler)
       ..get('/config', _getConfigHandler)
       ..post('/config', _setConfigHandler)
@@ -112,7 +112,21 @@ class HandlerService {
     return router.call;
   }
 
+  static Future<Response> _saveSessionHandler(Request request) async {
+    try {
+      final payload = await request.readAsString();
 
+      final sessionJson = jsonDecode(payload) as Map<String, dynamic>;
+      final chatSession = ChatSession.fromJson(sessionJson);
+      await SessionService.saveSession(session: chatSession);
+
+      return Response.ok({'result': 'File is saved'});
+    } catch (e) {
+      return Response.internalServerError(
+        body: 'Failed to create file - $e',
+      );
+    }
+  }
 
   static Response _getPromptsHandler(Request request) {
     try {
@@ -145,7 +159,7 @@ class HandlerService {
           shouldAutoOvewrite: true);
 
       return Response.ok(
-        'File is created at $filePath',
+        {'result': 'File is created at $filePath'},
       );
     } catch (e) {
       return Response.internalServerError(
@@ -234,7 +248,7 @@ class HandlerService {
     }
   }
 
-  static Future<Response> sessionsHandler(Request request) async {
+  static Future<Response> _sessionListHandler(Request request) async {
     try {
       WebService.sessions = await SessionService.listSessions();
       if (WebService.sessions == null || WebService.sessions!.isEmpty) {
@@ -253,7 +267,6 @@ class HandlerService {
       );
     }
   }
-
 }
 
 class MiddlerWareService {

@@ -14,7 +14,7 @@ class SessionService {
   static final SessionService _instance = SessionService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
-  static List<ChatSession>? _sessionsCache;
+  static List<ChatSession> _sessionsCache = [];
   static Logger? _logger;
   static DateTime? _lastCacheUpdate;
 
@@ -31,10 +31,10 @@ class SessionService {
 
     // Check if cache is still valid (e.g., not older than 3 minutes)
     final now = DateTime.now();
-    if (_sessionsCache != null &&
+    if (_sessionsCache.isEmpty &&
         _lastCacheUpdate != null &&
         now.difference(_lastCacheUpdate!).inMinutes < 3) {
-      return _sessionsCache!;
+      return _sessionsCache;
     }
     final sessionFiles = sessionsDirectory
         .listSync()
@@ -52,8 +52,8 @@ class SessionService {
         sessions.add(chatSession);
 
         // Check if this session is new or updated
-        if (_sessionsCache == null ||
-            !_sessionsCache!.any((s) => s.id == chatSession.id)) {
+        if (_sessionsCache.isEmpty ||
+            !_sessionsCache.any((s) => s.id == chatSession.id)) {
           hasNewSessions = true;
         }
       } catch (e) {
@@ -61,12 +61,12 @@ class SessionService {
       }
     }
 
-    if (hasNewSessions || _sessionsCache == null) {
+    if (hasNewSessions || _sessionsCache.isEmpty) {
       _sessionsCache = sessions;
       _lastCacheUpdate = now;
     }
 
-    return _sessionsCache!;
+    return _sessionsCache;
   }
 
   static Future<void> saveSession({
@@ -91,9 +91,9 @@ class SessionService {
           }
         }
       }
-      _sessionsCache ??= [];
-      _sessionsCache!.removeWhere((s) => s.id == session.id);
-      _sessionsCache!.add(session);
+     
+      _sessionsCache..removeWhere((s) => s.id == session.id)
+      ..add(session);
       _lastCacheUpdate = DateTime.now();
     } catch (e) {
       _logger
@@ -144,7 +144,7 @@ class SessionService {
         return false;
       } else {
         sessionsFile.deleteSync();
-        _sessionsCache?.removeWhere((s) => s.id == id);
+        _sessionsCache.removeWhere((s) => s.id == id);
         _lastCacheUpdate = DateTime.now();
         _logger?.info('Session $id has been removed.');
         return true;
@@ -178,7 +178,7 @@ class SessionService {
         await sessionFile.delete();
       }
       _logger?.info('All session files have been removed.');
-      _sessionsCache = null;
+      _sessionsCache = [];
       _lastCacheUpdate = null;
       return true;
     } catch (e) {
