@@ -115,7 +115,7 @@ class InfoCommand extends Command<int> {
     if (config != null && config) {
       configuration ??= await ConfigService.loadConfig().getOrNull();
       if (configuration != null) {
-        final table = RenderService.configurationTable(configuration!);
+        final table = RenderService.configurationJson(configuration!);
         _logger.info(table);
       } else {
         _logger.err('Failed to find config file');
@@ -181,9 +181,7 @@ class InfoCommand extends Command<int> {
     }
 
     if (sessions != null) {
-      final savedSessions = await SessionService.listSessions(
-      
-      );
+      final savedSessions = await SessionService.listSessions();
       _logger.info('Total saved sessions: ${savedSessions.length}');
       if (argResults?['sessions'] == 'list') {
         final table = RenderService.sessionList(savedSessions);

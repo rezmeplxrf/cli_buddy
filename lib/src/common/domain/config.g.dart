@@ -51,49 +51,40 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
           'You are a helpful assistant.\nProvide concise response unless asked for more details.',
     );
 
-Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
-  final val = <String, dynamic>{
-    'api_provider': _$APIProviderEnumMap[instance.apiProvider]!,
-    'localEndpoint': instance.localEndpoint,
-    'save_session': instance.saveSession,
-    'save_online': instance.saveOnline,
-    'local_web': instance.isLocal,
-    'max_messages': instance.maxMessages,
-  };
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('openrouter_default_model', instance.openrouterDefaultModel);
-  writeNotNull('buddy_default_model', instance.buddyDefaultModel);
-  writeNotNull('buddy_key', instance.buddyKey);
-  writeNotNull('ollama_default_model', instance.ollamaDefaultModel);
-  writeNotNull('ollamaEndpoint', instance.ollamaEndpoint);
-  writeNotNull('openrouter_key', instance.openrouterKey);
-  writeNotNull('temperature', instance.temperature);
-  writeNotNull('max_tokens', instance.maxTokens);
-  writeNotNull('top_p', instance.topP);
-  writeNotNull('top_k', instance.topK);
-  writeNotNull('frequency_penalty', instance.frequencyPenalty);
-  writeNotNull('presence_penalty', instance.presencePenalty);
-  writeNotNull('repetition_penalty', instance.repetitionPenalty);
-  writeNotNull('min_p', instance.minP);
-  writeNotNull('top_a', instance.topA);
-  writeNotNull('seed', instance.seed);
-  writeNotNull('logit_bias', instance.logitBias);
-  writeNotNull('logprobs', instance.logprobs);
-  writeNotNull('top_logprobs', instance.topLogprobs);
-  writeNotNull('response_format', instance.responseFormat);
-  writeNotNull('stop', instance.stop);
-  writeNotNull('cmd_prompt', instance.cmdPrompt);
-  writeNotNull('explain_prompt', instance.explainPrompt);
-  writeNotNull('code_prompt', instance.codePrompt);
-  writeNotNull('chat_prompt', instance.chatPrompt);
-  return val;
-}
+Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
+    <String, dynamic>{
+      'api_provider': _$APIProviderEnumMap[instance.apiProvider]!,
+      'localEndpoint': instance.localEndpoint,
+      'save_session': instance.saveSession,
+      'save_online': instance.saveOnline,
+      'local_web': instance.isLocal,
+      'max_messages': instance.maxMessages,
+      'openrouter_default_model': instance.openrouterDefaultModel,
+      'buddy_default_model': instance.buddyDefaultModel,
+      'buddy_key': instance.buddyKey,
+      'ollama_default_model': instance.ollamaDefaultModel,
+      'ollamaEndpoint': instance.ollamaEndpoint,
+      'openrouter_key': instance.openrouterKey,
+      'temperature': instance.temperature,
+      'max_tokens': instance.maxTokens,
+      'top_p': instance.topP,
+      'top_k': instance.topK,
+      'frequency_penalty': instance.frequencyPenalty,
+      'presence_penalty': instance.presencePenalty,
+      'repetition_penalty': instance.repetitionPenalty,
+      'min_p': instance.minP,
+      'top_a': instance.topA,
+      'seed': instance.seed,
+      'logit_bias': instance.logitBias,
+      'logprobs': instance.logprobs,
+      'top_logprobs': instance.topLogprobs,
+      'response_format': instance.responseFormat,
+      'stop': instance.stop,
+      'cmd_prompt': instance.cmdPrompt,
+      'explain_prompt': instance.explainPrompt,
+      'code_prompt': instance.codePrompt,
+      'chat_prompt': instance.chatPrompt,
+    };
 
 const _$APIProviderEnumMap = {
   APIProvider.openrouter: 'openrouter',

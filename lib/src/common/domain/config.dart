@@ -8,7 +8,7 @@ enum APIProvider { openrouter, buddy, ollama }
 
 @freezed
 class Configuration with _$Configuration {
-  @JsonSerializable(includeIfNull: false)
+  @JsonSerializable(includeIfNull: true)
   const factory Configuration({
     @JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
     required APIProvider apiProvider,

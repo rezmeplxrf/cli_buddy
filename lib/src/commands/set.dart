@@ -43,19 +43,16 @@ class SetCommand extends Command<int> {
       )
       ..addOption(
         'or-model',
-        abbr: 'm',
         help: 'Set the default Openrouter AI model to be used.',
         valueHelp: 'String',
       )
       ..addOption(
         'buddy-model',
-        abbr: 'm',
         help: 'Set the default Buddy AI model to be used.',
         valueHelp: 'String',
       )
       ..addOption(
         'ollama-model',
-        abbr: 'm',
         help: 'Set the default Ollama AI model to be used.',
         valueHelp: 'String',
       )
@@ -244,7 +241,8 @@ class SetCommand extends Command<int> {
       return ExitCode.usage.code;
     }
 
-    final apiProviderStr = argResults?['api-provider']?.toString().toLowerCase().trim();
+    final apiProviderStr =
+        argResults?['api-provider']?.toString().toLowerCase().trim();
     // convert string to APIProvider enum
     APIProvider? apiprovider;
     if (apiProviderStr != null) {

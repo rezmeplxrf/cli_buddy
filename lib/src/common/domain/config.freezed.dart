@@ -556,7 +556,7 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: true)
 class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
       {@JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:barbecue/barbecue.dart';
 import 'package:cli_buddy/cli_buddy.dart';
 import 'package:cli_buddy/src/common/domain/config.dart';
@@ -380,136 +382,10 @@ class RenderService {
     return '${cyan.wrap(parameter.model)}\n\n$propertyTable\n\n$supportedParametersTable\n';
   }
 
-  static String configurationTable(Configuration config) {
-    final model = (config.apiProvider == APIProvider.openrouter)
-          ? config.openrouterDefaultModel
-          : (config.apiProvider == APIProvider.ollama)
-              ? config.ollamaDefaultModel
-              : config.buddyDefaultModel;
-    final rows = [
-      Row(cells: [
-        const Cell('save_session'),
-        Cell(config.saveSession.toString())
-      ]),
-      Row(cells: [
-        const Cell('max_messages'),
-        Cell(config.maxMessages.toString())
-      ]),
-      Row(cells: [ Cell('${config.apiProvider.name}_default_model'), Cell(model ?? '')]),
-      Row(cells: [
-        const Cell('temperature'),
-        Cell(config.temperature.toString())
-      ]),
-      Row(cells: [
-        const Cell('max_tokens'),
-        Cell(config.maxTokens?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('top_p'),
-        Cell(config.topP?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('top_k'),
-        Cell(config.topK?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('frequency_penalty'),
-        Cell(config.frequencyPenalty?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('presence_penalty'),
-        Cell(config.presencePenalty?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('repetition_penalty'),
-        Cell(config.repetitionPenalty?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('min_p'),
-        Cell(config.minP?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('top_a'),
-        Cell(config.topA?.toString() ?? 'null')
-      ]),
-      Row(cells: [const Cell('seed'), Cell(config.seed?.toString() ?? 'null')]),
-      Row(cells: [
-        const Cell('logit_bias'),
-        Cell(config.logitBias?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('logprobs'),
-        Cell(config.logprobs?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('top_logprobs'),
-        Cell(config.topLogprobs?.toString() ?? 'null')
-      ]),
-      Row(cells: [
-        const Cell('response_format'),
-        Cell(config.responseFormat?.toString() ?? 'null')
-      ]),
-      Row(cells: [const Cell('stop'), Cell(config.stop?.toString() ?? 'null')]),
-    ];
-
-    final propertyTable = Table(
-      cellStyle: const CellStyle(
-          paddingRight: 1,
-          paddingLeft: 1,
-          borderLeft: true,
-          borderBottom: true),
-      tableStyle: const TableStyle(
-        border: true,
-      ),
-      body: TableSection(
-        cellStyle: const CellStyle(
-            paddingRight: 2, alignment: TextAlignment.MiddleLeft),
-        rows: rows,
-      ),
-    ).render();
-
-    final promptRows = [
-      Row(cells: [const Cell('CMD Prompt'), Cell(config.cmdPrompt.toString())]),
-      Row(cells: [
-        const Cell('Explain Prompt'),
-        Cell(config.explainPrompt.toString())
-      ]),
-      Row(cells: [
-        const Cell('Code Prompt'),
-        Cell(config.codePrompt.toString())
-      ]),
-      Row(cells: [
-        const Cell('Chat Prompt'),
-        Cell(config.chatPrompt.toString())
-      ]),
-    ];
-
-    final promptTable = Table(
-      cellStyle: const CellStyle(
-          paddingRight: 1,
-          paddingLeft: 1,
-          borderLeft: true,
-          borderBottom: true),
-      tableStyle: const TableStyle(
-        border: true,
-      ),
-      header: const TableSection(rows: [
-        Row(
-          cells: [
-            Cell('Type'),
-            Cell('Prompt'),
-          ],
-          cellStyle: CellStyle(borderBottom: true),
-        ),
-      ]),
-      body: TableSection(
-        cellStyle: const CellStyle(
-            paddingRight: 2, alignment: TextAlignment.MiddleLeft),
-        rows: promptRows,
-      ),
-    ).render();
+  static String configurationJson(Configuration config) {
+   final jsonEncoded = jsonEncode(config.toJson());
 
  
-    return '\n$propertyTable\n\n$promptTable\n';
+    return '\n$jsonEncoded\n';
   }
 }

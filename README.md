@@ -16,6 +16,7 @@
  - Lightweight and Fast
  - Supports over 100+ LLMs (GPT, Claude, Cohere, LLama 3, Gemini, Mistral, DeekSeek, and many other LLMs including all Open Source LLMs)
  - Use your own API key ([OpenRouter](https://openrouter.ai/))
+ - Local LLM Support using Ollama
  - Complete privacy - not a single analytic data is collected
  - Works on Linux, macOS, and Windows 
  - Can also view GUI similar to many AI chat app if you want
@@ -74,32 +75,38 @@ buddy set --or-api-key <your openrouter key>
 ### Example `buddy.config`
 ```json
 {
-   "or_api_key":"<your openrouter key>",
-   "or_api_url":"https://api.openrouter.ai",
-   "save_session":false,
-   "max_messages":20,
-   "default_model":"openai/gpt-4",
-   "temperature":0.3,
-   "max_tokens":null,
-   "top_p":null,
-   "top_k":null,
-   "frequency_penalty":null,
-   "presence_penalty":null,
-   "repetition_penalty":null,
-   "min_p":null,
-   "top_a":null,
-   "seed":null,
-   "logit_bias":null,
-   "logprobs":null,
-   "top_logprobs":null,
-   "response_format":null,
-   "stop":null,
-   "cmd_prompt":"If there is a lack of details, provide most logical solution.\nEnsure the output is a valid shell command.\nIf multiple steps required try to combine them together in one command.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```.\n",
-   "explain_prompt":"Provide short and concise explanation of your previous response about command or code.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```\n",
-   "code_prompt":"Provide only code as output without any description.\nProvide only code in plain text format without Markdown formatting.\nDo not include symbols such as ``` or ```python.\nIf there is a lack of details, provide most logical solution.\nYou are not allowed to ask for more details.\nFor example if the prompt is \"Hello world Python\", you should return \"print('Hello world')\".\n",
-   "chat_prompt":"Provide concise response unless asked for more details.\nAvoid using any markdown formatting such as ```, *, #.\n"
+  "api_provider": "openrouter",
+  "localEndpoint": "localhost:43210",
+  "save_session": true,
+  "save_online": false,
+  "local_web": true,
+  "max_messages": 20,
+  "openrouter_default_model": "openai/gpt-4o",
+  "buddy_default_model": "openai/gpt-4o",
+  "buddy_key": null,
+  "ollama_default_model": null,
+  "ollamaEndpoint": "localhost:11434",
+  "openrouter_key": null,
+  "temperature": 0.3,
+  "max_tokens": null,
+  "top_p": null,
+  "top_k": null,
+  "frequency_penalty": null,
+  "presence_penalty": null,
+  "repetition_penalty": null,
+  "min_p": null,
+  "top_a": null,
+  "seed": null,
+  "logit_bias": null,
+  "logprobs": false,
+  "top_logprobs": null,
+  "response_format": null,
+  "stop": null,
+  "cmd_prompt": "If there is a lack of details, provide most logical solution.\nEnsure the output is a valid shell command.\nIf multiple steps required try to combine them together in one command.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```",
+  "explain_prompt": "Provide short and concise explanation of your previous response about command or code.\nProvide only plain text without Markdown formatting.\nDo not provide markdown formatting such as ```",
+  "code_prompt": "Provide only code as output without any description.\nProvide only code in plain text format without Markdown formatting.\nDo not include symbols such as ``` or ```python.\nIf there is a lack of details, provide most logical solution.\nYou are not allowed to ask for more details.\nFor example if the prompt is \"Hello world Python\", you should return \"print('Hello world')\".\n",
+  "chat_prompt": "You are a Flutter/Dart developer. Don't be verbose in your response but focus on solving problem or coding."
 }
-
 ```
 
 ## Basic Usage
@@ -171,10 +178,9 @@ $ buddy info -s "session_id"
 
 The `set` command allows you to set or update configuration values. Below are the available options and flags:
 
-- `-s, --secret-path`: Specify the path to the `secret.env` file in the buddy.config.
-- `-k, --api-key`: Set the API key in the `secret.env` file. If the file doesn't exist, it will be created.
+- `--or-api-key`: Set the api key for OpenRouter. Will be saved in the the buddy.config.
 - `-r, --remove-sessions`: Remove all saved sessions.
-- `-m, --model`: Set the default AI model to be used.
+- `--or-model`: Set the default AI model to be used.
 - `-e, --save-session`: Enable or disable session saving. Allowed values: `true`, `false`.
 - `-a, --max-messages`: Set the maximum number of messages to retain.
 - `-t, --temperature`: Set the temperature for AI responses (controls randomness).
@@ -201,13 +207,11 @@ The `set` command allows you to set or update configuration values. Below are th
 
 ```sh
 # Set the API key
-$ buddy set -k "your_openrouter_key"
+$ buddy set --or-api-key "your_openrouter_key"
 
-# Set the path to the secret.env file (if you want to save it in the another directory)
-$ buddy set -s "/path/to/secret.env"
 
 # Set the default AI model
-$ buddy set -m "openai/gpt-3.5-turbo"
+$ buddy set --or-model "openai/gpt-3.5-turbo"
 
 # Enable session saving
 $ buddy set -e true
