@@ -381,6 +381,11 @@ class RenderService {
   }
 
   static String configurationTable(Configuration config) {
+    final model = (config.apiProvider == APIProvider.openrouter)
+          ? config.openrouterDefaultModel
+          : (config.apiProvider == APIProvider.ollama)
+              ? config.ollamaDefaultModel
+              : config.buddyDefaultModel;
     final rows = [
       Row(cells: [
         const Cell('save_session'),
@@ -390,7 +395,7 @@ class RenderService {
         const Cell('max_messages'),
         Cell(config.maxMessages.toString())
       ]),
-      Row(cells: [const Cell('default_model'), Cell(config.defaultModel)]),
+      Row(cells: [ Cell('${config.apiProvider.name}_default_model'), Cell(model ?? '')]),
       Row(cells: [
         const Cell('temperature'),
         Cell(config.temperature.toString())
@@ -504,9 +509,7 @@ class RenderService {
       ),
     ).render();
 
-    final clickableLink =
-        '\x1B]8;;file://${config.secretEnvPath}\x1B\\${config.secretEnvPath}\x1B]8;;\x1B\\';
-
-    return 'secret.env: ${blue.wrap(clickableLink)}\n\n$propertyTable\n\n$promptTable\n';
+ 
+    return '\n$propertyTable\n\n$promptTable\n';
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/global.dart';
@@ -69,13 +70,23 @@ class ChatCommand extends Command<int> {
       final prompt = args.join(' ');
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
-           configuration ??= await ConfigService.loadConfig().getOrThrow();
-      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], model: configuration!.defaultModel);
+      configuration ??= await ConfigService.loadConfig().getOrThrow();
+      final model = (configuration!.apiProvider == APIProvider.openrouter)
+          ? configuration!.openrouterDefaultModel
+          : (configuration!.apiProvider == APIProvider.ollama)
+              ? configuration!.ollamaDefaultModel
+              : configuration!.buddyDefaultModel;
+              if (model == null){
+                _logger.err('Default APIProvider is not found');
+                return ExitCode.tempFail.code;
+              }
+      session = ChatSession(
+          id: currentTime, messages: [sysMsg, initialMsg], model: model);
     }
 
     final shouldDebug = argResults?['raw'] as bool? ?? false;
     final markdown = argResults?['markdown'] as bool?;
-   
+
     final initialResult = await openRouter.invoke(
         session: session!, shouldDebug: shouldDebug, markdown: markdown);
     if (initialResult.isError()) {

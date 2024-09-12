@@ -50,17 +50,18 @@ class OpenCommand extends Command<int> {
   @override
   Future<int> run() async {
     configuration ??= await ConfigService.loadConfig().getOrNull();
-    final port = argResults?['port'] as String? ?? configuration?.port;
-    final address =
-        argResults?['address'] as String? ?? configuration?.ipAddress;
+    final port = argResults?['port'] as String?;
+    final address = argResults?['address'] as String?;
     final autoFlag = argResults?['launch'] as bool? ?? true;
     final isLocal = argResults?['local-web'] as bool? ?? true;
-
+    final defaultFullUri = configuration?.localEndpoint; // e.g. http://localhost:3000
+    final defaultAdress =  defaultFullUri?.split(':').first;
+    final defaultPort =  defaultFullUri?.split(':').last;
     final server = WebService();
 
     await server.start(
-        address: address!, port: int.parse(port!), isLocal: isLocal);
-    if (!isLocal) {
+        address: address ?? defaultAdress!, port: int.parse(port ?? defaultPort!), isLocal: isLocal);
+    if (!isLocal && autoFlag) {
       _logger
         ..info('The web interface is available at $hostedWeb in your browser.')
         ..info(
@@ -85,4 +86,3 @@ class OpenCommand extends Command<int> {
     return completer.future;
   }
 }
-

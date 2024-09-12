@@ -6,7 +6,7 @@ import 'package:cli_buddy/src/common/domain/exception.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/prompts.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
-import 'package:dotenv/dotenv.dart';
+
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
@@ -84,43 +84,15 @@ class ConfigService {
   static Future<Result<String, CustomException>> loadOpenrouterKey() async {
     configuration ??= await loadConfig().getOrThrow();
 
-    final secretEnvPath = configuration?.secretEnvPath;
-    if (secretEnvPath == null) {
-      _logger?.err('secret_env_path not found in buddy.config file');
+    final openrouterKey = configuration?.openrouterKey;
+    if (openrouterKey == null) {
+      _logger?.err('openrouterKey is found in buddy.config file');
       return CustomException(
-              message: 'secret_env_path not found',
+              message: 'openrouterKey not found',
               stack: 'ConfigService.loadOpenrouterKey')
           .toFailure();
     }
-    final env = DotEnv(includePlatformEnvironment: true)..load([secretEnvPath]);
-    try {
-      final keyExists = env.isDefined('openrouter_key');
-
-      if (keyExists) {
-        final key = env['openrouter_key'];
-        if (key == null) {
-          return CustomException(
-                  message: 'Api key is not found',
-                  stack: 'ConfigService.loadOpenrouterKey')
-              .toFailure();
-        } else {
-          return key.toSuccess();
-        }
-      } else {
-        return CustomException(
-                message: 'Api key is not found',
-                stack: 'ConfigService.loadOpenrouterKey')
-            .toFailure();
-      }
-    } catch (e) {
-      _logger?.err(e.toString());
-      return CustomException(
-        message: 'Error while loading api key',
-        stack: 'ConfigService.loadOpenrouterKey',
-        details: {'error': e.toString()},
-      ).toFailure();
-    } finally {
-      env.clear();
-    }
+    
+    return openrouterKey.toSuccess();
   }
 }

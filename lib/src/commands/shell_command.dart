@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:cli_buddy/src/common/domain/action.dart';
+import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/domain/session.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
@@ -67,7 +68,16 @@ class ShellCommand extends Command<int> {
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
             configuration ??= await ConfigService.loadConfig().getOrThrow();
-      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], model: configuration!.defaultModel);
+                final model = (configuration!.apiProvider == APIProvider.openrouter)
+          ? configuration!.openrouterDefaultModel
+          : (configuration!.apiProvider == APIProvider.ollama)
+              ? configuration!.ollamaDefaultModel
+              : configuration!.buddyDefaultModel;
+              if (model == null){
+                _logger.err('Default APIProvider is not found');
+                return ExitCode.tempFail.code;
+              }
+      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], model: model);
     }
 
     var shouldDebug = false;

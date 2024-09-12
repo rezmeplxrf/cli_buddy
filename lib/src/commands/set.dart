@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
-import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';
 
 /// {@template set_command}
@@ -20,17 +19,22 @@ class SetCommand extends Command<int> {
   }) : _logger = logger {
     argParser
       ..addOption(
-        'secret-path',
-        abbr: 's',
-        help: 'Specify the path to the secret.env file in the buddy.config.',
+        'or-api-key',
+        help:
+            "Set the Openrouter API key in the config file. If the file doesn't exist, it will be created.",
         valueHelp: 'String',
       )
       ..addOption(
-        'api-key',
-        abbr: 'k',
+        'buddy-api-key',
         help:
-            "Set the API key in the secret.env file. If the file doesn't exist, it will be created.",
+            "Set the Buddy API key in the config file. If the file doesn't exist, it will be created.",
         valueHelp: 'String',
+      )
+      ..addOption(
+        'api-provider',
+        help: 'Set the API provider in the config file.',
+        valueHelp: 'String',
+        allowed: ['openrouter', 'buddy', 'ollama'],
       )
       ..addFlag(
         'remove-sessions',
@@ -38,9 +42,21 @@ class SetCommand extends Command<int> {
         help: 'Remove all saved sessions.',
       )
       ..addOption(
-        'model',
+        'or-model',
         abbr: 'm',
-        help: 'Set the default AI model to be used.',
+        help: 'Set the default Openrouter AI model to be used.',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'buddy-model',
+        abbr: 'm',
+        help: 'Set the default Buddy AI model to be used.',
+        valueHelp: 'String',
+      )
+      ..addOption(
+        'ollama-model',
+        abbr: 'm',
+        help: 'Set the default Ollama AI model to be used.',
         valueHelp: 'String',
       )
       ..addOption(
@@ -176,9 +192,12 @@ class SetCommand extends Command<int> {
   @override
   Future<int> run() async {
     final progress = _logger.progress('');
-    final path = argResults?['secret-path']?.toString().trim();
-    final key = argResults?['api-key']?.toString().trim();
-    final model = argResults?['model']?.toString().trim();
+    final buddyKey = argResults?['sor-api-key']?.toString().trim();
+    final orkey = argResults?['or-api-key']?.toString().trim();
+    final orModel = argResults?['or-model']?.toString().trim();
+    final buddyModel = argResults?['buddy-model']?.toString().trim();
+    final ollamaModel = argResults?['ollama-model']?.toString().trim();
+
     final preferLocal =
         bool.tryParse(argResults?['local_web']?.toString() ?? '');
     final saveSession =
@@ -225,6 +244,14 @@ class SetCommand extends Command<int> {
       return ExitCode.usage.code;
     }
 
+    final apiProviderStr = argResults?['api-provider']?.toString().toLowerCase().trim();
+    // convert string to APIProvider enum
+    APIProvider? apiprovider;
+    if (apiProviderStr != null) {
+      apiprovider = APIProvider.values
+          .firstWhere((element) => element.name == apiProviderStr);
+    }
+
     if (removeSessions != null && removeSessions) {
       final confirm =
           _logger.confirm('Are you sure you want to remove all sessions?');
@@ -243,33 +270,20 @@ class SetCommand extends Command<int> {
       }
     }
 
-    if (key != null && key.isNotEmpty) {
-      configuration ??= await ConfigService.loadConfig().getOrThrow();
-      if (configuration == null) {
-        _logger.err('Configuration not found');
-        return ExitCode.unavailable.code;
-      }
-      String? secretEnvPath;
-      if (path != null) {
-        /// if path and key are both provided,
-        /// create a new secret.env file with the key in the provided path and update config file
-        secretEnvPath = p.join(path, 'secret.env');
-      } else {
-        secretEnvPath = p.join(defaultDir!, 'secret.env');
-      }
-      final secretEnvFile = File(secretEnvPath);
-      await secretEnvFile.writeAsString('openrouter_key = "$key"\n');
-      await ConfigService.saveConfig(
-          newConfig: configuration!.copyWith(secretEnvPath: secretEnvPath));
-      _logger.info(
-          'Created secret.env and set API key successfully at $secretEnvPath');
-    } else if (path != null && key == null) {
-      await ConfigService.saveConfig(
-          newConfig: configuration!.copyWith(secretEnvPath: path));
+    configuration ??= await ConfigService.loadConfig().getOrThrow();
+    if (configuration == null) {
+      _logger.err('Configuration not found');
+      return ExitCode.unavailable.code;
     }
+
     if (_isAnyConfigOptionProvided([
+      apiprovider,
       preferLocal,
-      model,
+      orkey,
+      orModel,
+      buddyModel,
+      buddyKey,
+      ollamaModel,
       saveSession,
       maxMessages,
       temperature,
@@ -294,8 +308,18 @@ class SetCommand extends Command<int> {
     ])) {
       configuration ??= await ConfigService.loadConfig().getOrThrow();
       final newConfig = configuration!.copyWith(
+        apiProvider:
+            _logUpdate('api-provider', apiprovider, configuration!.apiProvider),
         isLocal: _logUpdate('local_web', preferLocal, configuration!.isLocal),
-        defaultModel: _logUpdate('model', model, configuration!.defaultModel),
+        openrouterKey:
+            _logUpdate('openrouter_key', orkey, configuration!.openrouterKey),
+        openrouterDefaultModel: _logUpdate('openrouter_default_model', orModel,
+            configuration!.openrouterDefaultModel),
+        buddyDefaultModel: _logUpdate('buddy_default_model', buddyModel,
+            configuration!.buddyDefaultModel),
+        buddyKey: _logUpdate('buddy_key', buddyKey, configuration!.buddyKey),
+        ollamaDefaultModel: _logUpdate('ollama_default_model', ollamaModel,
+            configuration!.ollamaDefaultModel),
         saveSession:
             _logUpdate('save-session', saveSession, configuration!.saveSession),
         maxMessages:

@@ -8,14 +8,23 @@ part of 'config.dart';
 
 _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
     _$ConfigurationImpl(
-      secretEnvPath: json['secret_env_path'] as String?,
-      ipAddress: json['ipAddress'] as String? ?? '127.0.0.1',
-      port: json['port'] as String? ?? '43210',
+      apiProvider:
+          $enumDecodeNullable(_$APIProviderEnumMap, json['api_provider']) ??
+              APIProvider.openrouter,
+      localEndpoint: json['localEndpoint'] as String? ?? 'localhost:43210',
       saveSession: json['save_session'] as bool? ?? true,
+      saveOnline: json['save_online'] as bool? ?? false,
       isLocal: json['local_web'] as bool? ?? true,
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
-      defaultModel: json['default_model'] as String? ?? 'openai/gpt-4o',
-      temperature: (json['temperature'] as num).toDouble(),
+      openrouterDefaultModel:
+          json['openrouter_default_model'] as String? ?? 'openai/gpt-4o',
+      buddyDefaultModel:
+          json['buddy_default_model'] as String? ?? 'openai/gpt-4o',
+      buddyKey: json['buddy_key'] as String?,
+      ollamaDefaultModel: json['ollama_default_model'] as String?,
+      ollamaEndpoint: json['ollamaEndpoint'] as String? ?? 'localhost:11434',
+      openrouterKey: json['openrouter_key'] as String?,
+      temperature: (json['temperature'] as num?)?.toDouble(),
       maxTokens: (json['max_tokens'] as num?)?.toInt(),
       topP: (json['top_p'] as num?)?.toInt(),
       topK: (json['top_k'] as num?)?.toInt(),
@@ -43,7 +52,14 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'api_provider': _$APIProviderEnumMap[instance.apiProvider]!,
+    'localEndpoint': instance.localEndpoint,
+    'save_session': instance.saveSession,
+    'save_online': instance.saveOnline,
+    'local_web': instance.isLocal,
+    'max_messages': instance.maxMessages,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -51,14 +67,13 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
     }
   }
 
-  writeNotNull('secret_env_path', instance.secretEnvPath);
-  val['ipAddress'] = instance.ipAddress;
-  val['port'] = instance.port;
-  val['save_session'] = instance.saveSession;
-  val['local_web'] = instance.isLocal;
-  val['max_messages'] = instance.maxMessages;
-  val['default_model'] = instance.defaultModel;
-  val['temperature'] = instance.temperature;
+  writeNotNull('openrouter_default_model', instance.openrouterDefaultModel);
+  writeNotNull('buddy_default_model', instance.buddyDefaultModel);
+  writeNotNull('buddy_key', instance.buddyKey);
+  writeNotNull('ollama_default_model', instance.ollamaDefaultModel);
+  writeNotNull('ollamaEndpoint', instance.ollamaEndpoint);
+  writeNotNull('openrouter_key', instance.openrouterKey);
+  writeNotNull('temperature', instance.temperature);
   writeNotNull('max_tokens', instance.maxTokens);
   writeNotNull('top_p', instance.topP);
   writeNotNull('top_k', instance.topK);
@@ -80,14 +95,22 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) {
   return val;
 }
 
+const _$APIProviderEnumMap = {
+  APIProvider.openrouter: 'openrouter',
+  APIProvider.buddy: 'buddy',
+  APIProvider.ollama: 'ollama',
+};
+
 _$SysPromptImpl _$$SysPromptImplFromJson(Map<String, dynamic> json) =>
     _$SysPromptImpl(
       name: json['name'] as String,
       prompt: json['prompt'] as String,
+      modelId: json['modelId'] as String?,
     );
 
 Map<String, dynamic> _$$SysPromptImplToJson(_$SysPromptImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
       'prompt': instance.prompt,
+      'modelId': instance.modelId,
     };

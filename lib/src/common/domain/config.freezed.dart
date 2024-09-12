@@ -20,22 +20,32 @@ Configuration _$ConfigurationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Configuration {
-  @JsonKey(name: 'secret_env_path', defaultValue: null)
-  String? get secretEnvPath => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: '127.0.0.1')
-  String get ipAddress => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: '43210')
-  String get port => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+  APIProvider get apiProvider => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: 'localhost:43210')
+  String get localEndpoint => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: false, name: 'save_online')
+  bool get saveOnline => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: true, name: 'local_web')
   bool get isLocal => throw _privateConstructorUsedError;
   @JsonKey(name: 'max_messages', defaultValue: 20)
   int get maxMessages => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-  String get defaultModel => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+  String? get openrouterDefaultModel => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+  String? get buddyDefaultModel => throw _privateConstructorUsedError;
+  @JsonKey(name: 'buddy_key', defaultValue: null)
+  String? get buddyKey => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: null, name: 'ollama_default_model')
+  String? get ollamaDefaultModel => throw _privateConstructorUsedError;
+  @JsonKey(defaultValue: 'localhost:11434')
+  String? get ollamaEndpoint => throw _privateConstructorUsedError;
+  @JsonKey(name: 'openrouter_key', defaultValue: null)
+  String? get openrouterKey => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'temperature')
-  double get temperature => throw _privateConstructorUsedError;
+  double? get temperature => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'max_tokens')
   int? get maxTokens => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'top_p')
@@ -91,16 +101,24 @@ abstract class $ConfigurationCopyWith<$Res> {
       _$ConfigurationCopyWithImpl<$Res, Configuration>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'secret_env_path', defaultValue: null)
-      String? secretEnvPath,
-      @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
-      @JsonKey(defaultValue: '43210') String port,
+      {@JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+      APIProvider apiProvider,
+      @JsonKey(defaultValue: 'localhost:43210') String localEndpoint,
       @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: false, name: 'save_online') bool saveOnline,
       @JsonKey(defaultValue: true, name: 'local_web') bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-      String defaultModel,
-      @JsonKey(defaultValue: null, name: 'temperature') double temperature,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+      String? openrouterDefaultModel,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+      String? buddyDefaultModel,
+      @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
+      @JsonKey(defaultValue: null, name: 'ollama_default_model')
+      String? ollamaDefaultModel,
+      @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,
+      @JsonKey(name: 'openrouter_key', defaultValue: null)
+      String? openrouterKey,
+      @JsonKey(defaultValue: null, name: 'temperature') double? temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') int? topP,
       @JsonKey(defaultValue: null, name: 'top_k') int? topK,
@@ -145,14 +163,19 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? secretEnvPath = freezed,
-    Object? ipAddress = null,
-    Object? port = null,
+    Object? apiProvider = null,
+    Object? localEndpoint = null,
     Object? saveSession = null,
+    Object? saveOnline = null,
     Object? isLocal = null,
     Object? maxMessages = null,
-    Object? defaultModel = null,
-    Object? temperature = null,
+    Object? openrouterDefaultModel = freezed,
+    Object? buddyDefaultModel = freezed,
+    Object? buddyKey = freezed,
+    Object? ollamaDefaultModel = freezed,
+    Object? ollamaEndpoint = freezed,
+    Object? openrouterKey = freezed,
+    Object? temperature = freezed,
     Object? maxTokens = freezed,
     Object? topP = freezed,
     Object? topK = freezed,
@@ -173,21 +196,21 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
     Object? chatPrompt = freezed,
   }) {
     return _then(_value.copyWith(
-      secretEnvPath: freezed == secretEnvPath
-          ? _value.secretEnvPath
-          : secretEnvPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ipAddress: null == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      port: null == port
-          ? _value.port
-          : port // ignore: cast_nullable_to_non_nullable
+      apiProvider: null == apiProvider
+          ? _value.apiProvider
+          : apiProvider // ignore: cast_nullable_to_non_nullable
+              as APIProvider,
+      localEndpoint: null == localEndpoint
+          ? _value.localEndpoint
+          : localEndpoint // ignore: cast_nullable_to_non_nullable
               as String,
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
+              as bool,
+      saveOnline: null == saveOnline
+          ? _value.saveOnline
+          : saveOnline // ignore: cast_nullable_to_non_nullable
               as bool,
       isLocal: null == isLocal
           ? _value.isLocal
@@ -197,14 +220,34 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
           ? _value.maxMessages
           : maxMessages // ignore: cast_nullable_to_non_nullable
               as int,
-      defaultModel: null == defaultModel
-          ? _value.defaultModel
-          : defaultModel // ignore: cast_nullable_to_non_nullable
-              as String,
-      temperature: null == temperature
+      openrouterDefaultModel: freezed == openrouterDefaultModel
+          ? _value.openrouterDefaultModel
+          : openrouterDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buddyDefaultModel: freezed == buddyDefaultModel
+          ? _value.buddyDefaultModel
+          : buddyDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buddyKey: freezed == buddyKey
+          ? _value.buddyKey
+          : buddyKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ollamaDefaultModel: freezed == ollamaDefaultModel
+          ? _value.ollamaDefaultModel
+          : ollamaDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ollamaEndpoint: freezed == ollamaEndpoint
+          ? _value.ollamaEndpoint
+          : ollamaEndpoint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      openrouterKey: freezed == openrouterKey
+          ? _value.openrouterKey
+          : openrouterKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      temperature: freezed == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       maxTokens: freezed == maxTokens
           ? _value.maxTokens
           : maxTokens // ignore: cast_nullable_to_non_nullable
@@ -290,16 +333,24 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'secret_env_path', defaultValue: null)
-      String? secretEnvPath,
-      @JsonKey(defaultValue: '127.0.0.1') String ipAddress,
-      @JsonKey(defaultValue: '43210') String port,
+      {@JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+      APIProvider apiProvider,
+      @JsonKey(defaultValue: 'localhost:43210') String localEndpoint,
       @JsonKey(defaultValue: true, name: 'save_session') bool saveSession,
+      @JsonKey(defaultValue: false, name: 'save_online') bool saveOnline,
       @JsonKey(defaultValue: true, name: 'local_web') bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-      String defaultModel,
-      @JsonKey(defaultValue: null, name: 'temperature') double temperature,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+      String? openrouterDefaultModel,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+      String? buddyDefaultModel,
+      @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
+      @JsonKey(defaultValue: null, name: 'ollama_default_model')
+      String? ollamaDefaultModel,
+      @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,
+      @JsonKey(name: 'openrouter_key', defaultValue: null)
+      String? openrouterKey,
+      @JsonKey(defaultValue: null, name: 'temperature') double? temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') int? topP,
       @JsonKey(defaultValue: null, name: 'top_k') int? topK,
@@ -342,14 +393,19 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? secretEnvPath = freezed,
-    Object? ipAddress = null,
-    Object? port = null,
+    Object? apiProvider = null,
+    Object? localEndpoint = null,
     Object? saveSession = null,
+    Object? saveOnline = null,
     Object? isLocal = null,
     Object? maxMessages = null,
-    Object? defaultModel = null,
-    Object? temperature = null,
+    Object? openrouterDefaultModel = freezed,
+    Object? buddyDefaultModel = freezed,
+    Object? buddyKey = freezed,
+    Object? ollamaDefaultModel = freezed,
+    Object? ollamaEndpoint = freezed,
+    Object? openrouterKey = freezed,
+    Object? temperature = freezed,
     Object? maxTokens = freezed,
     Object? topP = freezed,
     Object? topK = freezed,
@@ -370,21 +426,21 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
     Object? chatPrompt = freezed,
   }) {
     return _then(_$ConfigurationImpl(
-      secretEnvPath: freezed == secretEnvPath
-          ? _value.secretEnvPath
-          : secretEnvPath // ignore: cast_nullable_to_non_nullable
-              as String?,
-      ipAddress: null == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      port: null == port
-          ? _value.port
-          : port // ignore: cast_nullable_to_non_nullable
+      apiProvider: null == apiProvider
+          ? _value.apiProvider
+          : apiProvider // ignore: cast_nullable_to_non_nullable
+              as APIProvider,
+      localEndpoint: null == localEndpoint
+          ? _value.localEndpoint
+          : localEndpoint // ignore: cast_nullable_to_non_nullable
               as String,
       saveSession: null == saveSession
           ? _value.saveSession
           : saveSession // ignore: cast_nullable_to_non_nullable
+              as bool,
+      saveOnline: null == saveOnline
+          ? _value.saveOnline
+          : saveOnline // ignore: cast_nullable_to_non_nullable
               as bool,
       isLocal: null == isLocal
           ? _value.isLocal
@@ -394,14 +450,34 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
           ? _value.maxMessages
           : maxMessages // ignore: cast_nullable_to_non_nullable
               as int,
-      defaultModel: null == defaultModel
-          ? _value.defaultModel
-          : defaultModel // ignore: cast_nullable_to_non_nullable
-              as String,
-      temperature: null == temperature
+      openrouterDefaultModel: freezed == openrouterDefaultModel
+          ? _value.openrouterDefaultModel
+          : openrouterDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buddyDefaultModel: freezed == buddyDefaultModel
+          ? _value.buddyDefaultModel
+          : buddyDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buddyKey: freezed == buddyKey
+          ? _value.buddyKey
+          : buddyKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ollamaDefaultModel: freezed == ollamaDefaultModel
+          ? _value.ollamaDefaultModel
+          : ollamaDefaultModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      ollamaEndpoint: freezed == ollamaEndpoint
+          ? _value.ollamaEndpoint
+          : ollamaEndpoint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      openrouterKey: freezed == openrouterKey
+          ? _value.openrouterKey
+          : openrouterKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      temperature: freezed == temperature
           ? _value.temperature
           : temperature // ignore: cast_nullable_to_non_nullable
-              as double,
+              as double?,
       maxTokens: freezed == maxTokens
           ? _value.maxTokens
           : maxTokens // ignore: cast_nullable_to_non_nullable
@@ -483,19 +559,26 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
 @JsonSerializable(includeIfNull: false)
 class _$ConfigurationImpl implements _Configuration {
   const _$ConfigurationImpl(
-      {@JsonKey(name: 'secret_env_path', defaultValue: null)
-      required this.secretEnvPath,
-      @JsonKey(defaultValue: '127.0.0.1') required this.ipAddress,
-      @JsonKey(defaultValue: '43210') required this.port,
+      {@JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+      required this.apiProvider,
+      @JsonKey(defaultValue: 'localhost:43210') required this.localEndpoint,
       @JsonKey(defaultValue: true, name: 'save_session')
       required this.saveSession,
+      @JsonKey(defaultValue: false, name: 'save_online')
+      required this.saveOnline,
       @JsonKey(defaultValue: true, name: 'local_web') required this.isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required this.maxMessages,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-      required this.defaultModel,
-      @JsonKey(defaultValue: null, name: 'temperature')
-      required this.temperature,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+      this.openrouterDefaultModel,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+      this.buddyDefaultModel,
+      @JsonKey(name: 'buddy_key', defaultValue: null) this.buddyKey,
+      @JsonKey(defaultValue: null, name: 'ollama_default_model')
+      this.ollamaDefaultModel,
+      @JsonKey(defaultValue: 'localhost:11434') this.ollamaEndpoint,
+      @JsonKey(name: 'openrouter_key', defaultValue: null) this.openrouterKey,
+      @JsonKey(defaultValue: null, name: 'temperature') this.temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') this.maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') this.topP,
       @JsonKey(defaultValue: null, name: 'top_k') this.topK,
@@ -531,17 +614,17 @@ class _$ConfigurationImpl implements _Configuration {
       _$$ConfigurationImplFromJson(json);
 
   @override
-  @JsonKey(name: 'secret_env_path', defaultValue: null)
-  final String? secretEnvPath;
+  @JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+  final APIProvider apiProvider;
   @override
-  @JsonKey(defaultValue: '127.0.0.1')
-  final String ipAddress;
-  @override
-  @JsonKey(defaultValue: '43210')
-  final String port;
+  @JsonKey(defaultValue: 'localhost:43210')
+  final String localEndpoint;
   @override
   @JsonKey(defaultValue: true, name: 'save_session')
   final bool saveSession;
+  @override
+  @JsonKey(defaultValue: false, name: 'save_online')
+  final bool saveOnline;
   @override
   @JsonKey(defaultValue: true, name: 'local_web')
   final bool isLocal;
@@ -549,11 +632,26 @@ class _$ConfigurationImpl implements _Configuration {
   @JsonKey(name: 'max_messages', defaultValue: 20)
   final int maxMessages;
   @override
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-  final String defaultModel;
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+  final String? openrouterDefaultModel;
+  @override
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+  final String? buddyDefaultModel;
+  @override
+  @JsonKey(name: 'buddy_key', defaultValue: null)
+  final String? buddyKey;
+  @override
+  @JsonKey(defaultValue: null, name: 'ollama_default_model')
+  final String? ollamaDefaultModel;
+  @override
+  @JsonKey(defaultValue: 'localhost:11434')
+  final String? ollamaEndpoint;
+  @override
+  @JsonKey(name: 'openrouter_key', defaultValue: null)
+  final String? openrouterKey;
   @override
   @JsonKey(defaultValue: null, name: 'temperature')
-  final double temperature;
+  final double? temperature;
   @override
   @JsonKey(defaultValue: null, name: 'max_tokens')
   final int? maxTokens;
@@ -635,7 +733,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(secretEnvPath: $secretEnvPath, ipAddress: $ipAddress, port: $port, saveSession: $saveSession, isLocal: $isLocal, maxMessages: $maxMessages, defaultModel: $defaultModel, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
+    return 'Configuration(apiProvider: $apiProvider, localEndpoint: $localEndpoint, saveSession: $saveSession, saveOnline: $saveOnline, isLocal: $isLocal, maxMessages: $maxMessages, openrouterDefaultModel: $openrouterDefaultModel, buddyDefaultModel: $buddyDefaultModel, buddyKey: $buddyKey, ollamaDefaultModel: $ollamaDefaultModel, ollamaEndpoint: $ollamaEndpoint, openrouterKey: $openrouterKey, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt)';
   }
 
   @override
@@ -643,18 +741,29 @@ class _$ConfigurationImpl implements _Configuration {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ConfigurationImpl &&
-            (identical(other.secretEnvPath, secretEnvPath) ||
-                other.secretEnvPath == secretEnvPath) &&
-            (identical(other.ipAddress, ipAddress) ||
-                other.ipAddress == ipAddress) &&
-            (identical(other.port, port) || other.port == port) &&
+            (identical(other.apiProvider, apiProvider) ||
+                other.apiProvider == apiProvider) &&
+            (identical(other.localEndpoint, localEndpoint) ||
+                other.localEndpoint == localEndpoint) &&
             (identical(other.saveSession, saveSession) ||
                 other.saveSession == saveSession) &&
+            (identical(other.saveOnline, saveOnline) ||
+                other.saveOnline == saveOnline) &&
             (identical(other.isLocal, isLocal) || other.isLocal == isLocal) &&
             (identical(other.maxMessages, maxMessages) ||
                 other.maxMessages == maxMessages) &&
-            (identical(other.defaultModel, defaultModel) ||
-                other.defaultModel == defaultModel) &&
+            (identical(other.openrouterDefaultModel, openrouterDefaultModel) ||
+                other.openrouterDefaultModel == openrouterDefaultModel) &&
+            (identical(other.buddyDefaultModel, buddyDefaultModel) ||
+                other.buddyDefaultModel == buddyDefaultModel) &&
+            (identical(other.buddyKey, buddyKey) ||
+                other.buddyKey == buddyKey) &&
+            (identical(other.ollamaDefaultModel, ollamaDefaultModel) ||
+                other.ollamaDefaultModel == ollamaDefaultModel) &&
+            (identical(other.ollamaEndpoint, ollamaEndpoint) ||
+                other.ollamaEndpoint == ollamaEndpoint) &&
+            (identical(other.openrouterKey, openrouterKey) ||
+                other.openrouterKey == openrouterKey) &&
             (identical(other.temperature, temperature) ||
                 other.temperature == temperature) &&
             (identical(other.maxTokens, maxTokens) ||
@@ -693,13 +802,18 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
-        secretEnvPath,
-        ipAddress,
-        port,
+        apiProvider,
+        localEndpoint,
         saveSession,
+        saveOnline,
         isLocal,
         maxMessages,
-        defaultModel,
+        openrouterDefaultModel,
+        buddyDefaultModel,
+        buddyKey,
+        ollamaDefaultModel,
+        ollamaEndpoint,
+        openrouterKey,
         temperature,
         maxTokens,
         topP,
@@ -739,20 +853,30 @@ class _$ConfigurationImpl implements _Configuration {
 
 abstract class _Configuration implements Configuration {
   const factory _Configuration(
-      {@JsonKey(name: 'secret_env_path', defaultValue: null)
-      required final String? secretEnvPath,
-      @JsonKey(defaultValue: '127.0.0.1') required final String ipAddress,
-      @JsonKey(defaultValue: '43210') required final String port,
+      {@JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+      required final APIProvider apiProvider,
+      @JsonKey(defaultValue: 'localhost:43210')
+      required final String localEndpoint,
       @JsonKey(defaultValue: true, name: 'save_session')
       required final bool saveSession,
+      @JsonKey(defaultValue: false, name: 'save_online')
+      required final bool saveOnline,
       @JsonKey(defaultValue: true, name: 'local_web')
       required final bool isLocal,
       @JsonKey(name: 'max_messages', defaultValue: 20)
       required final int maxMessages,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-      required final String defaultModel,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+      final String? openrouterDefaultModel,
+      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+      final String? buddyDefaultModel,
+      @JsonKey(name: 'buddy_key', defaultValue: null) final String? buddyKey,
+      @JsonKey(defaultValue: null, name: 'ollama_default_model')
+      final String? ollamaDefaultModel,
+      @JsonKey(defaultValue: 'localhost:11434') final String? ollamaEndpoint,
+      @JsonKey(name: 'openrouter_key', defaultValue: null)
+      final String? openrouterKey,
       @JsonKey(defaultValue: null, name: 'temperature')
-      required final double temperature,
+      final double? temperature,
       @JsonKey(defaultValue: null, name: 'max_tokens') final int? maxTokens,
       @JsonKey(defaultValue: null, name: 'top_p') final int? topP,
       @JsonKey(defaultValue: null, name: 'top_k') final int? topK,
@@ -785,17 +909,17 @@ abstract class _Configuration implements Configuration {
       _$ConfigurationImpl.fromJson;
 
   @override
-  @JsonKey(name: 'secret_env_path', defaultValue: null)
-  String? get secretEnvPath;
+  @JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+  APIProvider get apiProvider;
   @override
-  @JsonKey(defaultValue: '127.0.0.1')
-  String get ipAddress;
-  @override
-  @JsonKey(defaultValue: '43210')
-  String get port;
+  @JsonKey(defaultValue: 'localhost:43210')
+  String get localEndpoint;
   @override
   @JsonKey(defaultValue: true, name: 'save_session')
   bool get saveSession;
+  @override
+  @JsonKey(defaultValue: false, name: 'save_online')
+  bool get saveOnline;
   @override
   @JsonKey(defaultValue: true, name: 'local_web')
   bool get isLocal;
@@ -803,11 +927,26 @@ abstract class _Configuration implements Configuration {
   @JsonKey(name: 'max_messages', defaultValue: 20)
   int get maxMessages;
   @override
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-  String get defaultModel;
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+  String? get openrouterDefaultModel;
+  @override
+  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+  String? get buddyDefaultModel;
+  @override
+  @JsonKey(name: 'buddy_key', defaultValue: null)
+  String? get buddyKey;
+  @override
+  @JsonKey(defaultValue: null, name: 'ollama_default_model')
+  String? get ollamaDefaultModel;
+  @override
+  @JsonKey(defaultValue: 'localhost:11434')
+  String? get ollamaEndpoint;
+  @override
+  @JsonKey(name: 'openrouter_key', defaultValue: null)
+  String? get openrouterKey;
   @override
   @JsonKey(defaultValue: null, name: 'temperature')
-  double get temperature;
+  double? get temperature;
   @override
   @JsonKey(defaultValue: null, name: 'max_tokens')
   int? get maxTokens;
@@ -879,6 +1018,7 @@ SysPrompt _$SysPromptFromJson(Map<String, dynamic> json) {
 mixin _$SysPrompt {
   String get name => throw _privateConstructorUsedError;
   String get prompt => throw _privateConstructorUsedError;
+  String? get modelId => throw _privateConstructorUsedError;
 
   /// Serializes this SysPrompt to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -895,7 +1035,7 @@ abstract class $SysPromptCopyWith<$Res> {
   factory $SysPromptCopyWith(SysPrompt value, $Res Function(SysPrompt) then) =
       _$SysPromptCopyWithImpl<$Res, SysPrompt>;
   @useResult
-  $Res call({String name, String prompt});
+  $Res call({String name, String prompt, String? modelId});
 }
 
 /// @nodoc
@@ -915,6 +1055,7 @@ class _$SysPromptCopyWithImpl<$Res, $Val extends SysPrompt>
   $Res call({
     Object? name = null,
     Object? prompt = null,
+    Object? modelId = freezed,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -925,6 +1066,10 @@ class _$SysPromptCopyWithImpl<$Res, $Val extends SysPrompt>
           ? _value.prompt
           : prompt // ignore: cast_nullable_to_non_nullable
               as String,
+      modelId: freezed == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -937,7 +1082,7 @@ abstract class _$$SysPromptImplCopyWith<$Res>
       __$$SysPromptImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String prompt});
+  $Res call({String name, String prompt, String? modelId});
 }
 
 /// @nodoc
@@ -955,6 +1100,7 @@ class __$$SysPromptImplCopyWithImpl<$Res>
   $Res call({
     Object? name = null,
     Object? prompt = null,
+    Object? modelId = freezed,
   }) {
     return _then(_$SysPromptImpl(
       name: null == name
@@ -965,6 +1111,10 @@ class __$$SysPromptImplCopyWithImpl<$Res>
           ? _value.prompt
           : prompt // ignore: cast_nullable_to_non_nullable
               as String,
+      modelId: freezed == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -972,7 +1122,8 @@ class __$$SysPromptImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$SysPromptImpl implements _SysPrompt {
-  const _$SysPromptImpl({required this.name, required this.prompt});
+  const _$SysPromptImpl(
+      {required this.name, required this.prompt, this.modelId});
 
   factory _$SysPromptImpl.fromJson(Map<String, dynamic> json) =>
       _$$SysPromptImplFromJson(json);
@@ -981,10 +1132,12 @@ class _$SysPromptImpl implements _SysPrompt {
   final String name;
   @override
   final String prompt;
+  @override
+  final String? modelId;
 
   @override
   String toString() {
-    return 'SysPrompt(name: $name, prompt: $prompt)';
+    return 'SysPrompt(name: $name, prompt: $prompt, modelId: $modelId)';
   }
 
   @override
@@ -993,12 +1146,13 @@ class _$SysPromptImpl implements _SysPrompt {
         (other.runtimeType == runtimeType &&
             other is _$SysPromptImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.prompt, prompt) || other.prompt == prompt));
+            (identical(other.prompt, prompt) || other.prompt == prompt) &&
+            (identical(other.modelId, modelId) || other.modelId == modelId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, prompt);
+  int get hashCode => Object.hash(runtimeType, name, prompt, modelId);
 
   /// Create a copy of SysPrompt
   /// with the given fields replaced by the non-null parameter values.
@@ -1019,7 +1173,8 @@ class _$SysPromptImpl implements _SysPrompt {
 abstract class _SysPrompt implements SysPrompt {
   const factory _SysPrompt(
       {required final String name,
-      required final String prompt}) = _$SysPromptImpl;
+      required final String prompt,
+      final String? modelId}) = _$SysPromptImpl;
 
   factory _SysPrompt.fromJson(Map<String, dynamic> json) =
       _$SysPromptImpl.fromJson;
@@ -1028,6 +1183,8 @@ abstract class _SysPrompt implements SysPrompt {
   String get name;
   @override
   String get prompt;
+  @override
+  String? get modelId;
 
   /// Create a copy of SysPrompt
   /// with the given fields replaced by the non-null parameter values.

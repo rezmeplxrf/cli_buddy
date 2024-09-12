@@ -64,28 +64,18 @@
 **Note: I am not affliated with OpenRouter and I do not receive any benefits from them by any means.**
 
 
-### Add API Key or create `secret.env`
+### Add API Key
 *Easy way*
 ```sh
-buddy set -k <your openrouter key>
+buddy set --or-api-key <your openrouter key>
 ```
-This will create `secret.env` and `buddy.config` files at the default path.
 
-Or
-
-Create a `secret.env` file in the any directory and add:
-```sh
-openrouter_key=YOUR_OPENROUTER_KEY
-```
-Then run:
-```sh
-buddy set -s <path/to/secret.env>
-```
 
 ### Example `buddy.config`
 ```json
 {
-   "secret_env_path":"secret.env",
+   "or_api_key":"<your openrouter key>",
+   "or_api_url":"https://api.openrouter.ai",
    "save_session":false,
    "max_messages":20,
    "default_model":"openai/gpt-4",

@@ -4,22 +4,30 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'config.freezed.dart';
 part 'config.g.dart';
 
+enum APIProvider { openrouter, buddy, ollama }
+
 @freezed
 class Configuration with _$Configuration {
   @JsonSerializable(includeIfNull: false)
   const factory Configuration({
-    @JsonKey(name: 'secret_env_path', defaultValue: null)
-    required String? secretEnvPath,
-    @JsonKey(defaultValue: '127.0.0.1') required String ipAddress,
-    @JsonKey(defaultValue: '43210') required String port,
+    @JsonKey(defaultValue: APIProvider.openrouter, name: 'api_provider')
+    required APIProvider apiProvider,
+    @JsonKey(defaultValue: 'localhost:43210') required String localEndpoint,
     @JsonKey(defaultValue: true, name: 'save_session')
     required bool saveSession,
+    @JsonKey(defaultValue: false, name: 'save_online') required bool saveOnline,
     @JsonKey(defaultValue: true, name: 'local_web') required bool isLocal,
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,
-    @JsonKey(defaultValue: 'openai/gpt-4o', name: 'default_model')
-    required String defaultModel,
-    @JsonKey(defaultValue: null, name: 'temperature')
-    required double temperature,
+    @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
+    String? openrouterDefaultModel,
+    @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
+    String? buddyDefaultModel,
+    @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
+    @JsonKey(defaultValue: null, name: 'ollama_default_model')
+    String? ollamaDefaultModel,
+    @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,
+    @JsonKey(name: 'openrouter_key', defaultValue: null) String? openrouterKey,
+    @JsonKey(defaultValue: null, name: 'temperature') double? temperature,
     @JsonKey(defaultValue: null, name: 'max_tokens') int? maxTokens,
     @JsonKey(defaultValue: null, name: 'top_p') int? topP,
     @JsonKey(defaultValue: null, name: 'top_k') int? topK,
@@ -55,10 +63,10 @@ class Configuration with _$Configuration {
 
 @freezed
 class SysPrompt with _$SysPrompt {
-  const factory SysPrompt({
-    required String name,
-    required String prompt,
-  }) = _SysPrompt;
+  const factory SysPrompt(
+      {required String name,
+      required String prompt,
+      String? modelId}) = _SysPrompt;
 
   factory SysPrompt.fromJson(Map<String, Object?> json) =>
       _$SysPromptFromJson(json);
