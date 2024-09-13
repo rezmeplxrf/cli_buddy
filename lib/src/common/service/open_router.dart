@@ -62,10 +62,10 @@ class OpenRouterService {
 
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
-    final overRidingModel = session.messages.last.overideModel;
+    final overridedModelId = session.messages.last.overridedModelId;
     final trimedSession = _removeOldMessages(session, maxMsg);
     final prompt = <String, dynamic>{
-      'model': overRidingModel ?? session.model,
+      'model': overridedModelId ?? session.modelId,
       'stream': true,
       'messages':
           trimedSession.messages.map(Helper.toAPICompatibleJson).toList(),
@@ -245,7 +245,7 @@ ${lightCyan.wrap(promptForDebug)}
     openrouterKey ??= await ConfigService.loadOpenrouterKey().getOrThrow();
     final headers = await getHeaders();
     final prompt = <String, dynamic>{
-      'model': request.modelId ?? request.currentSession.model,
+      'model': request.modelId ?? request.currentSession.modelId,
       'stream': true,
       'messages': [
         Helper.toAPICompatibleJson(request.sysPrompt),
@@ -347,7 +347,7 @@ ${lightCyan.wrap(promptForDebug)}
       final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final validatedResult = Validation(
-        model: request.modelId ?? request.currentSession.model,
+        modelId: request.modelId ?? request.currentSession.modelId,
         result: msgBuffer.toString(),
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),

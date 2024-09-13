@@ -68,16 +68,16 @@ class ShellCommand extends Command<int> {
       final initialMsg =
           Message(role: Role.user, content: prompt, timestamp: currentTime);
             configuration ??= await ConfigService.loadConfig().getOrThrow();
-                final model = (configuration!.apiProvider == APIProvider.openrouter)
+                final modelId = (configuration!.apiProvider == APIProvider.openrouter)
           ? configuration!.openrouterDefaultModel
           : (configuration!.apiProvider == APIProvider.ollama)
               ? configuration!.ollamaDefaultModel
               : configuration!.buddyDefaultModel;
-              if (model == null){
+              if (modelId == null){
                 _logger.err('Default APIProvider is not found');
                 return ExitCode.tempFail.code;
               }
-      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], model: model);
+      session = ChatSession(id: currentTime, messages: [sysMsg, initialMsg], modelId: modelId);
     }
 
     var shouldDebug = false;

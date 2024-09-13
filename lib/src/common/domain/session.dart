@@ -10,7 +10,7 @@ class ChatSession with _$ChatSession {
   const factory ChatSession({
     required int id,
     required List<Message> messages,
-    required String model,
+    required String modelId,
     Parameters? parameters,
   }) = _ChatSession;
 
@@ -18,7 +18,7 @@ class ChatSession with _$ChatSession {
       _$ChatSessionFromJson(json);
 }
 
-enum Role { system, user, assistant, tool }
+enum Role { system, user, assistant, tool, reviewer }
 
 @freezed
 class Message with _$Message {
@@ -29,12 +29,11 @@ class Message with _$Message {
       required int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overideModel}) = _Message;
+      String? overridedModelId}) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
 }
-
 
 @freezed
 class ValidateRequest with _$ValidateRequest {
@@ -55,7 +54,7 @@ class ValidateRequest with _$ValidateRequest {
 class Validation with _$Validation {
   @JsonSerializable(includeIfNull: false)
   const factory Validation({
-    required String model,
+    required String modelId,
     required String result,
     required int timestamp,
     Usage? usage,

@@ -22,7 +22,7 @@ ChatSession _$ChatSessionFromJson(Map<String, dynamic> json) {
 mixin _$ChatSession {
   int get id => throw _privateConstructorUsedError;
   List<Message> get messages => throw _privateConstructorUsedError;
-  String get model => throw _privateConstructorUsedError;
+  String get modelId => throw _privateConstructorUsedError;
   Parameters? get parameters => throw _privateConstructorUsedError;
 
   /// Serializes this ChatSession to a JSON map.
@@ -42,7 +42,7 @@ abstract class $ChatSessionCopyWith<$Res> {
       _$ChatSessionCopyWithImpl<$Res, ChatSession>;
   @useResult
   $Res call(
-      {int id, List<Message> messages, String model, Parameters? parameters});
+      {int id, List<Message> messages, String modelId, Parameters? parameters});
 
   $ParametersCopyWith<$Res>? get parameters;
 }
@@ -64,7 +64,7 @@ class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
   $Res call({
     Object? id = null,
     Object? messages = null,
-    Object? model = null,
+    Object? modelId = null,
     Object? parameters = freezed,
   }) {
     return _then(_value.copyWith(
@@ -76,9 +76,9 @@ class _$ChatSessionCopyWithImpl<$Res, $Val extends ChatSession>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      model: null == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
               as String,
       parameters: freezed == parameters
           ? _value.parameters
@@ -111,7 +111,7 @@ abstract class _$$ChatSessionImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int id, List<Message> messages, String model, Parameters? parameters});
+      {int id, List<Message> messages, String modelId, Parameters? parameters});
 
   @override
   $ParametersCopyWith<$Res>? get parameters;
@@ -132,7 +132,7 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? messages = null,
-    Object? model = null,
+    Object? modelId = null,
     Object? parameters = freezed,
   }) {
     return _then(_$ChatSessionImpl(
@@ -144,9 +144,9 @@ class __$$ChatSessionImplCopyWithImpl<$Res>
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<Message>,
-      model: null == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
               as String,
       parameters: freezed == parameters
           ? _value.parameters
@@ -163,7 +163,7 @@ class _$ChatSessionImpl implements _ChatSession {
   const _$ChatSessionImpl(
       {required this.id,
       required final List<Message> messages,
-      required this.model,
+      required this.modelId,
       this.parameters})
       : _messages = messages;
 
@@ -181,13 +181,13 @@ class _$ChatSessionImpl implements _ChatSession {
   }
 
   @override
-  final String model;
+  final String modelId;
   @override
   final Parameters? parameters;
 
   @override
   String toString() {
-    return 'ChatSession(id: $id, messages: $messages, model: $model, parameters: $parameters)';
+    return 'ChatSession(id: $id, messages: $messages, modelId: $modelId, parameters: $parameters)';
   }
 
   @override
@@ -197,7 +197,7 @@ class _$ChatSessionImpl implements _ChatSession {
             other is _$ChatSessionImpl &&
             (identical(other.id, id) || other.id == id) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
-            (identical(other.model, model) || other.model == model) &&
+            (identical(other.modelId, modelId) || other.modelId == modelId) &&
             (identical(other.parameters, parameters) ||
                 other.parameters == parameters));
   }
@@ -205,7 +205,7 @@ class _$ChatSessionImpl implements _ChatSession {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id,
-      const DeepCollectionEquality().hash(_messages), model, parameters);
+      const DeepCollectionEquality().hash(_messages), modelId, parameters);
 
   /// Create a copy of ChatSession
   /// with the given fields replaced by the non-null parameter values.
@@ -227,7 +227,7 @@ abstract class _ChatSession implements ChatSession {
   const factory _ChatSession(
       {required final int id,
       required final List<Message> messages,
-      required final String model,
+      required final String modelId,
       final Parameters? parameters}) = _$ChatSessionImpl;
 
   factory _ChatSession.fromJson(Map<String, dynamic> json) =
@@ -238,7 +238,7 @@ abstract class _ChatSession implements ChatSession {
   @override
   List<Message> get messages;
   @override
-  String get model;
+  String get modelId;
   @override
   Parameters? get parameters;
 
@@ -261,7 +261,7 @@ mixin _$Message {
   int get timestamp => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
   Validation? get validation => throw _privateConstructorUsedError;
-  String? get overideModel => throw _privateConstructorUsedError;
+  String? get overridedModelId => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -283,7 +283,7 @@ abstract class $MessageCopyWith<$Res> {
       int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overideModel});
+      String? overridedModelId});
 
   $UsageCopyWith<$Res>? get usage;
   $ValidationCopyWith<$Res>? get validation;
@@ -309,7 +309,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
-    Object? overideModel = freezed,
+    Object? overridedModelId = freezed,
   }) {
     return _then(_value.copyWith(
       role: null == role
@@ -332,9 +332,9 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
-      overideModel: freezed == overideModel
-          ? _value.overideModel
-          : overideModel // ignore: cast_nullable_to_non_nullable
+      overridedModelId: freezed == overridedModelId
+          ? _value.overridedModelId
+          : overridedModelId // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -381,7 +381,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overideModel});
+      String? overridedModelId});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -407,7 +407,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
-    Object? overideModel = freezed,
+    Object? overridedModelId = freezed,
   }) {
     return _then(_$MessageImpl(
       role: null == role
@@ -430,9 +430,9 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
-      overideModel: freezed == overideModel
-          ? _value.overideModel
-          : overideModel // ignore: cast_nullable_to_non_nullable
+      overridedModelId: freezed == overridedModelId
+          ? _value.overridedModelId
+          : overridedModelId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -448,7 +448,7 @@ class _$MessageImpl implements _Message {
       required this.timestamp,
       this.usage,
       this.validation,
-      this.overideModel});
+      this.overridedModelId});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -464,11 +464,11 @@ class _$MessageImpl implements _Message {
   @override
   final Validation? validation;
   @override
-  final String? overideModel;
+  final String? overridedModelId;
 
   @override
   String toString() {
-    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation, overideModel: $overideModel)';
+    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation, overridedModelId: $overridedModelId)';
   }
 
   @override
@@ -483,14 +483,14 @@ class _$MessageImpl implements _Message {
             (identical(other.usage, usage) || other.usage == usage) &&
             (identical(other.validation, validation) ||
                 other.validation == validation) &&
-            (identical(other.overideModel, overideModel) ||
-                other.overideModel == overideModel));
+            (identical(other.overridedModelId, overridedModelId) ||
+                other.overridedModelId == overridedModelId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, role, content, timestamp, usage, validation, overideModel);
+  int get hashCode => Object.hash(runtimeType, role, content, timestamp, usage,
+      validation, overridedModelId);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -515,7 +515,7 @@ abstract class _Message implements Message {
       required final int timestamp,
       final Usage? usage,
       final Validation? validation,
-      final String? overideModel}) = _$MessageImpl;
+      final String? overridedModelId}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -530,7 +530,7 @@ abstract class _Message implements Message {
   @override
   Validation? get validation;
   @override
-  String? get overideModel;
+  String? get overridedModelId;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -844,7 +844,7 @@ Validation _$ValidationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Validation {
-  String get model => throw _privateConstructorUsedError;
+  String get modelId => throw _privateConstructorUsedError;
   String get result => throw _privateConstructorUsedError;
   int get timestamp => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
@@ -865,7 +865,7 @@ abstract class $ValidationCopyWith<$Res> {
           Validation value, $Res Function(Validation) then) =
       _$ValidationCopyWithImpl<$Res, Validation>;
   @useResult
-  $Res call({String model, String result, int timestamp, Usage? usage});
+  $Res call({String modelId, String result, int timestamp, Usage? usage});
 
   $UsageCopyWith<$Res>? get usage;
 }
@@ -885,15 +885,15 @@ class _$ValidationCopyWithImpl<$Res, $Val extends Validation>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? model = null,
+    Object? modelId = null,
     Object? result = null,
     Object? timestamp = null,
     Object? usage = freezed,
   }) {
     return _then(_value.copyWith(
-      model: null == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
               as String,
       result: null == result
           ? _value.result
@@ -933,7 +933,7 @@ abstract class _$$ValidationImplCopyWith<$Res>
       __$$ValidationImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String model, String result, int timestamp, Usage? usage});
+  $Res call({String modelId, String result, int timestamp, Usage? usage});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -952,15 +952,15 @@ class __$$ValidationImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? model = null,
+    Object? modelId = null,
     Object? result = null,
     Object? timestamp = null,
     Object? usage = freezed,
   }) {
     return _then(_$ValidationImpl(
-      model: null == model
-          ? _value.model
-          : model // ignore: cast_nullable_to_non_nullable
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
               as String,
       result: null == result
           ? _value.result
@@ -983,7 +983,7 @@ class __$$ValidationImplCopyWithImpl<$Res>
 @JsonSerializable(includeIfNull: false)
 class _$ValidationImpl implements _Validation {
   const _$ValidationImpl(
-      {required this.model,
+      {required this.modelId,
       required this.result,
       required this.timestamp,
       this.usage});
@@ -992,7 +992,7 @@ class _$ValidationImpl implements _Validation {
       _$$ValidationImplFromJson(json);
 
   @override
-  final String model;
+  final String modelId;
   @override
   final String result;
   @override
@@ -1002,7 +1002,7 @@ class _$ValidationImpl implements _Validation {
 
   @override
   String toString() {
-    return 'Validation(model: $model, result: $result, timestamp: $timestamp, usage: $usage)';
+    return 'Validation(modelId: $modelId, result: $result, timestamp: $timestamp, usage: $usage)';
   }
 
   @override
@@ -1010,7 +1010,7 @@ class _$ValidationImpl implements _Validation {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ValidationImpl &&
-            (identical(other.model, model) || other.model == model) &&
+            (identical(other.modelId, modelId) || other.modelId == modelId) &&
             (identical(other.result, result) || other.result == result) &&
             (identical(other.timestamp, timestamp) ||
                 other.timestamp == timestamp) &&
@@ -1019,7 +1019,8 @@ class _$ValidationImpl implements _Validation {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, model, result, timestamp, usage);
+  int get hashCode =>
+      Object.hash(runtimeType, modelId, result, timestamp, usage);
 
   /// Create a copy of Validation
   /// with the given fields replaced by the non-null parameter values.
@@ -1039,7 +1040,7 @@ class _$ValidationImpl implements _Validation {
 
 abstract class _Validation implements Validation {
   const factory _Validation(
-      {required final String model,
+      {required final String modelId,
       required final String result,
       required final int timestamp,
       final Usage? usage}) = _$ValidationImpl;
@@ -1048,7 +1049,7 @@ abstract class _Validation implements Validation {
       _$ValidationImpl.fromJson;
 
   @override
-  String get model;
+  String get modelId;
   @override
   String get result;
   @override
