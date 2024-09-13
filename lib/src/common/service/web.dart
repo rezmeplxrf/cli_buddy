@@ -120,7 +120,7 @@ class HandlerService {
       final chatSession = ChatSession.fromJson(sessionJson);
       await SessionService.saveSession(session: chatSession);
 
-      return Response.ok({'result': 'File is saved'});
+      return Response.ok(jsonEncode({'result': 'File is saved'}), headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
         body: 'Failed to create file - $e',
@@ -159,7 +159,7 @@ class HandlerService {
           shouldAutoOvewrite: true);
 
       return Response.ok(
-        {'result': 'File is created at $filePath'},
+       jsonEncode( jsonEncode({'result': 'File is created at $filePath'})), headers: jsonHeaders
       );
     } catch (e) {
       return Response.internalServerError(
@@ -176,7 +176,7 @@ class HandlerService {
       final content = data['code'] as String;
       final path = data['path'] as String;
       await ActionService.saveToFile(path, content, shouldAutoOvewrite: true);
-      return Response.ok({'result': 'File is created at $path'},
+      return Response.ok(jsonEncode({'result': 'File is created at $path'}),
           headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
@@ -191,7 +191,7 @@ class HandlerService {
     final sessionId = data['sessionId'];
     final result = await SessionService.removeSession(id: sessionId as int);
     if (result) {
-      return Response.ok({'result': 'Session is removed'},
+      return Response.ok(jsonEncode({'result': 'Session is removed'}),
           headers: jsonHeaders);
     } else {
       return Response.internalServerError(
@@ -226,7 +226,7 @@ class HandlerService {
             headers: jsonHeaders);
       } else {
         return Response.ok(
-            {'result': 'No changes made because it is the same as the current'},
+            jsonEncode({'result': 'No changes made because it is the same as the current'}),
             headers: jsonHeaders);
       }
     } catch (e) {
