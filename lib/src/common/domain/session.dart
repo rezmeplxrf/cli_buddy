@@ -29,7 +29,7 @@ class Message with _$Message {
       required int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overridedModelId}) = _Message;
+      String? overriddenModelId}) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);

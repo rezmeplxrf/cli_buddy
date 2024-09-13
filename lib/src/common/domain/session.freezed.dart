@@ -261,7 +261,7 @@ mixin _$Message {
   int get timestamp => throw _privateConstructorUsedError;
   Usage? get usage => throw _privateConstructorUsedError;
   Validation? get validation => throw _privateConstructorUsedError;
-  String? get overridedModelId => throw _privateConstructorUsedError;
+  String? get overriddenModelId => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -283,7 +283,7 @@ abstract class $MessageCopyWith<$Res> {
       int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overridedModelId});
+      String? overriddenModelId});
 
   $UsageCopyWith<$Res>? get usage;
   $ValidationCopyWith<$Res>? get validation;
@@ -309,7 +309,7 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
-    Object? overridedModelId = freezed,
+    Object? overriddenModelId = freezed,
   }) {
     return _then(_value.copyWith(
       role: null == role
@@ -332,9 +332,9 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
-      overridedModelId: freezed == overridedModelId
-          ? _value.overridedModelId
-          : overridedModelId // ignore: cast_nullable_to_non_nullable
+      overriddenModelId: freezed == overriddenModelId
+          ? _value.overriddenModelId
+          : overriddenModelId // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -381,7 +381,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
       int timestamp,
       Usage? usage,
       Validation? validation,
-      String? overridedModelId});
+      String? overriddenModelId});
 
   @override
   $UsageCopyWith<$Res>? get usage;
@@ -407,7 +407,7 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? timestamp = null,
     Object? usage = freezed,
     Object? validation = freezed,
-    Object? overridedModelId = freezed,
+    Object? overriddenModelId = freezed,
   }) {
     return _then(_$MessageImpl(
       role: null == role
@@ -430,9 +430,9 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
               as Validation?,
-      overridedModelId: freezed == overridedModelId
-          ? _value.overridedModelId
-          : overridedModelId // ignore: cast_nullable_to_non_nullable
+      overriddenModelId: freezed == overriddenModelId
+          ? _value.overriddenModelId
+          : overriddenModelId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -448,7 +448,7 @@ class _$MessageImpl implements _Message {
       required this.timestamp,
       this.usage,
       this.validation,
-      this.overridedModelId});
+      this.overriddenModelId});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -464,11 +464,11 @@ class _$MessageImpl implements _Message {
   @override
   final Validation? validation;
   @override
-  final String? overridedModelId;
+  final String? overriddenModelId;
 
   @override
   String toString() {
-    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation, overridedModelId: $overridedModelId)';
+    return 'Message(role: $role, content: $content, timestamp: $timestamp, usage: $usage, validation: $validation, overriddenModelId: $overriddenModelId)';
   }
 
   @override
@@ -483,14 +483,14 @@ class _$MessageImpl implements _Message {
             (identical(other.usage, usage) || other.usage == usage) &&
             (identical(other.validation, validation) ||
                 other.validation == validation) &&
-            (identical(other.overridedModelId, overridedModelId) ||
-                other.overridedModelId == overridedModelId));
+            (identical(other.overriddenModelId, overriddenModelId) ||
+                other.overriddenModelId == overriddenModelId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, role, content, timestamp, usage,
-      validation, overridedModelId);
+      validation, overriddenModelId);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -515,7 +515,7 @@ abstract class _Message implements Message {
       required final int timestamp,
       final Usage? usage,
       final Validation? validation,
-      final String? overridedModelId}) = _$MessageImpl;
+      final String? overriddenModelId}) = _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
 
@@ -530,7 +530,7 @@ abstract class _Message implements Message {
   @override
   Validation? get validation;
   @override
-  String? get overridedModelId;
+  String? get overriddenModelId;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.

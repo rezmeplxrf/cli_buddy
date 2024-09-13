@@ -46,7 +46,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       validation: json['validation'] == null
           ? null
           : Validation.fromJson(json['validation'] as Map<String, dynamic>),
-      overridedModelId: json['overridedModelId'] as String?,
+      overriddenModelId: json['overriddenModelId'] as String?,
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) {
@@ -64,7 +64,7 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) {
 
   writeNotNull('usage', instance.usage?.toJson());
   writeNotNull('validation', instance.validation?.toJson());
-  writeNotNull('overridedModelId', instance.overridedModelId);
+  writeNotNull('overriddenModelId', instance.overriddenModelId);
   return val;
 }
 

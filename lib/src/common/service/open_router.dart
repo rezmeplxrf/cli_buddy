@@ -62,10 +62,10 @@ class OpenRouterService {
 
     final parameters =
         (session.parameters != null) ? session.parameters : parametersCache;
-    final overridedModelId = session.messages.last.overridedModelId;
+    final overriddenModelId = session.messages.last.overriddenModelId;
     final trimedSession = _removeOldMessages(session, maxMsg);
     final prompt = <String, dynamic>{
-      'model': overridedModelId ?? session.modelId,
+      'model': overriddenModelId ?? session.modelId,
       'stream': true,
       'messages':
           trimedSession.messages.map(Helper.toAPICompatibleJson).toList(),
