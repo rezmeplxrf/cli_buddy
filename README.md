@@ -66,7 +66,6 @@
 
 
 ### Add API Key
-*Easy way*
 ```sh
 buddy set --or-api-key <your openrouter key>
 ```

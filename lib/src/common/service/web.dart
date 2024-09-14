@@ -7,6 +7,7 @@ import 'package:cli_buddy/src/common/domain/config.dart';
 import 'package:cli_buddy/src/common/service/action.dart';
 import 'package:cli_buddy/src/common/service/config.dart';
 import 'package:cli_buddy/src/common/service/dio.dart';
+import 'package:cli_buddy/src/common/service/global.dart';
 import 'package:cli_buddy/src/common/service/session.dart';
 import 'package:cli_buddy/src/common/service/sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
@@ -17,6 +18,7 @@ import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_static/shelf_static.dart';
+import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebService {
@@ -100,6 +102,7 @@ class HandlerService {
 
   static Handler get router {
     final router = Router()
+      ..get('/ws', webSocketHandler(_handleWebSocket))
       ..get('/session-list', _sessionListHandler)
       ..post('/save-session', _saveSessionHandler)
       ..post('/remove-all', _removeAllHandler)
@@ -110,6 +113,38 @@ class HandlerService {
       ..get('/prompts', _getPromptsHandler)
       ..post('/prompts', _setPromptsHandler);
     return router.call;
+  }
+
+  static void _handleWebSocket(WebSocketChannel socket) {
+    WebService.webSocket = socket;
+    socket.stream.listen((message) async {
+      final userSentSession = ChatSession.fromJson(
+          jsonDecode(message as String) as Map<String, dynamic>);
+      if (message.trim().isNotEmpty) {
+        WebService.webSocket?.sink
+            .add(jsonEncode(const MessageChunk(type: ChunkType.start)));
+        try {
+          final newSession = await openRouter
+              .invoke(session: userSentSession, markdown: false)
+              .getOrThrow();
+          final lastResponse = newSession.messages.last;
+          WebService.webSocket?.sink.add(jsonEncode(
+              MessageChunk(type: ChunkType.end, usage: lastResponse.usage)));
+        } catch (e) {
+          const msgChunk = MessageChunk(
+              type: ChunkType.error,
+              content: 'Error while making API request.');
+          WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+          return;
+        }
+      }
+    }, onDone: () {
+      WebService.webSocket?.sink.close();
+      WebService.webSocket = null;
+    }, onError: (e) {
+      WebService.webSocket?.sink.close();
+      WebService.webSocket = null;
+    });
   }
 
   static Future<Response> _saveSessionHandler(Request request) async {

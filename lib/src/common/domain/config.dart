@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'config.freezed.dart';
 part 'config.g.dart';
 
-enum APIProvider { openrouter, buddy, ollama }
+enum APIProvider { openrouter,  ollama }
 
 @freezed
 class Configuration with _$Configuration {

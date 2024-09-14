@@ -23,7 +23,6 @@ class OpenRouterService {
   static final OpenRouterService _instance = OpenRouterService._internal();
 
   static void setLogger(Logger? logger) => _logger = logger;
-  // TODO: When clients disconnect or cancel, also cancel the request via cancelToken
   static CancelToken? cancelToken;
   static Logger? _logger;
 
@@ -39,7 +38,6 @@ class OpenRouterService {
     return header;
   }
 
-// TODO: Refractor
   Future<Result<ChatSession, CustomException>> invoke({
     required ChatSession session,
     bool? markdown,
@@ -116,9 +114,7 @@ ${lightCyan.wrap(promptForDebug)}
 
     final msgBuffer = StringBuffer();
 
-    ChatSession? newSession;
     Usage? usage;
-    final responses = <ORResponse>[];
     var index = 0;
     var lineStart = 0;
     final consoleWidth =
@@ -148,7 +144,7 @@ ${lightCyan.wrap(promptForDebug)}
             if (response.usage?.completionTokens != null) {
               usage = response.usage;
             }
-            responses.add(response);
+        
             final content = response.choices?.first.delta?.content ?? '';
             msgBuffer.write(content);
 
@@ -195,7 +191,7 @@ ${lightCyan.wrap(promptForDebug)}
       _logger?.info(markdownStyle.apply(msgBuffer.toString()));
     }
 
-    if (responses.isNotEmpty) {
+   
       final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
       final difference = ((finishTime - startTime) * 10).ceil() / 10;
       final aiResponse = Message(
@@ -204,7 +200,7 @@ ${lightCyan.wrap(promptForDebug)}
         timestamp: DateTime.now().millisecondsSinceEpoch,
         usage: usage?.copyWith(responseTime: difference),
       );
-      newSession = session.copyWith(
+      final newSession = session.copyWith(
         messages: [...session.messages, aiResponse],
       );
 
@@ -215,20 +211,7 @@ ${lightCyan.wrap(promptForDebug)}
       await SessionService.saveSession(session: newSession);
 
       return newSession.toSuccess();
-    } else {
-      msgBuffer.clear();
-      progress?.fail();
-      _logger?.err('Something went wrong');
-      const msgChunk = MessageChunk(
-          type: ChunkType.error,
-          content: 'An unexpected error occured - responses are empty');
-      WebService.webSocket?.sink.add(jsonEncode(msgChunk));
-      return CustomException(
-              message: 'Something went wrong - newSession is null',
-              details: {'api_responses': responses},
-              stack: 'OpenRouterService.invoke')
-          .toFailure();
-    }
+   
   }
 
   Future<Result<ChatSession, CustomException>> validate(

@@ -86,7 +86,6 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
 
 const _$APIProviderEnumMap = {
   APIProvider.openrouter: 'openrouter',
-  APIProvider.buddy: 'buddy',
   APIProvider.ollama: 'ollama',
 };
 
