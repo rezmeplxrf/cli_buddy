@@ -1,3 +1,7 @@
+# 0.1.16
+
+* Bug fixes
+
 # 0.1.9
 
 * Changed Configuration Model and removed use of secret.env
