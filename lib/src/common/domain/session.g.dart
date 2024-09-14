@@ -132,7 +132,7 @@ Map<String, dynamic> _$$ValidationImplToJson(_$ValidationImpl instance) {
     }
   }
 
-  writeNotNull('usage', instance.usage);
+  writeNotNull('usage', instance.usage?.toJson());
   return val;
 }
 

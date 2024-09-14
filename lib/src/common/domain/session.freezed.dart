@@ -980,7 +980,7 @@ class __$$ValidationImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: false, explicitToJson: true)
 class _$ValidationImpl implements _Validation {
   const _$ValidationImpl(
       {required this.modelId,

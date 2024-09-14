@@ -37,8 +37,7 @@ class WebService {
       {required String address,
       required int port,
       required bool isLocal}) async {
-    configuration ??= await ConfigService.loadConfig().getOrThrow();
-
+  
     Cascade? cascade;
     final routerHandler = HandlerService.router;
     if (isLocal) {

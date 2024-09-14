@@ -54,13 +54,15 @@ class OpenCommand extends Command<int> {
     final address = argResults?['address'] as String?;
     final autoFlag = argResults?['launch'] as bool? ?? true;
     final isLocal = argResults?['local-web'] as bool? ?? true;
-    final defaultFullUri = configuration?.localEndpoint; // e.g. http://localhost:3000
-    final defaultAdress =  defaultFullUri?.split(':').first;
-    final defaultPort =  defaultFullUri?.split(':').last;
+    final defaultFullUri = configuration?.localEndpoint; // e.g. localhost:3000
+    final defaultAdress = defaultFullUri?.split(':').first;
+    final defaultPort = defaultFullUri?.split(':').last;
     final server = WebService();
 
     await server.start(
-        address: address ?? defaultAdress!, port: int.parse(port ?? defaultPort!), isLocal: isLocal);
+        address: address ?? defaultAdress!,
+        port: int.parse(port ?? defaultPort!),
+        isLocal: isLocal);
     if (!isLocal && autoFlag) {
       _logger
         ..info('The web interface is available at $hostedWeb in your browser.')
@@ -79,7 +81,10 @@ class OpenCommand extends Command<int> {
 
     if (autoFlag) {
       await ActionService.openWeb(
-          port: port, address: address, isLocal: isLocal, logger: _logger);
+          port: port ?? defaultPort,
+          address: address ?? defaultAdress,
+          isLocal: isLocal,
+          logger: _logger);
     }
 
     final completer = Completer<int>();
