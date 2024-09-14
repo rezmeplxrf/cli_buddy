@@ -82,8 +82,6 @@ buddy set --or-api-key <your openrouter key>
   "local_web": true,
   "max_messages": 20,
   "openrouter_default_model": "openai/gpt-4o",
-  "buddy_default_model": "openai/gpt-4o",
-  "buddy_key": null,
   "ollama_default_model": null,
   "ollamaEndpoint": "localhost:11434",
   "openrouter_key": null,
