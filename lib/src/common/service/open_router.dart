@@ -46,6 +46,7 @@ class OpenRouterService {
   }) async {
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
 
+    final msgBuffer = StringBuffer();
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
       green.wrap(waitingMsg)!,
@@ -98,6 +99,13 @@ ${lightCyan.wrap(promptForDebug)}
         options: Options(headers: headers, responseType: ResponseType.stream),
         data: prompt,
       );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.cancel) {
+        _logger?.info('Request was cancelled.');
+        return session.toSuccess();
+      } else {
+        rethrow;
+      }
     } catch (e) {
       progress?.fail();
 
@@ -107,8 +115,6 @@ ${lightCyan.wrap(promptForDebug)}
         details: {'error': e.toString()},
       ).toFailure();
     }
-
-    final msgBuffer = StringBuffer();
 
     Usage? usage;
     var index = 0;
