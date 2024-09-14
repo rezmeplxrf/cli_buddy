@@ -37,7 +37,6 @@ class WebService {
       {required String address,
       required int port,
       required bool isLocal}) async {
-  
     Cascade? cascade;
     final routerHandler = HandlerService.router;
     if (isLocal) {
@@ -117,7 +116,7 @@ class HandlerService {
   static void _handleWebSocket(WebSocketChannel socket) {
     WebService.webSocket = socket;
     socket.stream.listen((message) async {
-      if (message.toString().startsWith('Cancel')){
+      if (message.toString().startsWith('Cancel')) {
         OpenRouterService.cancelToken?.cancel();
         return;
       }

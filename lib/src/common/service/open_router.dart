@@ -46,7 +46,6 @@ class OpenRouterService {
   }) async {
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
 
-
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
       green.wrap(waitingMsg)!,
@@ -101,14 +100,9 @@ ${lightCyan.wrap(promptForDebug)}
       );
     } catch (e) {
       progress?.fail();
-      final errorMsg = MessageChunk(
-          type: ChunkType.error,
-          content:
-              'An error occurred while requesting the API - Status code: ${response?.statusCode} | message: ${response?.statusMessage}');
-      WebService.webSocket?.sink.add(jsonEncode(errorMsg));
 
       return CustomException(
-        message: 'Error while making API request.',
+        message: 'Error while making API request. - $e',
         stack: 'OpenRouterService.invoke',
         details: {'error': e.toString()},
       ).toFailure();
@@ -171,13 +165,10 @@ ${lightCyan.wrap(promptForDebug)}
             if (response.choices?.first.error != null) {
               msgBuffer.clear();
               progress?.fail();
-              final msgChunk = MessageChunk(
-                  type: ChunkType.error,
-                  content:
-                      'An error occured while processing the API streaming message | error: ${response.choices?.first.error?.message}');
-              WebService.webSocket?.sink.add(jsonEncode(msgChunk));
+
               return CustomException(
-                  message: 'An Error occured from the provider',
+                  message:
+                      'An Error occured from the provider - ${response.choices!.first.error?.toJson()}',
                   stack: 'OpenRouterService.invoke',
                   details: {
                     'api_error_message': response.choices!.first.error?.toJson()
@@ -213,7 +204,6 @@ ${lightCyan.wrap(promptForDebug)}
 
     return newSession.toSuccess();
   }
-
 
   ChatSession _removeOldMessages(ChatSession session, int maxMsg) {
     if (session.messages.length > maxMsg) {
