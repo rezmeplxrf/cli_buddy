@@ -52,7 +52,7 @@ class ValidateRequest with _$ValidateRequest {
 
 @freezed
 class Validation with _$Validation {
-  @JsonSerializable(includeIfNull: false)
+  @JsonSerializable(includeIfNull: false, explicitToJson: true)
   const factory Validation({
     required String modelId,
     required String result,
