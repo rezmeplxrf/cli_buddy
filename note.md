@@ -1,4 +1,4 @@
-dart compile exe ./bin/buddy.dart -o ./release/buddy_macos
+sudo dart compile exe ./bin/buddy.dart -o ./release/buddy_macos
 
 import 'package:process_run/shell_run.dart';budd
 var controller = ShellLinesController();

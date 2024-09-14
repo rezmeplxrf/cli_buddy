@@ -45,7 +45,7 @@ class OpenRouterService {
     int? overrideMaxMsg,
   }) async {
     final startTime = DateTime.now().millisecondsSinceEpoch / 1000;
-
+   
     final msgBuffer = StringBuffer();
     const waitingMsg = 'Waiting for response...';
     final progress = _logger?.progress(
@@ -102,6 +102,12 @@ ${lightCyan.wrap(promptForDebug)}
     } on DioException catch (e) {
       if (e.type == DioExceptionType.cancel) {
         _logger?.info('Request was cancelled.');
+       
+        final msgChunk = MessageChunk(
+            type: ChunkType.end,
+            content: msgBuffer.toString(),
+           );
+        WebService.webSocket?.sink.add(jsonEncode(msgChunk));
         return session.toSuccess();
       } else {
         rethrow;
@@ -115,8 +121,7 @@ ${lightCyan.wrap(promptForDebug)}
         details: {'error': e.toString()},
       ).toFailure();
     }
-
-    Usage? usage;
+ Usage? usage;
     var index = 0;
     var lineStart = 0;
     final consoleWidth =
