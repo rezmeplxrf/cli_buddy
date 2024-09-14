@@ -85,8 +85,8 @@ class WebService {
 
   Future<void> stop() async {
     if (_server != null) {
-      WebService.webSocket = null;
       await _server!.close(force: true);
+      WebService.webSocket = null;
       _logger?.info('Server stopped');
     }
   }
@@ -120,7 +120,8 @@ class HandlerService {
       final chatSession = ChatSession.fromJson(sessionJson);
       await SessionService.saveSession(session: chatSession);
 
-      return Response.ok(jsonEncode({'result': 'File is saved'}), headers: jsonHeaders);
+      return Response.ok(jsonEncode({'result': 'File is saved'}),
+          headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
         body: 'Failed to create file - $e',
@@ -159,8 +160,8 @@ class HandlerService {
           shouldAutoOvewrite: true);
 
       return Response.ok(
-       jsonEncode( jsonEncode({'result': 'File is created at $filePath'})), headers: jsonHeaders
-      );
+          jsonEncode(jsonEncode({'result': 'File is created at $filePath'})),
+          headers: jsonHeaders);
     } catch (e) {
       return Response.internalServerError(
         body: 'Failed to create file - $e',
@@ -226,7 +227,9 @@ class HandlerService {
             headers: jsonHeaders);
       } else {
         return Response.ok(
-            jsonEncode({'result': 'No changes made because it is the same as the current'}),
+            jsonEncode({
+              'result': 'No changes made because it is the same as the current'
+            }),
             headers: jsonHeaders);
       }
     } catch (e) {

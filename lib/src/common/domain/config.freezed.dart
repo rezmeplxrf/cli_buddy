@@ -34,10 +34,6 @@ mixin _$Configuration {
   int get maxMessages => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
   String? get openrouterDefaultModel => throw _privateConstructorUsedError;
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-  String? get buddyDefaultModel => throw _privateConstructorUsedError;
-  @JsonKey(name: 'buddy_key', defaultValue: null)
-  String? get buddyKey => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: null, name: 'ollama_default_model')
   String? get ollamaDefaultModel => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: 'localhost:11434')
@@ -112,9 +108,6 @@ abstract class $ConfigurationCopyWith<$Res> {
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
       String? openrouterDefaultModel,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-      String? buddyDefaultModel,
-      @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
       @JsonKey(defaultValue: null, name: 'ollama_default_model')
       String? ollamaDefaultModel,
       @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,
@@ -174,8 +167,6 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
     Object? isLocal = null,
     Object? maxMessages = null,
     Object? openrouterDefaultModel = freezed,
-    Object? buddyDefaultModel = freezed,
-    Object? buddyKey = freezed,
     Object? ollamaDefaultModel = freezed,
     Object? ollamaEndpoint = freezed,
     Object? openrouterKey = freezed,
@@ -228,14 +219,6 @@ class _$ConfigurationCopyWithImpl<$Res, $Val extends Configuration>
       openrouterDefaultModel: freezed == openrouterDefaultModel
           ? _value.openrouterDefaultModel
           : openrouterDefaultModel // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buddyDefaultModel: freezed == buddyDefaultModel
-          ? _value.buddyDefaultModel
-          : buddyDefaultModel // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buddyKey: freezed == buddyKey
-          ? _value.buddyKey
-          : buddyKey // ignore: cast_nullable_to_non_nullable
               as String?,
       ollamaDefaultModel: freezed == ollamaDefaultModel
           ? _value.ollamaDefaultModel
@@ -351,9 +334,6 @@ abstract class _$$ConfigurationImplCopyWith<$Res>
       @JsonKey(name: 'max_messages', defaultValue: 20) int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
       String? openrouterDefaultModel,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-      String? buddyDefaultModel,
-      @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
       @JsonKey(defaultValue: null, name: 'ollama_default_model')
       String? ollamaDefaultModel,
       @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,
@@ -411,8 +391,6 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
     Object? isLocal = null,
     Object? maxMessages = null,
     Object? openrouterDefaultModel = freezed,
-    Object? buddyDefaultModel = freezed,
-    Object? buddyKey = freezed,
     Object? ollamaDefaultModel = freezed,
     Object? ollamaEndpoint = freezed,
     Object? openrouterKey = freezed,
@@ -465,14 +443,6 @@ class __$$ConfigurationImplCopyWithImpl<$Res>
       openrouterDefaultModel: freezed == openrouterDefaultModel
           ? _value.openrouterDefaultModel
           : openrouterDefaultModel // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buddyDefaultModel: freezed == buddyDefaultModel
-          ? _value.buddyDefaultModel
-          : buddyDefaultModel // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buddyKey: freezed == buddyKey
-          ? _value.buddyKey
-          : buddyKey // ignore: cast_nullable_to_non_nullable
               as String?,
       ollamaDefaultModel: freezed == ollamaDefaultModel
           ? _value.ollamaDefaultModel
@@ -587,9 +557,6 @@ class _$ConfigurationImpl implements _Configuration {
       required this.maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
       this.openrouterDefaultModel,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-      this.buddyDefaultModel,
-      @JsonKey(name: 'buddy_key', defaultValue: null) this.buddyKey,
       @JsonKey(defaultValue: null, name: 'ollama_default_model')
       this.ollamaDefaultModel,
       @JsonKey(defaultValue: 'localhost:11434') this.ollamaEndpoint,
@@ -652,12 +619,6 @@ class _$ConfigurationImpl implements _Configuration {
   @override
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
   final String? openrouterDefaultModel;
-  @override
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-  final String? buddyDefaultModel;
-  @override
-  @JsonKey(name: 'buddy_key', defaultValue: null)
-  final String? buddyKey;
   @override
   @JsonKey(defaultValue: null, name: 'ollama_default_model')
   final String? ollamaDefaultModel;
@@ -754,7 +715,7 @@ class _$ConfigurationImpl implements _Configuration {
 
   @override
   String toString() {
-    return 'Configuration(apiProvider: $apiProvider, localEndpoint: $localEndpoint, saveSession: $saveSession, saveOnline: $saveOnline, isLocal: $isLocal, maxMessages: $maxMessages, openrouterDefaultModel: $openrouterDefaultModel, buddyDefaultModel: $buddyDefaultModel, buddyKey: $buddyKey, ollamaDefaultModel: $ollamaDefaultModel, ollamaEndpoint: $ollamaEndpoint, openrouterKey: $openrouterKey, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt, validatePrompt: $validatePrompt)';
+    return 'Configuration(apiProvider: $apiProvider, localEndpoint: $localEndpoint, saveSession: $saveSession, saveOnline: $saveOnline, isLocal: $isLocal, maxMessages: $maxMessages, openrouterDefaultModel: $openrouterDefaultModel, ollamaDefaultModel: $ollamaDefaultModel, ollamaEndpoint: $ollamaEndpoint, openrouterKey: $openrouterKey, temperature: $temperature, maxTokens: $maxTokens, topP: $topP, topK: $topK, frequencyPenalty: $frequencyPenalty, presencePenalty: $presencePenalty, repetitionPenalty: $repetitionPenalty, minP: $minP, topA: $topA, seed: $seed, logitBias: $logitBias, logprobs: $logprobs, topLogprobs: $topLogprobs, responseFormat: $responseFormat, stop: $stop, cmdPrompt: $cmdPrompt, explainPrompt: $explainPrompt, codePrompt: $codePrompt, chatPrompt: $chatPrompt, validatePrompt: $validatePrompt)';
   }
 
   @override
@@ -775,10 +736,6 @@ class _$ConfigurationImpl implements _Configuration {
                 other.maxMessages == maxMessages) &&
             (identical(other.openrouterDefaultModel, openrouterDefaultModel) ||
                 other.openrouterDefaultModel == openrouterDefaultModel) &&
-            (identical(other.buddyDefaultModel, buddyDefaultModel) ||
-                other.buddyDefaultModel == buddyDefaultModel) &&
-            (identical(other.buddyKey, buddyKey) ||
-                other.buddyKey == buddyKey) &&
             (identical(other.ollamaDefaultModel, ollamaDefaultModel) ||
                 other.ollamaDefaultModel == ollamaDefaultModel) &&
             (identical(other.ollamaEndpoint, ollamaEndpoint) ||
@@ -832,8 +789,6 @@ class _$ConfigurationImpl implements _Configuration {
         isLocal,
         maxMessages,
         openrouterDefaultModel,
-        buddyDefaultModel,
-        buddyKey,
         ollamaDefaultModel,
         ollamaEndpoint,
         openrouterKey,
@@ -891,9 +846,6 @@ abstract class _Configuration implements Configuration {
       required final int maxMessages,
       @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
       final String? openrouterDefaultModel,
-      @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-      final String? buddyDefaultModel,
-      @JsonKey(name: 'buddy_key', defaultValue: null) final String? buddyKey,
       @JsonKey(defaultValue: null, name: 'ollama_default_model')
       final String? ollamaDefaultModel,
       @JsonKey(defaultValue: 'localhost:11434') final String? ollamaEndpoint,
@@ -955,12 +907,6 @@ abstract class _Configuration implements Configuration {
   @override
   @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
   String? get openrouterDefaultModel;
-  @override
-  @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-  String? get buddyDefaultModel;
-  @override
-  @JsonKey(name: 'buddy_key', defaultValue: null)
-  String? get buddyKey;
   @override
   @JsonKey(defaultValue: null, name: 'ollama_default_model')
   String? get ollamaDefaultModel;

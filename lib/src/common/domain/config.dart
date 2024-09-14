@@ -20,9 +20,6 @@ class Configuration with _$Configuration {
     @JsonKey(name: 'max_messages', defaultValue: 20) required int maxMessages,
     @JsonKey(defaultValue: 'openai/gpt-4o', name: 'openrouter_default_model')
     String? openrouterDefaultModel,
-    @JsonKey(defaultValue: 'openai/gpt-4o', name: 'buddy_default_model')
-    String? buddyDefaultModel,
-    @JsonKey(name: 'buddy_key', defaultValue: null) String? buddyKey,
     @JsonKey(defaultValue: null, name: 'ollama_default_model')
     String? ollamaDefaultModel,
     @JsonKey(defaultValue: 'localhost:11434') String? ollamaEndpoint,

@@ -73,13 +73,11 @@ class ChatCommand extends Command<int> {
       configuration ??= await ConfigService.loadConfig().getOrThrow();
       final modelId = (configuration!.apiProvider == APIProvider.openrouter)
           ? configuration!.openrouterDefaultModel
-          : (configuration!.apiProvider == APIProvider.ollama)
-              ? configuration!.ollamaDefaultModel
-              : configuration!.buddyDefaultModel;
-              if (modelId == null){
-                _logger.err('Default APIProvider is not found');
-                return ExitCode.tempFail.code;
-              }
+          : configuration!.ollamaDefaultModel;
+      if (modelId == null) {
+        _logger.err('Default APIProvider is not found');
+        return ExitCode.tempFail.code;
+      }
       session = ChatSession(
           id: currentTime, messages: [sysMsg, initialMsg], modelId: modelId);
     }

@@ -18,9 +18,6 @@ _$ConfigurationImpl _$$ConfigurationImplFromJson(Map<String, dynamic> json) =>
       maxMessages: (json['max_messages'] as num?)?.toInt() ?? 20,
       openrouterDefaultModel:
           json['openrouter_default_model'] as String? ?? 'openai/gpt-4o',
-      buddyDefaultModel:
-          json['buddy_default_model'] as String? ?? 'openai/gpt-4o',
-      buddyKey: json['buddy_key'] as String?,
       ollamaDefaultModel: json['ollama_default_model'] as String?,
       ollamaEndpoint: json['ollamaEndpoint'] as String? ?? 'localhost:11434',
       openrouterKey: json['openrouter_key'] as String?,
@@ -62,8 +59,6 @@ Map<String, dynamic> _$$ConfigurationImplToJson(_$ConfigurationImpl instance) =>
       'local_web': instance.isLocal,
       'max_messages': instance.maxMessages,
       'openrouter_default_model': instance.openrouterDefaultModel,
-      'buddy_default_model': instance.buddyDefaultModel,
-      'buddy_key': instance.buddyKey,
       'ollama_default_model': instance.ollamaDefaultModel,
       'ollamaEndpoint': instance.ollamaEndpoint,
       'openrouter_key': instance.openrouterKey,

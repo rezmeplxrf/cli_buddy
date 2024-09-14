@@ -24,12 +24,7 @@ class SetCommand extends Command<int> {
             "Set the Openrouter API key in the config file. If the file doesn't exist, it will be created.",
         valueHelp: 'String',
       )
-      ..addOption(
-        'buddy-api-key',
-        help:
-            "Set the Buddy API key in the config file. If the file doesn't exist, it will be created.",
-        valueHelp: 'String',
-      )
+    
       ..addOption(
         'api-provider',
         help: 'Set the API provider in the config file.',
@@ -46,11 +41,7 @@ class SetCommand extends Command<int> {
         help: 'Set the default Openrouter AI model to be used.',
         valueHelp: 'String',
       )
-      ..addOption(
-        'buddy-model',
-        help: 'Set the default Buddy AI model to be used.',
-        valueHelp: 'String',
-      )
+   
       ..addOption(
         'ollama-model',
         help: 'Set the default Ollama AI model to be used.',
@@ -210,10 +201,8 @@ class SetCommand extends Command<int> {
   @override
   Future<int> run() async {
     final progress = _logger.progress('');
-    final buddyKey = argResults?['buddy-api-key']?.toString().trim();
     final orkey = argResults?['or-api-key']?.toString().trim();
     final orModel = argResults?['or-model']?.toString().trim();
-    final buddyModel = argResults?['buddy-model']?.toString().trim();
     final ollamaModel = argResults?['ollama-model']?.toString().trim();
     final localEndpoint = argResults?['local-endpoint']?.toString().trim();
     final ollamaEndpoint = argResults?['ollama-endpoint']?.toString().trim();
@@ -305,8 +294,6 @@ class SetCommand extends Command<int> {
       preferLocal,
       orkey,
       orModel,
-      buddyModel,
-      buddyKey,
       ollamaModel,
       localEndpoint,
       ollamaEndpoint,
@@ -343,9 +330,7 @@ class SetCommand extends Command<int> {
             _logUpdate('openrouter_key', orkey, configuration!.openrouterKey),
         openrouterDefaultModel: _logUpdate('openrouter_default_model', orModel,
             configuration!.openrouterDefaultModel),
-        buddyDefaultModel: _logUpdate('buddy_default_model', buddyModel,
-            configuration!.buddyDefaultModel),
-        buddyKey: _logUpdate('buddy_key', buddyKey, configuration!.buddyKey),
+     
         ollamaDefaultModel: _logUpdate('ollama_default_model', ollamaModel,
             configuration!.ollamaDefaultModel),
         saveSession:
