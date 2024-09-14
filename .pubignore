@@ -15,7 +15,7 @@ dart_test.yaml
 web/
 release/
 script/
-memo.md
+note.md
 
 
 .test_coverage.dart
