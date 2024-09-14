@@ -144,7 +144,7 @@ ${lightCyan.wrap(promptForDebug)}
             if (response.usage?.completionTokens != null) {
               usage = response.usage;
             }
-        
+
             final content = response.choices?.first.delta?.content ?? '';
             msgBuffer.write(content);
 
@@ -191,27 +191,25 @@ ${lightCyan.wrap(promptForDebug)}
       _logger?.info(markdownStyle.apply(msgBuffer.toString()));
     }
 
-   
-      final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
-      final difference = ((finishTime - startTime) * 10).ceil() / 10;
-      final aiResponse = Message(
-        role: Role.assistant,
-        content: msgBuffer.toString(),
-        timestamp: DateTime.now().millisecondsSinceEpoch,
-        usage: usage?.copyWith(responseTime: difference),
-      );
-      final newSession = session.copyWith(
-        messages: [...session.messages, aiResponse],
-      );
+    final finishTime = DateTime.now().millisecondsSinceEpoch / 1000;
+    final difference = ((finishTime - startTime) * 10).ceil() / 10;
+    final aiResponse = Message(
+      role: Role.assistant,
+      content: msgBuffer.toString(),
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      usage: usage?.copyWith(responseTime: difference),
+    );
+    final newSession = session.copyWith(
+      messages: [...session.messages, aiResponse],
+    );
 
-      final usageLog =
-          '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
-      _logger?.info(darkGray.wrap(usageLog));
+    final usageLog =
+        '\nToken usage | Prompt: ${usage?.promptTokens} | Completion: ${usage?.completionTokens} | Total: ${usage?.totalTokens} | Time: ${difference}s\n';
+    _logger?.info(darkGray.wrap(usageLog));
 
-      await SessionService.saveSession(session: newSession);
+    await SessionService.saveSession(session: newSession);
 
-      return newSession.toSuccess();
-   
+    return newSession.toSuccess();
   }
 
   Future<Result<ChatSession, CustomException>> validate(

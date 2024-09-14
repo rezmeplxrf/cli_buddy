@@ -118,6 +118,10 @@ class HandlerService {
   static void _handleWebSocket(WebSocketChannel socket) {
     WebService.webSocket = socket;
     socket.stream.listen((message) async {
+      if (message.toString().startsWith('Cancel')){
+        OpenRouterService.cancelToken?.cancel();
+        return;
+      }
       final userSentSession = ChatSession.fromJson(
           jsonDecode(message as String) as Map<String, dynamic>);
       if (message.trim().isNotEmpty) {
