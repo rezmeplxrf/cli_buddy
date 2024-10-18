@@ -1,4 +1,4 @@
-import 'package:cli_buddy/src/common/service/sys_info.dart';
+import 'sys_info.dart';
 
 const defaultCommandPrompt = '''
 If there is a lack of details, provide most logical solution.

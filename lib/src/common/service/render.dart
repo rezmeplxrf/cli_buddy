@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:barbecue/barbecue.dart';
-import 'package:cli_buddy/cli_buddy.dart';
-import 'package:cli_buddy/src/common/models/config.dart';
+import '../../../cli_buddy.dart';
+import '../models/config.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 class RenderService {

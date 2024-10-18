@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cli_buddy/src/command_runner.dart';
+import '../lib/src/command_runner.dart';
 
 Future<void> main(List<String> args) async {
   await _flushThenExit(await CliBuddyCommandRunner().run(args));

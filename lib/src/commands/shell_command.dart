@@ -1,12 +1,12 @@
 import 'package:args/command_runner.dart';
-import 'package:cli_buddy/src/common/models/action.dart';
-import 'package:cli_buddy/src/common/models/config.dart';
-import 'package:cli_buddy/src/common/models/session.dart';
-import 'package:cli_buddy/src/common/service/action.dart';
-import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/global.dart';
-import 'package:cli_buddy/src/common/service/prompts.dart';
-import 'package:cli_buddy/src/common/service/session.dart';
+import '../common/models/action.dart';
+import '../common/models/config.dart';
+import '../common/models/session.dart';
+import '../common/service/action.dart';
+import '../common/service/config.dart';
+import '../common/service/global.dart';
+import '../common/service/prompts.dart';
+import '../common/service/session.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
 

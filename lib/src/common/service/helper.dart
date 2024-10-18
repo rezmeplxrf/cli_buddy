@@ -1,4 +1,4 @@
-import 'package:cli_buddy/cli_buddy.dart';
+import '../../../cli_buddy.dart';
 
 class Helper {
   factory Helper() => _instance;

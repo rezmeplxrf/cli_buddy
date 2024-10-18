@@ -11,4 +11,3 @@ library cli_buddy;
 
 /// Although primarily built for a cli tool, openrouter related api can be used in dart/flutter project.
 export 'src/common/models/domain.dart';
-export 'src/common/service/open_router.dart';

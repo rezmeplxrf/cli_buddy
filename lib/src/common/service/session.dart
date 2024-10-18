@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cli_buddy/src/common/models/session.dart';
-import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/sys_info.dart';
+import '../models/session.dart';
+import 'config.dart';
+import 'sys_info.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:result_dart/result_dart.dart';

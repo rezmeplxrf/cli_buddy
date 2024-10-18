@@ -1,12 +1,12 @@
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
-import 'package:cli_buddy/cli_buddy.dart';
-import 'package:cli_buddy/src/commands/commands.dart';
-import 'package:cli_buddy/src/common/service/action.dart';
-import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/session.dart';
-import 'package:cli_buddy/src/common/service/web.dart';
-import 'package:cli_buddy/src/version.dart';
+import 'commands/commands.dart';
+import 'common/service/action.dart';
+import 'common/service/config.dart';
+import 'common/service/open_router.dart';
+import 'common/service/session.dart';
+import 'common/service/web.dart';
+import 'version.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pub_updater/pub_updater.dart';
@@ -50,14 +50,14 @@ class CliBuddyCommandRunner extends CompletionCommandRunner<int> {
     addCommand(ChatCommand(logger: _logger));
     addCommand(CodeCommand(logger: _logger));
     addCommand(SetCommand(logger: _logger));
-    addCommand(OpenCommand(logger: _logger));
+    // TODO: fix issue
+    // addCommand(OpenCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
     SessionService.setLogger(_logger);
     OpenRouterService.setLogger(_logger);
     ConfigService.setLogger(_logger);
     ActionService.setLogger(_logger);
     WebService.setLogger(_logger);
-    
   }
 
   @override

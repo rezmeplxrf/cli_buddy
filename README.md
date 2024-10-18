@@ -34,8 +34,7 @@
 3. **Continuous Chat**: Chat with AI continuously in your terminal.
 4. **Session Management**: Save chat history in JSON format locally and load it when starting a new session using `-s <session_id>`.
    - By default, saving chat history is disabled.
-5. **OpenRouter APIs**: Even though it's made as a CLI tool, this package can also be used for any Dart/Flutter project to use OpenRouter APIs. This package exposes OpenRouter APIs and Models. Simply declare `final openRouter = OpenRouterService();` and use it in your project. such as `final result = await openRouter.invoke(session: ChatSession());`
-6. **GUI**: Want to see GUI? Just run `buddy open` to open the GUI.
+5. **GUI**: Want to see GUI? Just run `buddy open` to open the GUI. // Currently Disabled due to some unexpected issues
 
 ## Getting Started 🚀
 
@@ -78,7 +77,6 @@ buddy set --or-api-key <your openrouter key>
   "localEndpoint": "localhost:43210",
   "save_session": true,
   "save_online": false,
-  "local_web": true,
   "max_messages": 20,
   "openrouter_default_model": "openai/gpt-4o",
   "ollama_default_model": null,

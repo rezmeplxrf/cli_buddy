@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cli_buddy/src/common/models/config.dart';
-import 'package:cli_buddy/src/common/models/exception.dart';
-import 'package:cli_buddy/src/common/models/session.dart';
-import 'package:cli_buddy/src/common/service/prompts.dart';
-import 'package:cli_buddy/src/common/service/sys_info.dart';
+import '../models/config.dart';
+import '../models/exception.dart';
+import '../models/session.dart';
+import 'prompts.dart';
+import 'sys_info.dart';
 
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as p;

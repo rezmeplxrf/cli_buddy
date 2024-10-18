@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cli_buddy/src/common/models/exception.dart';
-import 'package:cli_buddy/src/common/models/session.dart';
-import 'package:cli_buddy/src/common/service/global.dart';
-import 'package:cli_buddy/src/common/service/prompts.dart';
+import '../models/exception.dart';
+import '../models/session.dart';
+import 'global.dart';
+import 'prompts.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:process_run/shell.dart';
 import 'package:result_dart/result_dart.dart';

@@ -1,4 +1,4 @@
-import 'package:cli_buddy/src/common/service/prompts.dart';
+import '../service/prompts.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'config.freezed.dart';

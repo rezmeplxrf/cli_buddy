@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:cli_buddy/src/common/service/action.dart';
-import 'package:cli_buddy/src/common/service/config.dart';
-import 'package:cli_buddy/src/common/service/global.dart';
-import 'package:cli_buddy/src/common/service/web.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:result_dart/result_dart.dart';
+
+import '../common/service/action.dart';
+import '../common/service/config.dart';
+import '../common/service/global.dart';
+import '../common/service/web.dart';
 
 /// {@template open_command}
 ///
@@ -66,19 +67,11 @@ class OpenCommand extends Command<int> {
             'If you are still worried, you can check out the network section of the devtool');
     }
 
-    // Handle SIGINT (Ctrl+C) to stop the server and clean up resources
     ProcessSignal.sigint.watch().listen((signal) async {
       _logger.info('Stopping the server...');
       await server.stop();
       exit(0);
     });
-    // if (isLocal) {
-    //   _logger
-    //     ..info(
-    //         'Due to some unknown issues, currently local version crashes so local web is disabled.')
-    //     ..info(
-    //         'The hosted web interface is available at $hostedWeb in your browser.');
-    // }
 
     if (autoFlag) {
       await ActionService.openWeb(
