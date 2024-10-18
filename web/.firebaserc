@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "buddy-c3bf4",
+    "hosting": "buddy-c3bf4"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}

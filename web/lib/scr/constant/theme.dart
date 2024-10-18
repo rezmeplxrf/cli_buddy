@@ -1,0 +1,50 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
+
+final lightTheme = FlexThemeData.light(
+  scheme: FlexScheme.indigoM3,
+  subThemesData: const FlexSubThemesData(
+    interactionEffects: false,
+    tintedDisabledControls: false,
+    buttonPadding: EdgeInsets.all(5),
+    outlinedButtonRadius: 10,
+    blendOnColors: false,
+    useTextTheme: true,
+    inputDecoratorBorderType: FlexInputBorderType.underline,
+    inputDecoratorUnfocusedBorderIsColored: false,
+    alignedDropdown: true,
+    tooltipRadius: 4,
+    tooltipSchemeColor: SchemeColor.inverseSurface,
+    tooltipOpacity: 0.9,
+    useInputDecoratorThemeInDialogs: true,
+    snackBarElevation: 6,
+    snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+  ),
+  keyColors: const FlexKeyColors(),
+  visualDensity: FlexColorScheme.comfortablePlatformDensity,
+  useMaterial3: true,
+  swapLegacyOnMaterial3: true,
+);
+final darkTheme = FlexThemeData.dark(
+  scheme: FlexScheme.indigoM3,
+  subThemesData: const FlexSubThemesData(
+    interactionEffects: false,
+    tintedDisabledControls: false,
+    useTextTheme: true,
+    buttonPadding: EdgeInsets.all(5),
+    outlinedButtonRadius: 10,
+    inputDecoratorBorderType: FlexInputBorderType.underline,
+    inputDecoratorUnfocusedBorderIsColored: false,
+    alignedDropdown: true,
+    tooltipRadius: 4,
+    tooltipSchemeColor: SchemeColor.inverseSurface,
+    tooltipOpacity: 0.9,
+    useInputDecoratorThemeInDialogs: true,
+    snackBarElevation: 6,
+    snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+  ),
+  keyColors: const FlexKeyColors(),
+  visualDensity: FlexColorScheme.comfortablePlatformDensity,
+  useMaterial3: true,
+  swapLegacyOnMaterial3: true,
+);
